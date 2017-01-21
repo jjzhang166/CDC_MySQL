@@ -1,0 +1,48 @@
+
+#########################################################################
+###
+###  DESCRIPTION:
+###    Common definitions for all Makefiles in UAS linux project.
+###
+#########################################################################
+
+SRC_DIR := ../src
+
+COMM_DIR := .
+
+## Name and type of the target for this Makefile
+
+SO_TARGET := CDC_MySQL
+
+## Define debugging symbols
+DEBUG = 0
+LINUX_COMPILER=_LINUX_
+PWLIB_SUPPORT = 0
+
+CFLAGS += -fno-omit-frame-pointer
+CFLAGS += -D_LINUX
+
+## Object files that compose the target(s)
+
+SRCS := $(wildcard $(SRC_DIR)/*.cpp)
+OBJS := $(patsubst %.cpp,%, $(SRCS))
+
+
+## Libraries to include in shared object file
+
+LIBS :=  mysqlclient cjson
+        
+
+## Add driver-specific include directory to the search path
+
+INC_PATH += ../include ../include/MySQL5.7   
+
+LIB_PATH := . ../lib /usr/lib/x86_64-linux-gnu /usr/local/lib
+
+INSTALL_LIB_PATH = ../lib
+
+include $(COMM_DIR)/common.mk
+
+clean:
+	rm -f $(SRC_DIR)/*.o
+	rm -f *.so

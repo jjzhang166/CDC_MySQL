@@ -82,7 +82,7 @@ void CDC_Host_Tests::testJsonAdd()
 	out = cJSON_Print(json);
 	req = out;
 	cJSON_Delete(json);
-	result = _pObj->CDC_Host_add(req);
+	result = _pObj->CDC_Host_Add(req);
 
 	const string success = "{\n\t\"Result\":\t1,\n\t\"Host_ID\":\t1\n}";
 	assert(success == result);
@@ -94,7 +94,7 @@ void CDC_Host_Tests::testJsonAdd()
 	cJSON_Delete(json);
 
 	const string failed = FAILED_JSON_RESULT;
-	result = _pObj->CDC_Host_add(req);
+	result = _pObj->CDC_Host_Add(req);
 	assert(failed == result);
 }
 
@@ -105,7 +105,7 @@ void CDC_Host_Tests::testJsonDel()
 	t1.Host_Name = "testJsonDel1";
 	t1.Host_IP = "127.0.0.1";
 	t1.Host_VirtNet = "testJsonDel2222";
-	id = _pObj->Host_add(t1);
+	id = _pObj->Host_Add(t1);
 	assert(id > 0);
 
 	json = cJSON_CreateObject();
@@ -114,7 +114,7 @@ void CDC_Host_Tests::testJsonDel()
 	out = cJSON_Print(json);
 	req = out;
 	cJSON_Delete(json);
-	result = _pObj->CDC_Host_del(req);
+	result = _pObj->CDC_Host_Del(req);
 	assert(SUCCESS_JSON_RESULT == result);
 }
 
@@ -124,7 +124,7 @@ void CDC_Host_Tests::testJsonUpdate()
 	t1.Host_Name = "testJsonUpdate1";
 	t1.Host_IP = "127.0.0.1";
 	t1.Host_VirtNet = "testJsonUpdate2222";
-	id = _pObj->Host_add(t1);
+	id = _pObj->Host_Add(t1);
 	assert(id > 0);
 
 	json = cJSON_CreateObject();
@@ -136,7 +136,7 @@ void CDC_Host_Tests::testJsonUpdate()
 	out = cJSON_Print(json);
 	req = out;
 	cJSON_Delete(json);
-	result = _pObj->CDC_Host_update(req);
+	result = _pObj->CDC_Host_Update(req);
 	assert(SUCCESS_JSON_RESULT == result);
 }
 
@@ -146,14 +146,14 @@ void CDC_Host_Tests::testJsonFind()
 	t1.Host_Name = "testJsonFind11";
 	t1.Host_IP = "127.0.0.1";
 	t1.Host_VirtNet = "testJsonFind11aa";
-	id = _pObj->Host_add(t1);
+	id = _pObj->Host_Add(t1);
 	assert(id > 0);
 
 	TCDC_Host t2;
 	t2.Host_Name = "testJsonFind22";
 	t2.Host_IP = "127.0.0.1";
 	t2.Host_VirtNet = "testJsonFind22bb";
-	id = _pObj->Host_add(t2);
+	id = _pObj->Host_Add(t2);
 	assert(id > 0);
 
 	json = cJSON_CreateObject();
@@ -163,7 +163,7 @@ void CDC_Host_Tests::testJsonFind()
 	out = cJSON_Print(json);
 	req = out;
 	cJSON_Delete(json);
-	result = _pObj->CDC_Host_find(req);
+	result = _pObj->CDC_Host_Find(req);
 	MDEBUG << result << endl;
 	assert(result.length() > 0);
 
@@ -172,7 +172,7 @@ void CDC_Host_Tests::testJsonFind()
 	out = cJSON_Print(json);
 	req = out;
 	cJSON_Delete(json);
-	result = _pObj->CDC_Host_find(req);
+	result = _pObj->CDC_Host_Find(req);
 	MDEBUG << result << endl;
 	assert(result.length() > 0);
 }
@@ -183,14 +183,14 @@ void CDC_Host_Tests::testJsonFindCount()
 	t1.Host_Name = "testJsonFindCount11";
 	t1.Host_IP = "127.0.0.1";
 	t1.Host_VirtNet = "testJsonFindCount11aa";
-	id = _pObj->Host_add(t1);
+	id = _pObj->Host_Add(t1);
 	assert(id > 0);
 
 	TCDC_Host t2;
 	t2.Host_Name = "testJsonFindCount22";
 	t2.Host_IP = "127.0.0.1";
 	t2.Host_VirtNet = "testJsonFindCount22bb";
-	id = _pObj->Host_add(t2);
+	id = _pObj->Host_Add(t2);
 	assert(id > 0);
 
 	json = cJSON_CreateObject();
@@ -224,7 +224,7 @@ void CDC_Host_Tests::testCount()
 	host.Host_Name = "计数";
 	host.Host_IP = "test_Count11";
 	host.Host_VirtNet = "test_Count1";
-	id = _pObj->Host_add(host);
+	id = _pObj->Host_Add(host);
 	assert(id > 0);
 
 	count = _pObj->Host_Count();
@@ -238,7 +238,7 @@ void CDC_Host_Tests::testAdd()
 	host.Host_Name = "增加";
 	host.Host_IP = "test_Add1";
 	host.Host_VirtNet = "test_Add1";
-	id = _pObj->Host_add(host);
+	id = _pObj->Host_Add(host);
 	assert(id > 0);
 }
 
@@ -249,7 +249,7 @@ void CDC_Host_Tests::testDel()
 	host1.Host_Name = "删除";
 	host1.Host_IP = "test_Del1";
 	host1.Host_VirtNet = "test_Del1";
-	id = _pObj->Host_add(host1);
+	id = _pObj->Host_Add(host1);
 	assert(id > 0);
 
 	TCDC_Host host2;
@@ -257,13 +257,13 @@ void CDC_Host_Tests::testDel()
 	host2.Host_Name = "删除";
 	host2.Host_IP = "test_Del2";
 	host2.Host_VirtNet = "test_Del2";
-	id = _pObj->Host_add(host2);
+	id = _pObj->Host_Add(host2);
 	assert(id > 0);
 
-	ret = _pObj->Host_del(1002);
+	ret = _pObj->Host_Del(1002);
 	assert(ret != 0);
 
-	ret = _pObj->Host_del(10012);
+	ret = _pObj->Host_Del(10012);
 	assert(ret == success);
 }
 
@@ -274,7 +274,7 @@ void CDC_Host_Tests::testUpdate()
 	host1.Host_Name = "更新";
 	host1.Host_IP = "test_Update2";
 	host1.Host_VirtNet = "test_Update2";
-	id = _pObj->Host_add(host1);
+	id = _pObj->Host_Add(host1);
 	assert(id > 0);
 
 	TCDC_Host host2;
@@ -282,7 +282,7 @@ void CDC_Host_Tests::testUpdate()
 	host2.Host_Name = "更新22";
 	host2.Host_IP = "test_Update33";
 	host2.Host_VirtNet = "test_Update44";
-	ret = _pObj->Host_update(host2);
+	ret = _pObj->Host_Update(host2);
 	assert(ret == success);
 }
 
@@ -293,7 +293,7 @@ void CDC_Host_Tests::testFind()
 	host1.Host_Name = "查找1";
 	host1.Host_IP = "test_Find1";
 	host1.Host_VirtNet = "test_Find1";
-	id = _pObj->Host_add(host1);
+	id = _pObj->Host_Add(host1);
 	assert(id > 0);
 
 	TCDC_Host host2;
@@ -301,24 +301,24 @@ void CDC_Host_Tests::testFind()
 	host2.Host_Name = "查找2";
 	host2.Host_IP = "test_Find2";
 	host2.Host_VirtNet = "test_Find2";
-	id = _pObj->Host_add(host2);
+	id = _pObj->Host_Add(host2);
 	assert(id > 0);
 
-	bool find = _pObj->Host_find(10011);
+	bool find = _pObj->Host_Find(10011);
 	assert(find == true);
 
 	string name = "查找1";
-	find = _pObj->Host_find(name);
+	find = _pObj->Host_Find(name);
 	assert(find == true);
 
 	TCDC_Host t1;
-	ret = _pObj->Host_find(10011, t1);
+	ret = _pObj->Host_Find(10011, t1);
 	assert(ret == success);
 	assert(t1.Host_Name == "查找1");
 
 	TCDC_Host t2;
 	name = "查找2";
-	ret = _pObj->Host_find(name, t2);
+	ret = _pObj->Host_Find(name, t2);
 	assert(ret == success);
 	assert(t2.Host_ID == 10012);
 }

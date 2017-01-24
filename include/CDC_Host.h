@@ -12,25 +12,25 @@ public:
 	CDC_Host(CppMySQLDB& db);
 	~CDC_Host();
 
-	std::string CDC_Host_add(const std::string& req);
-	std::string CDC_Host_del(const std::string& req);
-	std::string CDC_Host_update(const std::string& req);
-	std::string CDC_Host_find(const std::string& req);
+	std::string CDC_Host_Add(const std::string& req);
+	std::string CDC_Host_Del(const std::string& req);
+	std::string CDC_Host_Update(const std::string& req);
+	std::string CDC_Host_Find(const std::string& req);
 	std::string CDC_Host_FindCount(const std::string& req);
 	////////////////////////////////////////////
 
-	double Host_add(TCDC_Host&);
+	double Host_Add(TCDC_Host&);
 
-	int Host_del(double id);
-	int Host_del(const std::string& name);
+	int Host_Del(double id);
+	int Host_Del(const std::string& name);
 
-	int Host_update(TCDC_Host&);
-	int Host_update(TCDC_Host& src, std::list<std::string>& keyList);
+	int Host_Update(TCDC_Host&);
+	int Host_Update(TCDC_Host& src, std::list<std::string>& keyList);
 
-	bool Host_find(double id);
-	bool Host_find(const std::string& name);
-	int Host_find(double id, TCDC_Host& t);
-	int Host_find(const std::string& name, TCDC_Host& t);
+	bool Host_Find(double id);
+	bool Host_Find(const std::string& name);
+	int Host_Find(double id, TCDC_Host& t);
+	int Host_Find(const std::string& name, TCDC_Host& t);
 	int Host_find2(const std::string& whereSql, TCDC_Host& t);
 	int Host_Count();
 	int Host_Count(const std::string& whereSql);

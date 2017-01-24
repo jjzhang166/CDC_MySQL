@@ -21,7 +21,7 @@ CDC_UserGroup::~CDC_UserGroup()
 }
 
 
-std::string CDC_UserGroup::CDC_UserGroup_add(const std::string& req)
+std::string CDC_UserGroup::CDC_UserGroup_Add(const std::string& req)
 {
 	int ret = 0;
 	double id = -1;
@@ -49,7 +49,7 @@ std::string CDC_UserGroup::CDC_UserGroup_add(const std::string& req)
 			userGroup.UserGroup_Name = tmp->valuestring;
 		else
 			goto END;
-		id = UserGroup_add(userGroup);
+		id = UserGroup_Add(userGroup);
 	}
 
 END:
@@ -66,7 +66,7 @@ END:
 	return string(out);
 }
 
-std::string CDC_UserGroup::CDC_UserGroup_del(const std::string& req)
+std::string CDC_UserGroup::CDC_UserGroup_Del(const std::string& req)
 {
 	int ret = 0;
 	cJSON *json, *tmp, *element;
@@ -92,7 +92,7 @@ std::string CDC_UserGroup::CDC_UserGroup_del(const std::string& req)
 			id = tmp->valuedouble;
 		else
 			goto END;
-		ret = UserGroup_del(id);
+		ret = UserGroup_Del(id);
 	}
 
 END:
@@ -107,7 +107,7 @@ END:
 }
 
 
-std::string CDC_UserGroup::CDC_UserGroup_update(const std::string& req)
+std::string CDC_UserGroup::CDC_UserGroup_Update(const std::string& req)
 {
 	int ret = 0;
 	bool hasItem = false;
@@ -144,7 +144,7 @@ std::string CDC_UserGroup::CDC_UserGroup_update(const std::string& req)
 		
 		if (!hasItem) goto END;
 
-		ret = UserGroup_update(userGroup);
+		ret = UserGroup_Update(userGroup);
 	}
 
 END:
@@ -158,7 +158,7 @@ END:
 	return string(out);
 }
 
-std::string CDC_UserGroup::CDC_UserGroup_find(const std::string& req)
+std::string CDC_UserGroup::CDC_UserGroup_Find(const std::string& req)
 {
 	int ret = 0;
 	bool hasItem = false;
@@ -242,8 +242,7 @@ END:
 		if (!isAll)
 		{
 			cJSON_AddNumberToObject(result, "Result", 1);
-			cJSON_AddItemToObject(result, "Data", dataArr = cJSON_CreateArray());
-			cJSON_AddItemToArray(dataArr, data = cJSON_CreateObject());
+			cJSON_AddItemToObject(result, "Data", data = cJSON_CreateArray());
 			cJSON_AddNumberToObject(data, "UserGroup_ID", userGroup.UserGroup_ID);
 			cJSON_AddStringToObject(data, "UserGroup_Name", userGroup.UserGroup_Name.c_str());
 		}
@@ -358,12 +357,12 @@ double CDC_UserGroup::GetMaxID()
 	return q.getDoubleField(0);
 }
 
-double CDC_UserGroup::UserGroup_add(TCDC_UserGroup& src)
+double CDC_UserGroup::UserGroup_Add(TCDC_UserGroup& src)
 {
 	double id = -1;
 	try
 	{
-		if (UserGroup_find(src.UserGroup_ID))
+		if (UserGroup_Find(src.UserGroup_ID))
 			return exists;
 
 		_stmt = _db.compileStatement("insert into CDC_UserGroup values (?, ?);");
@@ -386,11 +385,11 @@ double CDC_UserGroup::UserGroup_add(TCDC_UserGroup& src)
 	return id;
 }
 
-int CDC_UserGroup::UserGroup_del(double id)
+int CDC_UserGroup::UserGroup_Del(double id)
 {
 	try
 	{
-		if (!UserGroup_find(id))
+		if (!UserGroup_Find(id))
 			return notExists;
 
 		char buf[1024] = { 0 };
@@ -405,11 +404,11 @@ int CDC_UserGroup::UserGroup_del(double id)
 	return success;
 }
 
-int CDC_UserGroup::UserGroup_del(std::string& name)
+int CDC_UserGroup::UserGroup_Del(std::string& name)
 {
 	try
 	{
-		if (!UserGroup_find(name))
+		if (!UserGroup_Find(name))
 			return notExists;
 
 		char buf[1024] = { 0 };
@@ -424,7 +423,7 @@ int CDC_UserGroup::UserGroup_del(std::string& name)
 	return success;
 }
 
-int CDC_UserGroup::UserGroup_update(TCDC_UserGroup& src)
+int CDC_UserGroup::UserGroup_Update(TCDC_UserGroup& src)
 {
 	try
 	{
@@ -443,7 +442,7 @@ int CDC_UserGroup::UserGroup_update(TCDC_UserGroup& src)
 }
 
 
-bool CDC_UserGroup::UserGroup_find(double id)
+bool CDC_UserGroup::UserGroup_Find(double id)
 {
 	try
 	{
@@ -459,7 +458,7 @@ bool CDC_UserGroup::UserGroup_find(double id)
 	return true;
 }
 
-bool CDC_UserGroup::UserGroup_find(std::string& name)
+bool CDC_UserGroup::UserGroup_Find(std::string& name)
 {
 	try
 	{
@@ -476,11 +475,11 @@ bool CDC_UserGroup::UserGroup_find(std::string& name)
 }
 
 
-int CDC_UserGroup::UserGroup_find(double id, TCDC_UserGroup& t)
+int CDC_UserGroup::UserGroup_Find(double id, TCDC_UserGroup& t)
 {
 	try
 	{
-		if (!UserGroup_find(id))
+		if (!UserGroup_Find(id))
 			return notExists;
 
 		CppMySQLQuery q;
@@ -506,11 +505,11 @@ int CDC_UserGroup::UserGroup_find(double id, TCDC_UserGroup& t)
 	return success;
 }
 
-int CDC_UserGroup::UserGroup_find(std::string& name, TCDC_UserGroup& t)
+int CDC_UserGroup::UserGroup_Find(std::string& name, TCDC_UserGroup& t)
 {
 	try
 	{
-		if (!UserGroup_find(name))
+		if (!UserGroup_Find(name))
 			return notExists;
 
 		CppMySQLQuery q;

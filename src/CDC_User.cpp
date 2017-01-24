@@ -20,7 +20,7 @@ CDC_User::~CDC_User()
 	_stmt.clear();
 }
 
-std::string CDC_User::CDC_User_add(const std::string& req)
+std::string CDC_User::CDC_User_Add(const std::string& req)
 {
 	int ret = 0;
 	double id = -1;
@@ -57,7 +57,7 @@ std::string CDC_User::CDC_User_add(const std::string& req)
 
 	#undef JSON_ADD_ONE_ELEMENT
 
-		id = User_add(t);
+		id = User_Add(t);
 	}
 
 END:
@@ -74,7 +74,7 @@ END:
 	return string(out);
 }
 
-std::string CDC_User::CDC_User_del(const std::string& req)
+std::string CDC_User::CDC_User_Del(const std::string& req)
 {
 	int ret = 0;
 	cJSON *json, *tmp, *element;
@@ -100,7 +100,7 @@ std::string CDC_User::CDC_User_del(const std::string& req)
 			id = tmp->valuedouble;
 		else
 			goto END;
-		ret = User_del(id);
+		ret = User_Del(id);
 	}
 
 END:
@@ -114,7 +114,7 @@ END:
 	return string(out);
 }
 
-std::string CDC_User::CDC_User_update(const std::string& req)
+std::string CDC_User::CDC_User_Update(const std::string& req)
 {
 	int ret = 0;
 	bool hasItem = false;
@@ -166,7 +166,7 @@ std::string CDC_User::CDC_User_update(const std::string& req)
 
 		if (!hasItem) goto END;
 
-		ret = User_update(t, keyList);
+		ret = User_Update(t, keyList);
 	}
 
 END:
@@ -182,7 +182,7 @@ END:
 
 
 
-std::string CDC_User::CDC_User_find(const std::string& req)
+std::string CDC_User::CDC_User_Find(const std::string& req)
 {
 	int ret = 0;
 	bool hasItem = false;
@@ -282,8 +282,7 @@ END:
 		if (!isAll)
 		{
 			cJSON_AddNumberToObject(result, "Result", 1);
-			cJSON_AddItemToObject(result, "Data", dataArr = cJSON_CreateArray());
-			cJSON_AddItemToArray(dataArr, data = cJSON_CreateObject());
+			cJSON_AddItemToObject(result, "Data", data = cJSON_CreateArray());
 			JSON_ADD_ONE_ELEMENT;
 		}
 		else
@@ -395,12 +394,12 @@ END:
 }
 
 /////////////////////////////
-double CDC_User::User_add(TCDC_User& src)
+double CDC_User::User_Add(TCDC_User& src)
 {
 	double id = -1;
 	try
 	{
-		if (User_find(src.User_ID))
+		if (User_Find(src.User_ID))
 			return exists;
 
 		_stmt = _db.compileStatement("insert into CDC_User values (?, ?, ?, ?, ?, ?, ?);");
@@ -427,11 +426,11 @@ double CDC_User::User_add(TCDC_User& src)
 	return id;
 }
 
-int CDC_User::User_del(double id)
+int CDC_User::User_Del(double id)
 {
 	try
 	{
-		if (!User_find(id))
+		if (!User_Find(id))
 			return notExists;
 
 		_stmt = _db.compileStatement("delete from CDC_User where User_ID = ?;");
@@ -447,11 +446,11 @@ int CDC_User::User_del(double id)
 	return success;
 }
 
-int CDC_User::User_del(const std::string& name)
+int CDC_User::User_Del(const std::string& name)
 {
 	try
 	{
-		if (!User_find(name))
+		if (!User_Find(name))
 			return notExists;
 
 		char buf[1024] = { 0 };
@@ -466,11 +465,11 @@ int CDC_User::User_del(const std::string& name)
 	return success;
 }
 
-int CDC_User::User_update(TCDC_User& src)
+int CDC_User::User_Update(TCDC_User& src)
 {
 	try
 	{
-		if (!User_find(src.User_ID))
+		if (!User_Find(src.User_ID))
 			return notExists;
 
 		_stmt = _db.compileStatement("update CDC_User \
@@ -497,7 +496,7 @@ int CDC_User::User_update(TCDC_User& src)
 	return success;
 }
 
-int CDC_User::User_update(TCDC_User& src, std::list<string>& keyList)
+int CDC_User::User_Update(TCDC_User& src, std::list<string>& keyList)
 {
 	try
 	{
@@ -505,7 +504,7 @@ int CDC_User::User_update(TCDC_User& src, std::list<string>& keyList)
 		if (it == keyList.end())
 			return inputConditionError;
 			
-		if (!User_find(src.User_ID))
+		if (!User_Find(src.User_ID))
 			return notExists;
 
 		string updateSql = "update CDC_User set ";
@@ -549,7 +548,7 @@ int CDC_User::User_update(TCDC_User& src, std::list<string>& keyList)
 	return success;
 }
 
-bool CDC_User::User_find(double id)
+bool CDC_User::User_Find(double id)
 {
 	try
 	{
@@ -565,7 +564,7 @@ bool CDC_User::User_find(double id)
 	return true;
 }
 
-bool CDC_User::User_find(const std::string& name)
+bool CDC_User::User_Find(const std::string& name)
 {
 	try
 	{
@@ -583,11 +582,11 @@ bool CDC_User::User_find(const std::string& name)
 }
 
 
-int CDC_User::User_find(double id, TCDC_User& t)
+int CDC_User::User_Find(double id, TCDC_User& t)
 {
 	try
 	{
-		if (!User_find(id))
+		if (!User_Find(id))
 			return notExists;
 
 		CppMySQLQuery q;
@@ -618,11 +617,11 @@ int CDC_User::User_find(double id, TCDC_User& t)
 	return success;
 }
 
-int CDC_User::User_find(const std::string& name, TCDC_User& t)
+int CDC_User::User_Find(const std::string& name, TCDC_User& t)
 {
 	try
 	{
-		if (!User_find(name))
+		if (!User_Find(name))
 			return notExists;
 
 		CppMySQLQuery q;

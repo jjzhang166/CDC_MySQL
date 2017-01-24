@@ -22,7 +22,7 @@ CDC_Host::~CDC_Host()
 }
 
 
-std::string CDC_Host::CDC_Host_add(const std::string& req)
+std::string CDC_Host::CDC_Host_Add(const std::string& req)
 {
 	int ret = 0;
 	double id = -1;
@@ -56,7 +56,7 @@ std::string CDC_Host::CDC_Host_add(const std::string& req)
 
 #undef JSON_ADD_ONE_ELEMENT
 
-		id = Host_add(t);
+		id = Host_Add(t);
 	}
 
 END:
@@ -74,7 +74,7 @@ END:
 	return string(out);
 }
 
-std::string CDC_Host::CDC_Host_del(const std::string& req)
+std::string CDC_Host::CDC_Host_Del(const std::string& req)
 {
 	int ret = 0;
 	cJSON *json, *tmp, *element;
@@ -100,7 +100,7 @@ std::string CDC_Host::CDC_Host_del(const std::string& req)
 			id = tmp->valuedouble;
 		else
 			goto END;
-		ret = Host_del(id);
+		ret = Host_Del(id);
 	}
 
 END:
@@ -114,7 +114,7 @@ END:
 	return string(out);
 }
 
-std::string CDC_Host::CDC_Host_update(const std::string& req)
+std::string CDC_Host::CDC_Host_Update(const std::string& req)
 {
 	int ret = 0;
 	bool hasItem = false;
@@ -163,7 +163,7 @@ std::string CDC_Host::CDC_Host_update(const std::string& req)
 
 		if (!hasItem) goto END;
 
-		ret = Host_update(t, keyList);
+		ret = Host_Update(t, keyList);
 	}
 
 END:
@@ -177,7 +177,7 @@ END:
 	return string(out);
 }
 
-std::string CDC_Host::CDC_Host_find(const std::string& req)
+std::string CDC_Host::CDC_Host_Find(const std::string& req)
 {
 	int ret = 0;
 	bool hasItem = false;
@@ -263,8 +263,7 @@ END:
 		if (!isAll)
 		{
 			cJSON_AddNumberToObject(result, "Result", 1);
-			cJSON_AddItemToObject(result, "Data", dataArr = cJSON_CreateArray());
-			cJSON_AddItemToArray(dataArr, data = cJSON_CreateObject());
+			cJSON_AddItemToObject(result, "Data", data = cJSON_CreateArray());
 			JSON_ADD_ONE_ELEMENT;
 		}
 		else
@@ -364,12 +363,12 @@ END:
 
 ////////////////////////////////////////////////////////////
 
-double CDC_Host::Host_add(TCDC_Host& src)
+double CDC_Host::Host_Add(TCDC_Host& src)
 {
 	double id = -1;
 	try
 	{
-		if (Host_find(src.Host_ID))
+		if (Host_Find(src.Host_ID))
 			return exists;
 
 		_stmt = _db.compileStatement("insert into CDC_Host values (?, ?, ?, ?);");
@@ -393,11 +392,11 @@ double CDC_Host::Host_add(TCDC_Host& src)
 	return id;
 }
 
-int CDC_Host::Host_del(double id)
+int CDC_Host::Host_Del(double id)
 {
 	try
 	{
-		if (!Host_find(id))
+		if (!Host_Find(id))
 			return notExists;
 
 		_stmt = _db.compileStatement("delete from CDC_Host where Host_ID = ?;");
@@ -413,11 +412,11 @@ int CDC_Host::Host_del(double id)
 	return success;
 }
 
-int CDC_Host::Host_del(const std::string& name)
+int CDC_Host::Host_Del(const std::string& name)
 {
 	try
 	{
-		if (!Host_find(name))
+		if (!Host_Find(name))
 			return notExists;
 
 		char buf[1024] = { 0 };
@@ -432,11 +431,11 @@ int CDC_Host::Host_del(const std::string& name)
 	return success;
 }
 
-int CDC_Host::Host_update(TCDC_Host& src)
+int CDC_Host::Host_Update(TCDC_Host& src)
 {
 	try
 	{
-		if (!Host_find(src.Host_ID))
+		if (!Host_Find(src.Host_ID))
 			return notExists;
 
 		_stmt = _db.compileStatement("update CDC_Host \
@@ -458,7 +457,7 @@ int CDC_Host::Host_update(TCDC_Host& src)
 	return success;
 }
 
-int CDC_Host::Host_update(TCDC_Host& src, std::list<std::string>& keyList)
+int CDC_Host::Host_Update(TCDC_Host& src, std::list<std::string>& keyList)
 {
 	try
 	{
@@ -466,7 +465,7 @@ int CDC_Host::Host_update(TCDC_Host& src, std::list<std::string>& keyList)
 		if (it == keyList.end())
 			return inputConditionError;
 
-		if (!Host_find(src.Host_ID))
+		if (!Host_Find(src.Host_ID))
 			return notExists;
 
 		string updateSql = "update CDC_Host set ";
@@ -504,7 +503,7 @@ int CDC_Host::Host_update(TCDC_Host& src, std::list<std::string>& keyList)
 	return success;
 }
 
-bool CDC_Host::Host_find(double id)
+bool CDC_Host::Host_Find(double id)
 {
 	try
 	{
@@ -520,7 +519,7 @@ bool CDC_Host::Host_find(double id)
 	return true;
 }
 
-bool CDC_Host::Host_find(const std::string& name)
+bool CDC_Host::Host_Find(const std::string& name)
 {
 	try
 	{
@@ -538,11 +537,11 @@ bool CDC_Host::Host_find(const std::string& name)
 }
 
 
-int CDC_Host::Host_find(double id, TCDC_Host& t)
+int CDC_Host::Host_Find(double id, TCDC_Host& t)
 {
 	try
 	{
-		if (!Host_find(id))
+		if (!Host_Find(id))
 			return notExists;
 
 		CppMySQLQuery q;
@@ -570,11 +569,11 @@ int CDC_Host::Host_find(double id, TCDC_Host& t)
 	return success;
 }
 
-int CDC_Host::Host_find(const std::string& name, TCDC_Host& t)
+int CDC_Host::Host_Find(const std::string& name, TCDC_Host& t)
 {
 	try
 	{
-		if (!Host_find(name))
+		if (!Host_Find(name))
 			return notExists;
 
 		CppMySQLQuery q;

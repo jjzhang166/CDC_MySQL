@@ -70,7 +70,7 @@ void CDC_UserGroup_Tests::testCount()
 
 	TCDC_UserGroup userGroup;
 	userGroup.UserGroup_Name = "testCount";
-	id = _pObj->UserGroup_add(userGroup);
+	id = _pObj->UserGroup_Add(userGroup);
 	assert(id > 0);
 
 	count = _pObj->UserGroup_Count();
@@ -86,7 +86,7 @@ void CDC_UserGroup_Tests::testJsonAdd()
 	out = cJSON_Print(json);
 	req = out;
 	cJSON_Delete(json);
-	result = _pObj->CDC_UserGroup_add(req);
+	result = _pObj->CDC_UserGroup_Add(req);
 
 	const string success = "{\n\t\"Result\":\t1,\n\t\"UserGroup_ID\":\t1\n}";
 	assert(success == result);
@@ -98,7 +98,7 @@ void CDC_UserGroup_Tests::testJsonAdd()
 	cJSON_Delete(json);
 
 	const string failed = FAILED_JSON_RESULT;
-	result = _pObj->CDC_UserGroup_add(req);
+	result = _pObj->CDC_UserGroup_Add(req);
 	assert(failed == result);
 }
 
@@ -107,7 +107,7 @@ void CDC_UserGroup_Tests::testJsonDel()
 {
 	TCDC_UserGroup userGroup1;
 	userGroup1.UserGroup_Name = "testDel1";
-	id = _pObj->UserGroup_add(userGroup1);
+	id = _pObj->UserGroup_Add(userGroup1);
 	assert(id > 0);
 
 	json = cJSON_CreateObject();
@@ -116,7 +116,7 @@ void CDC_UserGroup_Tests::testJsonDel()
 	out = cJSON_Print(json);
 	req = out;
 	cJSON_Delete(json);
-	result = _pObj->CDC_UserGroup_del(req);
+	result = _pObj->CDC_UserGroup_Del(req);
 	assert(SUCCESS_JSON_RESULT == result);
 }
 
@@ -124,7 +124,7 @@ void CDC_UserGroup_Tests::testJsonUpdate()
 {
 	TCDC_UserGroup userGroup1;
 	userGroup1.UserGroup_Name = "testJsonUpdate";
-	id = _pObj->UserGroup_add(userGroup1);
+	id = _pObj->UserGroup_Add(userGroup1);
 	assert(id > 0);
 
 	json = cJSON_CreateObject();
@@ -134,7 +134,7 @@ void CDC_UserGroup_Tests::testJsonUpdate()
 	out = cJSON_Print(json);
 	req = out;
 	cJSON_Delete(json);
-	result = _pObj->CDC_UserGroup_update(req);
+	result = _pObj->CDC_UserGroup_Update(req);
 	assert(SUCCESS_JSON_RESULT == result);
 }
 
@@ -142,12 +142,12 @@ void CDC_UserGroup_Tests::testJsonFind()
 {
 	TCDC_UserGroup userGroup1;
 	userGroup1.UserGroup_Name = "testJsonFind11";
-	id = _pObj->UserGroup_add(userGroup1);
+	id = _pObj->UserGroup_Add(userGroup1);
 	assert(id > 0);
 
 	TCDC_UserGroup userGroup2;
 	userGroup2.UserGroup_Name = "testJsonFind22";
-	id = _pObj->UserGroup_add(userGroup2);
+	id = _pObj->UserGroup_Add(userGroup2);
 	assert(id > 0);
 
 	json = cJSON_CreateObject();
@@ -156,7 +156,7 @@ void CDC_UserGroup_Tests::testJsonFind()
 	out = cJSON_Print(json);
 	req = out;
 	cJSON_Delete(json);
-	result = _pObj->CDC_UserGroup_find(req);
+	result = _pObj->CDC_UserGroup_Find(req);
 	assert(result.length() > 0);
 	MDEBUG << result << endl;
 
@@ -165,7 +165,7 @@ void CDC_UserGroup_Tests::testJsonFind()
 	out = cJSON_Print(json);
 	req = out;
 	cJSON_Delete(json);
-	result = _pObj->CDC_UserGroup_find(req);
+	result = _pObj->CDC_UserGroup_Find(req);
 	MDEBUG << result << endl;
 	assert(result.length() > 0);
 }
@@ -174,12 +174,12 @@ void CDC_UserGroup_Tests::testJsonFindCount()
 {
 	TCDC_UserGroup userGroup1;
 	userGroup1.UserGroup_Name = "testJsonFindCount11";
-	id = _pObj->UserGroup_add(userGroup1);
+	id = _pObj->UserGroup_Add(userGroup1);
 	assert(id > 0);
 
 	TCDC_UserGroup userGroup2;
 	userGroup2.UserGroup_Name = "testJsonFindCount22";
-	id = _pObj->UserGroup_add(userGroup2);
+	id = _pObj->UserGroup_Add(userGroup2);
 	assert(id > 0);
 
 	json = cJSON_CreateObject();
@@ -207,20 +207,20 @@ void CDC_UserGroup_Tests::testAdd()
 {
 	TCDC_UserGroup userGroup;
 	userGroup.UserGroup_Name = "testAdd";
-	id = _pObj->UserGroup_add(userGroup);
+	id = _pObj->UserGroup_Add(userGroup);
 	assert(id > 0);
 
 	TCDC_UserGroup userGroup2;
 	userGroup2.UserGroup_Name = "testAdd2";
-	id = _pObj->UserGroup_add(userGroup2);
+	id = _pObj->UserGroup_Add(userGroup2);
 	assert(id > 0);
 
 	TCDC_UserGroup t1, t2;
 	string name = "testAdd";
 	string name2 = "testAdd2";
-	ret = _pObj->UserGroup_find(name, t1);
+	ret = _pObj->UserGroup_Find(name, t1);
 	assert(ret == success);
-	ret = _pObj->UserGroup_find(name2, t2);
+	ret = _pObj->UserGroup_Find(name2, t2);
 	assert(ret == success);
 	assert(t1.UserGroup_ID + 1 == t2.UserGroup_ID);
 }
@@ -232,16 +232,16 @@ void CDC_UserGroup_Tests::testDel()
 	TCDC_UserGroup userGroup1;
 	userGroup1.UserGroup_ID = 1001;
 	userGroup1.UserGroup_Name = "testDel1";
-	id = _pObj->UserGroup_add(userGroup1);
+	id = _pObj->UserGroup_Add(userGroup1);
 	assert(id > 0);
 
 	TCDC_UserGroup userGroup2;
 	userGroup2.UserGroup_ID = 1002;
 	userGroup2.UserGroup_Name = "testDel2";
-	id = _pObj->UserGroup_add(userGroup2);
+	id = _pObj->UserGroup_Add(userGroup2);
 	assert(id > 0);
 
-	ret = _pObj->UserGroup_del(1002);
+	ret = _pObj->UserGroup_Del(1002);
 	assert(ret == success);
 }
 
@@ -250,13 +250,13 @@ void CDC_UserGroup_Tests::testUpdate()
 	TCDC_UserGroup userGroup1;
 	userGroup1.UserGroup_ID = 1001;
 	userGroup1.UserGroup_Name = "testUpdate1";
-	id = _pObj->UserGroup_add(userGroup1);
+	id = _pObj->UserGroup_Add(userGroup1);
 	assert(id > 0);
 
 	TCDC_UserGroup userGroup2;
 	userGroup2.UserGroup_ID = 1001;
 	userGroup2.UserGroup_Name = "testUpdate2";
-	ret = _pObj->UserGroup_update(userGroup2);
+	ret = _pObj->UserGroup_Update(userGroup2);
 	assert(ret == success);
 }
 
@@ -265,30 +265,30 @@ void CDC_UserGroup_Tests::testFind()
 	TCDC_UserGroup userGroup1;
 	userGroup1.UserGroup_ID = 1001;
 	userGroup1.UserGroup_Name = "testFind1";
-	id = _pObj->UserGroup_add(userGroup1);
+	id = _pObj->UserGroup_Add(userGroup1);
 	assert(id > 0);
 
 	TCDC_UserGroup userGroup2;
 	userGroup2.UserGroup_ID = 1002;
 	userGroup2.UserGroup_Name = "testFind2";
-	id = _pObj->UserGroup_add(userGroup2);
+	id = _pObj->UserGroup_Add(userGroup2);
 	assert(ret == success);
 
-	bool find = _pObj->UserGroup_find(1001);
+	bool find = _pObj->UserGroup_Find(1001);
 	assert(find == true);
 
 	string name = "testFind2";
-	find = _pObj->UserGroup_find(name);
+	find = _pObj->UserGroup_Find(name);
 	assert(find == true);
 
 	TCDC_UserGroup t1;
-	ret = _pObj->UserGroup_find(1001, t1);
+	ret = _pObj->UserGroup_Find(1001, t1);
 	assert(ret == success);
 	assert(t1.UserGroup_Name == "testFind1");
 
 	TCDC_UserGroup t2;
 	name = "testFind2";
-	ret = _pObj->UserGroup_find(name, t2);
+	ret = _pObj->UserGroup_Find(name, t2);
 	assert(ret == success);
 	assert(t2.UserGroup_ID == 1002);
 }

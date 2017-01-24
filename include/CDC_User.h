@@ -11,28 +11,28 @@ class CDC_MYSQL_API CDC_User
 {
 public:
 
-	std::string CDC_User_add(const std::string& req);
-	std::string CDC_User_del(const std::string& req);
-	std::string CDC_User_update(const std::string& req);
-	std::string CDC_User_find(const std::string& req);
+	std::string CDC_User_Add(const std::string& req);
+	std::string CDC_User_Del(const std::string& req);
+	std::string CDC_User_Update(const std::string& req);
+	std::string CDC_User_Find(const std::string& req);
 	std::string CDC_User_FindCount(const std::string& req);
 
 	////////////////////////////////////////////
 
 	CDC_User(CppMySQLDB& db);
 	~CDC_User();
-	double User_add(TCDC_User&);
+	double User_Add(TCDC_User&);
 
-	int User_del(double id);
-	int User_del(const std::string& name);
+	int User_Del(double id);
+	int User_Del(const std::string& name);
 
-	int User_update(TCDC_User&);
-	int User_update(TCDC_User& src, std::list<std::string>& keyList);
+	int User_Update(TCDC_User&);
+	int User_Update(TCDC_User& src, std::list<std::string>& keyList);
 
-	bool User_find(double id);
-	bool User_find(const std::string& name);
-	int User_find(double id, TCDC_User& t);
-	int User_find(const std::string& name, TCDC_User& t);
+	bool User_Find(double id);
+	bool User_Find(const std::string& name);
+	int User_Find(double id, TCDC_User& t);
+	int User_Find(const std::string& name, TCDC_User& t);
 	int User_find2(const std::string& whereSql, TCDC_User& t);
 
 	int User_Count();

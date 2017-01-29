@@ -10,8 +10,8 @@
 
 using namespace std;
 
-CDC_Host::CDC_Host(CppMySQLDB& db)
-	:_db(db)
+CDC_Host::CDC_Host(CppMySQLDB* pdb)
+	:_pdb(pdb)
 {
 }
 
@@ -27,7 +27,7 @@ std::string CDC_Host::CDC_Host_Add(const std::string& req)
 	int ret = 0;
 	double id = -1;
 
-	cJSON *json, *tmp, *element;
+	cJSON *json, *tmp;
 	json = cJSON_Parse(req.c_str());
 	if (!json)
 	{
@@ -77,7 +77,7 @@ END:
 std::string CDC_Host::CDC_Host_Del(const std::string& req)
 {
 	int ret = 0;
-	cJSON *json, *tmp, *element;
+	cJSON *json, *tmp;
 	json = cJSON_Parse(req.c_str());
 	if (!json)
 	{
@@ -118,7 +118,7 @@ std::string CDC_Host::CDC_Host_Update(const std::string& req)
 {
 	int ret = 0;
 	bool hasItem = false;
-	cJSON *json, *tmp, *element;
+	cJSON *json, *tmp;
 	json = cJSON_Parse(req.c_str());
 	if (!json)
 	{
@@ -182,7 +182,7 @@ std::string CDC_Host::CDC_Host_Find(const std::string& req)
 	int ret = 0;
 	bool hasItem = false;
 	bool isAll = true;
-	cJSON *json, *tmp, *element;
+	cJSON *json, *tmp;
 	TCDC_Host t;
 	list<TCDC_Host> lst;
 	json = cJSON_Parse(req.c_str());
@@ -298,7 +298,7 @@ std::string CDC_Host::CDC_Host_FindCount(const std::string& req)
 	int ret = 0;
 	bool hasItem = false;
 	bool isAll = true;
-	cJSON *json, *tmp, *element;
+	cJSON *json, *tmp;
 	double count = -1;
 	json = cJSON_Parse(req.c_str());
 	if (!json)
@@ -380,7 +380,7 @@ double CDC_Host::Host_Add(TCDC_Host& src)
 		if (Host_Find(src.Host_ID))
 			return exists;
 
-		_stmt = _db.compileStatement("insert into CDC_Host values (?, ?, ?, ?);");
+		_stmt = _pdb->compileStatement("insert into CDC_Host values (?, ?, ?, ?);");
 		if (src.Host_ID != INVALID_NUM && src.Host_ID > 0)
 			id = src.Host_ID;
 		else
@@ -408,7 +408,7 @@ int CDC_Host::Host_Del(double id)
 		if (!Host_Find(id))
 			return notExists;
 
-		_stmt = _db.compileStatement("delete from CDC_Host where Host_ID = ?;");
+		_stmt = _pdb->compileStatement("delete from CDC_Host where Host_ID = ?;");
 		_stmt.bind(1, id);
 		_stmt.execDML();
 		_stmt.reset();
@@ -430,7 +430,7 @@ int CDC_Host::Host_Del(const std::string& name)
 
 		char buf[1024] = { 0 };
 		sprintf(buf, "delete from CDC_Host where Host_Name = %s;", name.c_str());
-		_db.execDML(buf);
+		_pdb->execDML(buf);
 	}
 	catch (CppMySQLException& e)
 	{
@@ -447,7 +447,7 @@ int CDC_Host::Host_Update(TCDC_Host& src)
 		if (!Host_Find(src.Host_ID))
 			return notExists;
 
-		_stmt = _db.compileStatement("update CDC_Host \
+		_stmt = _pdb->compileStatement("update CDC_Host \
 			set Host_Name = ?, Host_IP = ?, Host_VirtNet = ? where Host_ID = ?;");
 		
 		_stmt.bind(1, src.Host_Name);
@@ -487,7 +487,7 @@ int CDC_Host::Host_Update(TCDC_Host& src, std::list<std::string>& keyList)
 		updateSql = updateSql.substr(0, updateSql.size() - 1);
 		updateSql += " where Host_ID = ?;";
 
-		_stmt = _db.compileStatement(updateSql.c_str());
+		_stmt = _pdb->compileStatement(updateSql.c_str());
 
 		int index = 1;
 		for (list<string>::iterator it = keyList.begin(); it != keyList.end(); ++it)
@@ -520,7 +520,7 @@ bool CDC_Host::Host_Find(double id)
 	{
 		char buf[1024] = { 0 };
 		sprintf(buf, "select count(*) from CDC_Host where Host_ID = %f;", id);
-		return (_db.execScalar(buf) != 0);
+		return (_pdb->execScalar(buf) != 0);
 	}
 	catch (CppMySQLException& e)
 	{
@@ -536,8 +536,8 @@ bool CDC_Host::Host_Find(const std::string& name)
 	{
 		char buf[1024] = { 0 };
 		sprintf(buf, "select count(*) from CDC_Host where Host_Name = '%s';", name.c_str());
-		int dd = _db.execScalar(buf);
-		return (_db.execScalar(buf) != 0);
+		int dd = _pdb->execScalar(buf);
+		return (_pdb->execScalar(buf) != 0);
 	}
 	catch (CppMySQLException& e)
 	{
@@ -559,7 +559,7 @@ int CDC_Host::Host_Find(double id, TCDC_Host& t)
 		char buf[1024] = { 0 };
 		sprintf(buf, "select * from CDC_Host where Host_ID = %f;", id);
 
-		q = _db.execQuery(buf);
+		q = _pdb->execQuery(buf);
 
 		if (!q.eof())
 		{
@@ -591,7 +591,7 @@ int CDC_Host::Host_Find(const std::string& name, TCDC_Host& t)
 		char buf[1024] = { 0 };
 		sprintf(buf, "select * from CDC_Host where Host_Name = '%s';", name.c_str());
 
-		q = _db.execQuery(buf);
+		q = _pdb->execQuery(buf);
 
 		if (!q.eof())
 		{
@@ -620,7 +620,7 @@ int CDC_Host::Host_Find2(const std::string& whereSql, TCDC_Host& t)
 		char buf[1024] = { 0 };
 		sprintf(buf, "select * from CDC_Host where %s;", whereSql.c_str());
 
-		q = _db.execQuery(buf);
+		q = _pdb->execQuery(buf);
 
 		if (!q.eof())
 		{
@@ -645,7 +645,7 @@ int CDC_Host::Host_Count()
 {
 	try
 	{
-		return _db.execScalar("select count(*) from CDC_Host;");
+		return _pdb->execScalar("select count(*) from CDC_Host;");
 	}
 	catch (CppMySQLException& e)
 	{
@@ -662,7 +662,7 @@ int CDC_Host::Host_Count(const std::string& whereSql)
 		char buf[1024] = { 0 };
 		sprintf(buf, "select count(*) from CDC_Host where %s;", whereSql.c_str());
 
-		return _db.execScalar(buf);
+		return _pdb->execScalar(buf);
 	}
 	catch (CppMySQLException& e)
 	{
@@ -677,7 +677,7 @@ std::list<TCDC_Host> CDC_Host::GetAll()
 	std::list<TCDC_Host> lst;
 	try
 	{
-		CppMySQLQuery q = _db.execQuery("select * from CDC_Host;");
+		CppMySQLQuery q = _pdb->execQuery("select * from CDC_Host;");
 		while (!q.eof())
 		{
 			TCDC_Host t;
@@ -702,7 +702,7 @@ double CDC_Host::GetMaxID()
 {
 	char buf[1024] = { 0 };
 	sprintf(buf, "select max(Host_ID) from CDC_Host");
-	CppMySQLQuery q = _db.execQuery(buf);
+	CppMySQLQuery q = _pdb->execQuery(buf);
 
 	if (q.eof() || q.numFields() < 1)
 	{

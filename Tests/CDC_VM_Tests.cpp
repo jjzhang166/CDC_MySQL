@@ -50,7 +50,7 @@ void CDC_VM_Tests::dependsFuc()
 
 		pDB->execDML(sql);
 
-		_pCDC_HostObj = new CDC_Host(*pDB);
+		_pCDC_HostObj = new CDC_Host(pDB);
 
 		TCDC_Host t1;
 		t1.Host_ID = 1001;
@@ -105,7 +105,7 @@ void CDC_VM_Tests::dependsFuc1()
 
 		pDB->execDML(sql);
 
-		_pCDC_TemplateObj = new CDC_Template(*pDB);
+		_pCDC_TemplateObj = new CDC_Template(pDB);
 
 		TCDC_Template t1; 
 		t1.Template_ID = 1001;
@@ -170,7 +170,7 @@ void CDC_VM_Tests::dependsFuc2()
 
 		pDB->execDML(sql);
 
-		_pCDC_ThinClientGroupObj = new CDC_ThinClientGroup(*pDB);
+		_pCDC_ThinClientGroupObj = new CDC_ThinClientGroup(pDB);
 
 		TCDC_ThinClientGroup t1;
 		t1.ThinClientGroup_ID = 1001;
@@ -203,7 +203,7 @@ void CDC_VM_Tests::dependsFuc2()
 
 		pDB->execDML(sql);
 
-		_pCDC_ThinClientObj = new CDC_ThinClient(*pDB);
+		_pCDC_ThinClientObj = new CDC_ThinClient(pDB);
 
 		TCDC_ThinClient t3; 
 		t3.ThinClient_ID = 1001;
@@ -249,7 +249,7 @@ void CDC_VM_Tests::dependsFuc3()
 
 		pDB->execDML(sql);
 
-		_pCDC_UserGroupObj = new CDC_UserGroup(*pDB);
+		_pCDC_UserGroupObj = new CDC_UserGroup(pDB);
 
 		TCDC_UserGroup userGroup1;
 		userGroup1.UserGroup_ID = 1001;
@@ -290,7 +290,7 @@ void CDC_VM_Tests::dependsFuc4()
 
 		pDB->execDML(sql);
 
-		_pCDC_UserObj = new CDC_User(*pDB);
+		_pCDC_UserObj = new CDC_User(pDB);
 
 		TCDC_User User1;
 		User1.User_ID = 1001;
@@ -373,7 +373,7 @@ void CDC_VM_Tests::setUp()
 			ON DELETE CASCADE\
 			) ENGINE = InnoDB DEFAULT CHARSET = utf8; ";
 		pDB->execDML(sql);
-		_pObj = new CDC_VM(*pDB);
+		_pObj = new CDC_VM(pDB);
 	}
 	catch (CppMySQLException& e)
 	{
@@ -508,7 +508,7 @@ void CDC_VM_Tests::testJsonFind()
 	cJSON_Delete(json);
 	result = _pObj->CDC_VM_Find(req);
 	MDEBUG << result << endl;
-	assert(result.length() > 0);
+	assert(result != FAILED_JSON_RESULT);
 
 	json = cJSON_CreateObject();
 	cJSON_AddStringToObject(json, "Method", "All");
@@ -517,7 +517,7 @@ void CDC_VM_Tests::testJsonFind()
 	cJSON_Delete(json);
 	result = _pObj->CDC_VM_Find(req);
 	MDEBUG << result << endl;
-	assert(result.length() > 0);
+	assert(result != FAILED_JSON_RESULT);
 }
 
 void CDC_VM_Tests::testJsonFindCount()
@@ -534,7 +534,7 @@ void CDC_VM_Tests::testJsonFindCount()
 	cJSON_Delete(json);
 	result = _pObj->CDC_VM_FindCount(req);
 	MDEBUG << result << endl;
-	assert(result.length() > 0);
+	assert(result != FAILED_JSON_RESULT);
 
 	json = cJSON_CreateObject();
 	cJSON_AddStringToObject(json, "Method", "All");
@@ -543,7 +543,7 @@ void CDC_VM_Tests::testJsonFindCount()
 	cJSON_Delete(json);
 	result = _pObj->CDC_VM_FindCount(req);
 	MDEBUG << result << endl;
-	assert(result.length() > 0);
+	assert(result != FAILED_JSON_RESULT);
 }
 
 

@@ -10,8 +10,8 @@
 
 using namespace std;
 
-CDC_Authorization::CDC_Authorization(CppMySQLDB& db)
-	:_db(db)
+CDC_Authorization::CDC_Authorization(CppMySQLDB* pdb)
+	:_pdb(pdb)
 {
 }
 
@@ -27,7 +27,7 @@ std::string CDC_Authorization::CDC_Authorization_Add(const std::string& req)
 	int ret = 0;
 	std::string id;
 
-	cJSON *json, *tmp, *element;
+	cJSON *json, *tmp;
 	json = cJSON_Parse(req.c_str());
 	if (!json)
 	{
@@ -78,7 +78,7 @@ END:
 std::string CDC_Authorization::CDC_Authorization_Del(const std::string& req)
 {
 	int ret = 0;
-	cJSON *json, *tmp, *element;
+	cJSON *json, *tmp;
 	json = cJSON_Parse(req.c_str());
 	if (!json)
 	{
@@ -119,7 +119,7 @@ std::string CDC_Authorization::CDC_Authorization_Update(const std::string& req)
 {
 	int ret = 0;
 	bool hasItem = false;
-	cJSON *json, *tmp, *element;
+	cJSON *json, *tmp;
 	json = cJSON_Parse(req.c_str());
 	if (!json)
 	{
@@ -183,7 +183,7 @@ std::string CDC_Authorization::CDC_Authorization_Find(const std::string& req)
 	int ret = 0;
 	bool hasItem = false;
 	bool isAll = true;
-	cJSON *json, *tmp, *element;
+	cJSON *json, *tmp;
 	TCDC_Authorization t;
 	list<TCDC_Authorization> lst;
 	json = cJSON_Parse(req.c_str());
@@ -300,7 +300,7 @@ std::string CDC_Authorization::CDC_Authorization_FindCount(const std::string& re
 	int ret = 0;
 	bool hasItem = false;
 	bool isAll = true;
-	cJSON *json, *tmp, *element;
+	cJSON *json, *tmp;
 	double count = -1;
 	json = cJSON_Parse(req.c_str());
 	if (!json)
@@ -381,7 +381,7 @@ std::string CDC_Authorization::Authorization_Add(TCDC_Authorization& src)
 		if (Authorization_Find(src.Authorization_MachineID))
 			return "";
 
-		_stmt = _db.compileStatement("insert into CDC_Authorization values (?, ?, ?, ?);");
+		_stmt = _pdb->compileStatement("insert into CDC_Authorization values (?, ?, ?, ?);");
 		_stmt.bind(1, src.Authorization_MachineID);
 		_stmt.bind(2, src.Authorization_MaxClientNum);
 		_stmt.bind(3, String2MySQLTime(src.Authorization_Deadline));
@@ -405,7 +405,7 @@ int CDC_Authorization::Authorization_Del(const std::string& id)
 		if (!Authorization_Find(id))
 			return notExists;
 
-		_stmt = _db.compileStatement("delete from CDC_Authorization where Authorization_MachineID = ?;");
+		_stmt = _pdb->compileStatement("delete from CDC_Authorization where Authorization_MachineID = ?;");
 		_stmt.bind(1, id.c_str());
 		_stmt.execDML();
 		_stmt.reset();
@@ -425,7 +425,7 @@ int CDC_Authorization::Authorization_Update(TCDC_Authorization& src)
 		if (!Authorization_Find(src.Authorization_MachineID))
 			return notExists;
 
-		_stmt = _db.compileStatement("update CDC_Authorization \
+		_stmt = _pdb->compileStatement("update CDC_Authorization \
 			set Authorization_MaxClientNum = ?, Authorization_Deadline = ?, Authorization_Company = ? where Authorization_MachineID = ?;");
 		
 		_stmt.bind(1, src.Authorization_MaxClientNum);
@@ -465,7 +465,7 @@ int CDC_Authorization::Authorization_Update(TCDC_Authorization& src, std::list<s
 		updateSql = updateSql.substr(0, updateSql.size() - 1);
 		updateSql += " where Authorization_MachineID = ?;";
 
-		_stmt = _db.compileStatement(updateSql.c_str());
+		_stmt = _pdb->compileStatement(updateSql.c_str());
 
 		int index = 1;
 		for (list<string>::iterator it = keyList.begin(); it != keyList.end(); ++it)
@@ -498,7 +498,7 @@ bool CDC_Authorization::Authorization_Find(const std::string& id)
 	{
 		char buf[1024] = { 0 };
 		sprintf(buf, "select count(*) from CDC_Authorization where Authorization_MachineID = '%s';", id.c_str());
-		return (_db.execScalar(buf) != 0);
+		return (_pdb->execScalar(buf) != 0);
 	}
 	catch (CppMySQLException& e)
 	{
@@ -520,7 +520,7 @@ int CDC_Authorization::Authorization_Find(const std::string& id, TCDC_Authorizat
 		char buf[1024] = { 0 };
 		sprintf(buf, "select * from CDC_Authorization where Authorization_MachineID = '%s';", id);
 
-		q = _db.execQuery(buf);
+		q = _pdb->execQuery(buf);
 
 		if (!q.eof())
 		{
@@ -549,7 +549,7 @@ int CDC_Authorization::Authorization_Find2(const std::string& whereSql, TCDC_Aut
 		char buf[1024] = { 0 };
 		sprintf(buf, "select * from CDC_Authorization where %s;", whereSql.c_str());
 
-		q = _db.execQuery(buf);
+		q = _pdb->execQuery(buf);
 
 		if (!q.eof())
 		{
@@ -574,7 +574,7 @@ int CDC_Authorization::Authorization_Count()
 {
 	try
 	{
-		return _db.execScalar("select count(*) from CDC_Authorization;");
+		return _pdb->execScalar("select count(*) from CDC_Authorization;");
 	}
 	catch (CppMySQLException& e)
 	{
@@ -591,7 +591,7 @@ int CDC_Authorization::Authorization_Count(const std::string& whereSql)
 		char buf[1024] = { 0 };
 		sprintf(buf, "select count(*) from CDC_Authorization where %s;", whereSql.c_str());
 
-		return _db.execScalar(buf);
+		return _pdb->execScalar(buf);
 	}
 	catch (CppMySQLException& e)
 	{
@@ -606,7 +606,7 @@ std::list<TCDC_Authorization> CDC_Authorization::GetAll()
 	std::list<TCDC_Authorization> lst;
 	try
 	{
-		CppMySQLQuery q = _db.execQuery("select * from CDC_Authorization;");
+		CppMySQLQuery q = _pdb->execQuery("select * from CDC_Authorization;");
 		while (!q.eof())
 		{
 			TCDC_Authorization t;
@@ -631,7 +631,7 @@ double CDC_Authorization::GetMaxID()
 {
 	char buf[1024] = { 0 };
 	sprintf(buf, "select max(Authorization_ID) from CDC_Authorization");
-	CppMySQLQuery q = _db.execQuery(buf);
+	CppMySQLQuery q = _pdb->execQuery(buf);
 
 	if (q.eof() || q.numFields() < 1)
 	{

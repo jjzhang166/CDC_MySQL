@@ -6,7 +6,7 @@
 #include <sstream>
 #include <iostream>
 
-#define ENABLE_DEBUG true
+#define ENABLE_DEBUG false
 #define ENABLE_INFO true
 
 class CLogInfo

@@ -47,7 +47,7 @@ void CDC_User_Tests::dependsFuc()
 
 		pDB->execDML(sql);
 
-		_pCDC_UserGroupObj = new CDC_UserGroup(*pDB);
+		_pCDC_UserGroupObj = new CDC_UserGroup(pDB);
 
 		TCDC_UserGroup userGroup1;
 		userGroup1.UserGroup_ID = 1001;
@@ -94,7 +94,7 @@ void CDC_User_Tests::setUp()
 			ON DELETE CASCADE\
 			) ENGINE = InnoDB; ";
 		pDB->execDML(sql);
-		_pObj = new CDC_User(*pDB);
+		_pObj = new CDC_User(pDB);
 	}
 	catch (CppMySQLException& e)
 	{
@@ -222,7 +222,7 @@ void CDC_User_Tests::testJsonFind()
 	cJSON_Delete(json);
 	result = _pObj->CDC_User_Find(req);
 	MDEBUG << result << endl;
-	assert(result.length() > 0);
+	assert(result != FAILED_JSON_RESULT);
 
 	json = cJSON_CreateObject();
 	cJSON_AddStringToObject(json, "Method", "All");
@@ -231,7 +231,7 @@ void CDC_User_Tests::testJsonFind()
 	cJSON_Delete(json);
 	result = _pObj->CDC_User_Find(req);
 	MDEBUG << result << endl;
-	assert(result.length() > 0);
+	assert(result != FAILED_JSON_RESULT);
 }
 
 void CDC_User_Tests::testJsonFindCount()
@@ -258,16 +258,14 @@ void CDC_User_Tests::testJsonFindCount()
 	cJSON_AddStringToObject(json, "Method", "Part");
 	cJSON_AddNumberToObject(json, "User_Role", 1);
 	cJSON_AddNumberToObject(json, "User_UserGroup_ID", 1001);
-	cJSON_AddStringToObject(json, "User_Name", "testJsonAdd込込");
-	cJSON_AddStringToObject(json, "User_LoginName", "testJsonAdd_11");
-	cJSON_AddStringToObject(json, "User_Password", "testJsonAdd_222");
-	cJSON_AddStringToObject(json, "User_Remarks", "haha込込");
+	cJSON_AddStringToObject(json, "User_Name", "testJsonFindCount11");
+	cJSON_AddStringToObject(json, "User_LoginName", "込込込11");
 	out = cJSON_Print(json);
 	req = out;
 	cJSON_Delete(json);
 	result = _pObj->CDC_User_FindCount(req);
 	MDEBUG << result << endl;
-	assert(result.length() > 0);
+	assert(result != FAILED_JSON_RESULT);
 
 	json = cJSON_CreateObject();
 	cJSON_AddStringToObject(json, "Method", "All");
@@ -276,7 +274,7 @@ void CDC_User_Tests::testJsonFindCount()
 	cJSON_Delete(json);
 	result = _pObj->CDC_User_FindCount(req);
 	MDEBUG << result << endl;
-	assert(result.length() > 0);
+	assert(result != FAILED_JSON_RESULT);
 }
 
 void CDC_User_Tests::testCount()
@@ -423,11 +421,11 @@ CppUnit::Test* CDC_User_Tests::suite()
 	CppUnit_addTest(pSuite, CDC_User_Tests, testJsonFind);
 	CppUnit_addTest(pSuite, CDC_User_Tests, testJsonFindCount);
 
-	CppUnit_addTest(pSuite, CDC_User_Tests, testCount);
+	/*CppUnit_addTest(pSuite, CDC_User_Tests, testCount);
 	CppUnit_addTest(pSuite, CDC_User_Tests, testAdd);
 	CppUnit_addTest(pSuite, CDC_User_Tests, testDel);
 	CppUnit_addTest(pSuite, CDC_User_Tests, testUpdate);
-	CppUnit_addTest(pSuite, CDC_User_Tests, testFind);
+	CppUnit_addTest(pSuite, CDC_User_Tests, testFind);*/
 
 	return pSuite;
 }

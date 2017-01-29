@@ -10,7 +10,7 @@ class CDC_MYSQL_API CDC_ThinClient
 {
 	DISABLE_COPY(CDC_ThinClient);
 public:
-	CDC_ThinClient(CppMySQLDB& db);
+	CDC_ThinClient(CppMySQLDB* pdb);
 	~CDC_ThinClient();
 
 	std::string CDC_ThinClient_Add(const std::string& req);
@@ -38,7 +38,7 @@ private:
 	std::list<TCDC_ThinClient> GetAll();
 
 private:
-	CppMySQLDB _db;
+	CppMySQLDB* _pdb;
 	CppMySQLStatement _stmt;
 };
 

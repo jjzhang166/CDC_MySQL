@@ -20,7 +20,7 @@ public:
 
 	////////////////////////////////////////////
 
-	CDC_User(CppMySQLDB& db);
+	CDC_User(CppMySQLDB* pdb);
 	~CDC_User();
 	double User_Add(TCDC_User&);
 
@@ -43,7 +43,7 @@ private:
 	std::list<TCDC_User> GetAll();
 
 private:
-	CppMySQLDB _db;
+	CppMySQLDB* _pdb;
 	CppMySQLStatement _stmt;
 };
 

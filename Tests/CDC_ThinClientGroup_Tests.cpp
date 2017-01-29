@@ -51,7 +51,7 @@ void CDC_ThinClientGroup_Tests::setUp()
 		) ENGINE = InnoDB DEFAULT CHARSET = utf8;";
 
 	pDB->execDML(sql);
-	_pObj = new CDC_ThinClientGroup(*pDB);
+	_pObj = new CDC_ThinClientGroup(pDB);
 }
 
 
@@ -143,7 +143,7 @@ void CDC_ThinClientGroup_Tests::testJsonFind()
 	req = out;
 	cJSON_Delete(json);
 	result = _pObj->CDC_ThinClientGroup_Find(req);
-	assert(result.length() > 0);
+	assert(result != FAILED_JSON_RESULT);
 	MDEBUG << result << endl;
 
 	json = cJSON_CreateObject();
@@ -153,7 +153,7 @@ void CDC_ThinClientGroup_Tests::testJsonFind()
 	cJSON_Delete(json);
 	result = _pObj->CDC_ThinClientGroup_Find(req);
 	MDEBUG << result << endl;
-	assert(result.length() > 0);
+	assert(result != FAILED_JSON_RESULT);
 }
 
 void CDC_ThinClientGroup_Tests::testJsonFindCount()
@@ -176,7 +176,7 @@ void CDC_ThinClientGroup_Tests::testJsonFindCount()
 	cJSON_Delete(json);
 	result = _pObj->CDC_ThinClientGroup_FindCount(req);
 	MDEBUG << result << endl;
-	assert(result.length() > 0);
+	assert(result != FAILED_JSON_RESULT);
 
 	json = cJSON_CreateObject();
 	cJSON_AddStringToObject(json, "Method", "All");
@@ -185,7 +185,7 @@ void CDC_ThinClientGroup_Tests::testJsonFindCount()
 	cJSON_Delete(json);
 	result = _pObj->CDC_ThinClientGroup_FindCount(req);
 	MDEBUG << result << endl;
-	assert(result.length() > 0);
+	assert(result != FAILED_JSON_RESULT);
 }
 
 

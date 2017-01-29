@@ -85,7 +85,7 @@ CppMySQLException::~CppMySQLException()
 
 static std::string s_DBName;
 CppMySQLDB::CppMySQLDB()
-	: m_inTransaction(0)
+	: m_inTransaction(0), m_pDB(NULL)
 {
 	m_pDB = mysql_init(NULL);
 	if (NULL == m_pDB)
@@ -421,9 +421,9 @@ void CppMySQLDB::checkDB(bool isCheck_db)
 	}
 }
 
-void CppMySQLDB::setOptions(mysql_option opt)
+void CppMySQLDB::setOptions(int opt)
 {
-	int res = mysql_options(m_pDB, opt, 0);
+	int res = mysql_options(m_pDB, (mysql_option)opt, 0);
 
 	if (res != 0)
 	{
@@ -431,9 +431,9 @@ void CppMySQLDB::setOptions(mysql_option opt)
 	}
 }
 
-void CppMySQLDB::setOptions(mysql_option opt, const char* arg)
+void CppMySQLDB::setOptions(int opt, const char* arg)
 {
-	int res = mysql_options(m_pDB, opt, arg);
+	int res = mysql_options(m_pDB, (mysql_option)opt, arg);
 
 	if (res != 0)
 	{

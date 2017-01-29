@@ -10,7 +10,7 @@ class CDC_MYSQL_API CDC_Template
 {
 	DISABLE_COPY(CDC_Template);
 public:
-	CDC_Template(CppMySQLDB& db);
+	CDC_Template(CppMySQLDB* pdb);
 	~CDC_Template();
 
 	std::string CDC_Template_Add(const std::string& req);
@@ -37,7 +37,7 @@ private:
 	std::list<TCDC_Template> GetAll();
 
 private:
-	CppMySQLDB _db;
+	CppMySQLDB* _pdb;
 	CppMySQLStatement _stmt;
 };
 

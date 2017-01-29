@@ -12,7 +12,7 @@ class CDC_MYSQL_API CDC_ThinClientGroup
 {
 	DISABLE_COPY(CDC_ThinClientGroup);
 public:
-	CDC_ThinClientGroup(CppMySQLDB& db);
+	CDC_ThinClientGroup(CppMySQLDB* pdb);
 	~CDC_ThinClientGroup();
 
 	std::string CDC_ThinClientGroup_Add(const std::string& req);
@@ -40,7 +40,7 @@ private:
 	std::list<TCDC_ThinClientGroup> GetAll();
 
 private:
-	CppMySQLDB _db;
+	CppMySQLDB* _pdb;
 	CppMySQLStatement _stmt;
 };
 

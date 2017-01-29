@@ -51,7 +51,7 @@ void CDC_UserGroup_Tests::setUp()
 		) ENGINE = InnoDB; ";
 
 	pDB->execDML(sql);
-	_pObj = new CDC_UserGroup(*pDB);
+	_pObj = new CDC_UserGroup(pDB);
 }
 
 
@@ -82,7 +82,7 @@ void CDC_UserGroup_Tests::testJsonAdd()
 	// success
 	json = cJSON_CreateObject();
 	cJSON_AddStringToObject(json, "Method", "Part");
-	cJSON_AddStringToObject(json, "UserGroup_Name", "testJsonAdd");
+	cJSON_AddStringToObject(json, "UserGroup_Name", "testJsonAdd¹þ¹þ");
 	out = cJSON_Print(json);
 	req = out;
 	cJSON_Delete(json);
@@ -157,7 +157,7 @@ void CDC_UserGroup_Tests::testJsonFind()
 	req = out;
 	cJSON_Delete(json);
 	result = _pObj->CDC_UserGroup_Find(req);
-	assert(result.length() > 0);
+	assert(result != FAILED_JSON_RESULT);
 	MDEBUG << result << endl;
 
 	json = cJSON_CreateObject();
@@ -167,7 +167,7 @@ void CDC_UserGroup_Tests::testJsonFind()
 	cJSON_Delete(json);
 	result = _pObj->CDC_UserGroup_Find(req);
 	MDEBUG << result << endl;
-	assert(result.length() > 0);
+	assert(result != FAILED_JSON_RESULT);
 }
 
 void CDC_UserGroup_Tests::testJsonFindCount()
@@ -190,7 +190,7 @@ void CDC_UserGroup_Tests::testJsonFindCount()
 	cJSON_Delete(json);
 	result = _pObj->CDC_UserGroup_FindCount(req);
 	MDEBUG << result << endl;
-	assert(result.length() > 0);
+	assert(result != FAILED_JSON_RESULT);
 
 	json = cJSON_CreateObject();
 	cJSON_AddStringToObject(json, "Method", "All");
@@ -199,7 +199,7 @@ void CDC_UserGroup_Tests::testJsonFindCount()
 	cJSON_Delete(json);
 	result = _pObj->CDC_UserGroup_FindCount(req);
 	MDEBUG << result << endl;
-	assert(result.length() > 0);
+	assert(result != FAILED_JSON_RESULT);
 }
 
 
@@ -306,11 +306,11 @@ CppUnit::Test* CDC_UserGroup_Tests::suite()
 	CppUnit_addTest(pSuite, CDC_UserGroup_Tests, testJsonFind);
 	CppUnit_addTest(pSuite, CDC_UserGroup_Tests, testJsonFindCount);
 	
-	CppUnit_addTest(pSuite, CDC_UserGroup_Tests, testCount);
+	/*CppUnit_addTest(pSuite, CDC_UserGroup_Tests, testCount);
 	CppUnit_addTest(pSuite, CDC_UserGroup_Tests, testAdd);
 	CppUnit_addTest(pSuite, CDC_UserGroup_Tests, testDel);
 	CppUnit_addTest(pSuite, CDC_UserGroup_Tests, testUpdate);
-	CppUnit_addTest(pSuite, CDC_UserGroup_Tests, testFind);
+	CppUnit_addTest(pSuite, CDC_UserGroup_Tests, testFind);*/
 
 	return pSuite;
 }

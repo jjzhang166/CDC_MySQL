@@ -50,7 +50,7 @@ void CDC_ISO_Tests::dependsFuc()
 
 		pDB->execDML(sql);
 
-		_pCDC_HostObj = new CDC_Host(*pDB);
+		_pCDC_HostObj = new CDC_Host(pDB);
 
 		TCDC_Host t1;
 		t1.Host_ID = 1001;
@@ -97,7 +97,7 @@ void CDC_ISO_Tests::setUp()
 			ON DELETE CASCADE\
 			) ENGINE = InnoDB DEFAULT CHARSET = utf8; ";
 		pDB->execDML(sql);
-		_pObj = new CDC_ISO(*pDB);
+		_pObj = new CDC_ISO(pDB);
 	}
 	catch (CppMySQLException& e)
 	{
@@ -195,7 +195,7 @@ void CDC_ISO_Tests::testJsonFind()
 	cJSON_Delete(json);
 	result = _pObj->CDC_ISO_Find(req);
 	MDEBUG << result << endl;
-	assert(result.length() > 0);
+	assert(result != FAILED_JSON_RESULT);
 
 	json = cJSON_CreateObject();
 	cJSON_AddStringToObject(json, "Method", "All");
@@ -204,7 +204,7 @@ void CDC_ISO_Tests::testJsonFind()
 	cJSON_Delete(json);
 	result = _pObj->CDC_ISO_Find(req);
 	MDEBUG << result << endl;
-	assert(result.length() > 0);
+	assert(result != FAILED_JSON_RESULT);
 }
 
 void CDC_ISO_Tests::testJsonFindCount()
@@ -221,7 +221,7 @@ void CDC_ISO_Tests::testJsonFindCount()
 	cJSON_Delete(json);
 	result = _pObj->CDC_ISO_FindCount(req);
 	MDEBUG << result << endl;
-	assert(result.length() > 0);
+	assert(result != FAILED_JSON_RESULT);
 
 	json = cJSON_CreateObject();
 	cJSON_AddStringToObject(json, "Method", "All");
@@ -230,7 +230,7 @@ void CDC_ISO_Tests::testJsonFindCount()
 	cJSON_Delete(json);
 	result = _pObj->CDC_ISO_FindCount(req);
 	MDEBUG << result << endl;
-	assert(result.length() > 0);
+	assert(result != FAILED_JSON_RESULT);
 }
 
 

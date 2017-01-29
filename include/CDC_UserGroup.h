@@ -12,7 +12,7 @@ class CDC_MYSQL_API CDC_UserGroup
 {
 	DISABLE_COPY(CDC_UserGroup);
 public:
-	CDC_UserGroup(CppMySQLDB& db);
+	CDC_UserGroup(CppMySQLDB* pdb);
 	~CDC_UserGroup();
 
 	std::string CDC_UserGroup_Add(const std::string& req);
@@ -43,7 +43,7 @@ private:
 	std::list<TCDC_UserGroup> GetAll();
 
 private:
-	CppMySQLDB _db;
+	CppMySQLDB* _pdb;
 	CppMySQLStatement _stmt;
 };
 

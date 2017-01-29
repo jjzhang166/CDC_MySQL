@@ -111,8 +111,8 @@ VM_DataFilename Varchar(255),                   /*数据盘文件名*/
 VM_MAC Varchar(255) not null,                   /*虚拟机Mac地址*/ 
 VM_SpicePwd Varchar(255) not null,              /*Spice密码*/ 
 VM_Uuid Varchar(255),                           /*虚拟机内部标识*/ 
-VM_Create_Time datetime,                        /*虚拟机创建时间*/ 
-VM_Update_Time datetime,                        /*虚拟机最后修改时间*/ 
+VM_Create_Time DATETIME,                        /*虚拟机创建时间*/ 
+VM_Update_Time DATETIME,                        /*虚拟机最后修改时间*/ 
 PRIMARY KEY (VM_ID),
 FOREIGN KEY (VM_Template_ID)
         REFERENCES CDC_Template(Template_ID)
@@ -152,7 +152,7 @@ FOREIGN KEY (EDU_VM_ThinClient_ID)
 CREATE TABLE IF NOT EXISTS CDC_Authorization (
 Authorization_MachineID Varchar(255) not null,  /*机器码*/ 
 Authorization_MaxClientNum bigint(20) not null, /*设备数上限*/ 
-Authorization_Deadline datetime not null,           /*到期时间*/ 
-Authorization_Company Varchar(255) not null,    /*单位名称*/ 
+Authorization_Deadline DATETIME not null,           /*到期时间*/ 
+Authorization_Company Varchar(255),    /*单位名称*/ 
 PRIMARY KEY (Authorization_MachineID)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;

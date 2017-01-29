@@ -55,7 +55,7 @@ void CDC_Authorization_Tests::setUp()
 			PRIMARY KEY(Authorization_MachineID)\
 			) ENGINE = InnoDB DEFAULT CHARSET = utf8; ";
 		pDB->execDML(sql);
-		_pObj = new CDC_Authorization(*pDB);
+		_pObj = new CDC_Authorization(pDB);
 	}
 	catch (CppMySQLException& e)
 	{
@@ -152,7 +152,7 @@ void CDC_Authorization_Tests::testJsonFind()
 	cJSON_Delete(json);
 	result = _pObj->CDC_Authorization_Find(req);
 	MDEBUG << result << endl;
-	assert(result.length() > 0);
+	assert(result != FAILED_JSON_RESULT);
 
 	json = cJSON_CreateObject();
 	cJSON_AddStringToObject(json, "Method", "All");
@@ -161,7 +161,7 @@ void CDC_Authorization_Tests::testJsonFind()
 	cJSON_Delete(json);
 	result = _pObj->CDC_Authorization_Find(req);
 	MDEBUG << result << endl;
-	assert(result.length() > 0);
+	assert(result != FAILED_JSON_RESULT);
 }
 
 void CDC_Authorization_Tests::testJsonFindCount()
@@ -177,7 +177,7 @@ void CDC_Authorization_Tests::testJsonFindCount()
 	cJSON_Delete(json);
 	result = _pObj->CDC_Authorization_FindCount(req);
 	MDEBUG << result << endl;
-	assert(result.length() > 0);
+	assert(result != FAILED_JSON_RESULT);
 
 	json = cJSON_CreateObject();
 	cJSON_AddStringToObject(json, "Method", "All");
@@ -186,7 +186,7 @@ void CDC_Authorization_Tests::testJsonFindCount()
 	cJSON_Delete(json);
 	result = _pObj->CDC_Authorization_FindCount(req);
 	MDEBUG << result << endl;
-	assert(result.length() > 0);
+	assert(result != FAILED_JSON_RESULT);
 }
 
 CppUnit::Test* CDC_Authorization_Tests::suite()

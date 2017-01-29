@@ -10,7 +10,7 @@ class CDC_MYSQL_API CDC_Authorization
 {
 	DISABLE_COPY(CDC_Authorization);
 public:
-	CDC_Authorization(CppMySQLDB& db);
+	CDC_Authorization(CppMySQLDB* pdb);
 	~CDC_Authorization();
 
 	std::string CDC_Authorization_Add(const std::string& req);
@@ -38,7 +38,7 @@ private:
 	std::list<TCDC_Authorization> GetAll();
 
 private:
-	CppMySQLDB _db;
+	CppMySQLDB* _pdb;
 	CppMySQLStatement _stmt;
 };
 

@@ -102,7 +102,7 @@ MYSQL_TIME String2MySQLTime(const std::string& s)
 
 		mt.time_type = MYSQL_TIMESTAMP_DATETIME;
 	}
-	catch (std::exception& e)
+	catch (std::exception)
 	{
 		return mt;
 	}

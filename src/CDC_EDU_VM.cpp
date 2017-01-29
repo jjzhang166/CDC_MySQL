@@ -10,8 +10,8 @@
 
 using namespace std;
 
-CDC_EDU_VM::CDC_EDU_VM(CppMySQLDB& db)
-	:_db(db)
+CDC_EDU_VM::CDC_EDU_VM(CppMySQLDB* pdb)
+	:_pdb(pdb)
 {
 }
 
@@ -27,7 +27,7 @@ std::string CDC_EDU_VM::CDC_EDU_VM_Add(const std::string& req)
 	int ret = 0;
 	double id = -1;
 
-	cJSON *json, *tmp, *element;
+	cJSON *json, *tmp;
 	json = cJSON_Parse(req.c_str());
 	if (!json)
 	{
@@ -86,7 +86,7 @@ END:
 std::string CDC_EDU_VM::CDC_EDU_VM_Del(const std::string& req)
 {
 	int ret = 0;
-	cJSON *json, *tmp, *element;
+	cJSON *json, *tmp;
 	json = cJSON_Parse(req.c_str());
 	if (!json)
 	{
@@ -127,7 +127,7 @@ std::string CDC_EDU_VM::CDC_EDU_VM_Update(const std::string& req)
 {
 	int ret = 0;
 	bool hasItem = false;
-	cJSON *json, *tmp, *element;
+	cJSON *json, *tmp;
 	json = cJSON_Parse(req.c_str());
 	if (!json)
 	{
@@ -195,7 +195,7 @@ std::string CDC_EDU_VM::CDC_EDU_VM_Find(const std::string& req)
 	int ret = 0;
 	bool hasItem = false;
 	bool isAll = true;
-	cJSON *json, *tmp, *element;
+	cJSON *json, *tmp;
 	TCDC_EDU_VM t;
 	list<TCDC_EDU_VM> lst;
 	json = cJSON_Parse(req.c_str());
@@ -323,7 +323,7 @@ std::string CDC_EDU_VM::CDC_EDU_VM_FindCount(const std::string& req)
 	int ret = 0;
 	bool hasItem = false;
 	bool isAll = true;
-	cJSON *json, *tmp, *element;
+	cJSON *json, *tmp;
 	double count = -1;
 	json = cJSON_Parse(req.c_str());
 	if (!json)
@@ -415,7 +415,7 @@ double CDC_EDU_VM::EDU_VM_Add(TCDC_EDU_VM& src)
 		if (EDU_VM_Find(src.EDU_VM_ID))
 			return exists;
 
-		_stmt = _db.compileStatement("insert into CDC_EDU_VM values (?, ?, ?, ?, ?, ?, ?);");
+		_stmt = _pdb->compileStatement("insert into CDC_EDU_VM values (?, ?, ?, ?, ?, ?, ?);");
 		if (src.EDU_VM_ID != INVALID_NUM && src.EDU_VM_ID > 0)
 			id = src.EDU_VM_ID;
 		else
@@ -446,7 +446,7 @@ int CDC_EDU_VM::EDU_VM_Del(double id)
 		if (!EDU_VM_Find(id))
 			return notExists;
 
-		_stmt = _db.compileStatement("delete from CDC_EDU_VM where EDU_VM_ID = ?;");
+		_stmt = _pdb->compileStatement("delete from CDC_EDU_VM where EDU_VM_ID = ?;");
 		_stmt.bind(1, id);
 		_stmt.execDML();
 		_stmt.reset();
@@ -480,7 +480,7 @@ int CDC_EDU_VM::EDU_VM_Update(TCDC_EDU_VM& src, std::list<std::string>& keyList)
 		updateSql = updateSql.substr(0, updateSql.size() - 1);
 		updateSql += " where EDU_VM_ID = ?;";
 
-		_stmt = _db.compileStatement(updateSql.c_str());
+		_stmt = _pdb->compileStatement(updateSql.c_str());
 
 		int index = 1;
 		for (list<string>::iterator it = keyList.begin(); it != keyList.end(); ++it)
@@ -519,7 +519,7 @@ bool CDC_EDU_VM::EDU_VM_Find(double id)
 	{
 		char buf[1024] = { 0 };
 		sprintf(buf, "select count(*) from CDC_EDU_VM where EDU_VM_ID = %f;", id);
-		return (_db.execScalar(buf) != 0);
+		return (_pdb->execScalar(buf) != 0);
 	}
 	catch (CppMySQLException& e)
 	{
@@ -540,7 +540,7 @@ int CDC_EDU_VM::EDU_VM_Find(double id, TCDC_EDU_VM& t)
 		char buf[1024] = { 0 };
 		sprintf(buf, "select * from CDC_EDU_VM where EDU_VM_ID = %f;", id);
 
-		q = _db.execQuery(buf);
+		q = _pdb->execQuery(buf);
 
 		if (!q.eof())
 		{
@@ -572,7 +572,7 @@ int CDC_EDU_VM::EDU_VM_Find2(const std::string& whereSql, TCDC_EDU_VM& t)
 		char buf[1024] = { 0 };
 		sprintf(buf, "select * from CDC_EDU_VM where %s;", whereSql.c_str());
 
-		q = _db.execQuery(buf);
+		q = _pdb->execQuery(buf);
 
 		if (!q.eof())
 		{
@@ -600,7 +600,7 @@ int CDC_EDU_VM::EDU_VM_Count()
 {
 	try
 	{
-		return _db.execScalar("select count(*) from CDC_EDU_VM;");
+		return _pdb->execScalar("select count(*) from CDC_EDU_VM;");
 	}
 	catch (CppMySQLException& e)
 	{
@@ -617,7 +617,7 @@ int CDC_EDU_VM::EDU_VM_Count(const std::string& whereSql)
 		char buf[1024] = { 0 };
 		sprintf(buf, "select count(*) from CDC_EDU_VM where %s;", whereSql.c_str());
 
-		return _db.execScalar(buf);
+		return _pdb->execScalar(buf);
 	}
 	catch (CppMySQLException& e)
 	{
@@ -632,7 +632,7 @@ std::list<TCDC_EDU_VM> CDC_EDU_VM::GetAll()
 	std::list<TCDC_EDU_VM> lst;
 	try
 	{
-		CppMySQLQuery q = _db.execQuery("select * from CDC_EDU_VM;");
+		CppMySQLQuery q = _pdb->execQuery("select * from CDC_EDU_VM;");
 		while (!q.eof())
 		{
 			TCDC_EDU_VM t;
@@ -660,7 +660,7 @@ double CDC_EDU_VM::GetMaxID()
 {
 	char buf[1024] = { 0 };
 	sprintf(buf, "select max(EDU_VM_ID) from CDC_EDU_VM");
-	CppMySQLQuery q = _db.execQuery(buf);
+	CppMySQLQuery q = _pdb->execQuery(buf);
 
 	if (q.eof() || q.numFields() < 1)
 	{

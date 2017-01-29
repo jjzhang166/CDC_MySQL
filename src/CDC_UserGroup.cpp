@@ -9,8 +9,8 @@
 
 using namespace std;
 
-CDC_UserGroup::CDC_UserGroup(CppMySQLDB& db)
-	:_db(db)
+CDC_UserGroup::CDC_UserGroup(CppMySQLDB* pdb)
+	:_pdb(pdb)
 {
 }
 
@@ -26,7 +26,7 @@ std::string CDC_UserGroup::CDC_UserGroup_Add(const std::string& req)
 	int ret = 0;
 	double id = -1;
 
-	cJSON *json, *tmp, *element;
+	cJSON *json, *tmp;
 	json = cJSON_Parse(req.c_str());
 	if (!json)
 	{
@@ -69,7 +69,7 @@ END:
 std::string CDC_UserGroup::CDC_UserGroup_Del(const std::string& req)
 {
 	int ret = 0;
-	cJSON *json, *tmp, *element;
+	cJSON *json, *tmp;
 	json = cJSON_Parse(req.c_str());
 	if (!json)
 	{
@@ -111,7 +111,7 @@ std::string CDC_UserGroup::CDC_UserGroup_Update(const std::string& req)
 {
 	int ret = 0;
 	bool hasItem = false;
-	cJSON *json, *tmp, *element;
+	cJSON *json, *tmp;
 	json = cJSON_Parse(req.c_str());
 	if (!json)
 	{
@@ -163,7 +163,7 @@ std::string CDC_UserGroup::CDC_UserGroup_Find(const std::string& req)
 	int ret = 0;
 	bool hasItem = false;
 	bool isAll = true;
-	cJSON *json, *tmp, *element;
+	cJSON *json, *tmp;
 	TCDC_UserGroup userGroup;
 	list<TCDC_UserGroup> lst;
 	json = cJSON_Parse(req.c_str());
@@ -280,7 +280,7 @@ std::string CDC_UserGroup::CDC_UserGroup_FindCount(const std::string& req)
 	int ret = 0;
 	bool hasItem = false;
 	bool isAll = true;
-	cJSON *json, *tmp, *element;
+	cJSON *json, *tmp;
 	double count = -1;
 	json = cJSON_Parse(req.c_str());
 	if (!json)
@@ -358,7 +358,7 @@ double CDC_UserGroup::GetMaxID()
 {
 	char buf[1024] = { 0 };
 	sprintf(buf, "select max(UserGroup_ID) from CDC_UserGroup");
-	CppMySQLQuery q = _db.execQuery(buf);
+	CppMySQLQuery q = _pdb->execQuery(buf);
 
 	if (q.eof() || q.numFields() < 1)
 	{
@@ -376,7 +376,7 @@ double CDC_UserGroup::UserGroup_Add(TCDC_UserGroup& src)
 		if (UserGroup_Find(src.UserGroup_ID))
 			return exists;
 
-		_stmt = _db.compileStatement("insert into CDC_UserGroup values (?, ?);");
+		_stmt = _pdb->compileStatement("insert into CDC_UserGroup values (?, ?);");
 
 		if (src.UserGroup_ID != INVALID_NUM)
 			id = src.UserGroup_ID;
@@ -405,7 +405,7 @@ int CDC_UserGroup::UserGroup_Del(double id)
 
 		char buf[1024] = { 0 };
 		sprintf(buf, "delete from CDC_UserGroup where UserGroup_ID = %f;", id);
-		_db.execDML(buf);
+		_pdb->execDML(buf);
 	}
 	catch (CppMySQLException& e)
 	{
@@ -424,7 +424,7 @@ int CDC_UserGroup::UserGroup_Del(std::string& name)
 
 		char buf[1024] = { 0 };
 		sprintf(buf, "delete from CDC_UserGroup where UserGroup_Name = '%s';", name.c_str());
-		_db.execDML(buf);
+		_pdb->execDML(buf);
 	}
 	catch (CppMySQLException& e)
 	{
@@ -441,7 +441,7 @@ int CDC_UserGroup::UserGroup_Update(TCDC_UserGroup& src)
 		if (!UserGroup_Find(src.UserGroup_ID))
 			return notExists;
 
-		_stmt = _db.compileStatement("update CDC_UserGroup set UserGroup_Name = ? where UserGroup_ID = ?;");
+		_stmt = _pdb->compileStatement("update CDC_UserGroup set UserGroup_Name = ? where UserGroup_ID = ?;");
 		_stmt.bind(1, src.UserGroup_Name);
 		_stmt.bind(2, src.UserGroup_ID);
 		_stmt.execDML();
@@ -464,7 +464,7 @@ bool CDC_UserGroup::UserGroup_Find(double id)
 	{
 		char buf[1024] = {0};
 		sprintf(buf, "select count(*) from CDC_UserGroup where UserGroup_ID = %f;", id);
-		return (_db.execScalar(buf) != 0);
+		return (_pdb->execScalar(buf) != 0);
 	}
 	catch (CppMySQLException& e)
 	{
@@ -480,7 +480,7 @@ bool CDC_UserGroup::UserGroup_Find(std::string& name)
 	{
 		char buf[1024] = { 0 };
 		sprintf(buf, "select count(*) from CDC_UserGroup where UserGroup_Name = '%s';", name.c_str());
-		return (_db.execScalar(buf) != 0);
+		return (_pdb->execScalar(buf) != 0);
 	}
 	catch (CppMySQLException& e)
 	{
@@ -502,7 +502,7 @@ int CDC_UserGroup::UserGroup_Find(double id, TCDC_UserGroup& t)
 		char buf[1024] = { 0 };
 		sprintf(buf, "select * from CDC_UserGroup where UserGroup_ID = %f;", id);
 
-		q = _db.execQuery(buf);
+		q = _pdb->execQuery(buf);
 
 		if (!q.eof())
 		{
@@ -532,7 +532,7 @@ int CDC_UserGroup::UserGroup_Find(std::string& name, TCDC_UserGroup& t)
 		char buf[1024] = { 0 };
 		sprintf(buf, "select * from CDC_UserGroup where UserGroup_Name = '%s';", name.c_str());
 
-		q = _db.execQuery(buf);
+		q = _pdb->execQuery(buf);
 
 		if (!q.eof())
 		{
@@ -559,7 +559,7 @@ int CDC_UserGroup::UserGroup_Find2(std::string& whereSql, TCDC_UserGroup& t)
 		char buf[1024] = { 0 };
 		sprintf(buf, "select * from CDC_UserGroup where %s;", whereSql.c_str());
 
-		q = _db.execQuery(buf);
+		q = _pdb->execQuery(buf);
 
 		if (!q.eof())
 		{
@@ -582,7 +582,7 @@ int CDC_UserGroup::UserGroup_Count()
 {
 	try
 	{
-		return _db.execScalar("select count(*) from CDC_UserGroup;");
+		return _pdb->execScalar("select count(*) from CDC_UserGroup;");
 	}
 	catch (CppMySQLException& e)
 	{
@@ -599,7 +599,7 @@ int CDC_UserGroup::UserGroup_Count(std::string& whereSql)
 		char buf[1024] = { 0 };
 		sprintf(buf, "select count(*) from CDC_UserGroup where %s;", whereSql.c_str());
 
-		return _db.execScalar(buf);
+		return _pdb->execScalar(buf);
 	}
 	catch (CppMySQLException& e)
 	{
@@ -614,7 +614,7 @@ std::list<TCDC_UserGroup> CDC_UserGroup::GetAll()
 	std::list<TCDC_UserGroup> lst;
 	try
 	{
-		CppMySQLQuery q = _db.execQuery("select * from CDC_UserGroup;");
+		CppMySQLQuery q = _pdb->execQuery("select * from CDC_UserGroup;");
 		while (!q.eof())
 		{
 			TCDC_UserGroup t;

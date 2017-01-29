@@ -1,7 +1,7 @@
 
 /*! 
 	\file		CppMySQL.h
-*	\brief		MySQLÊı¾İ¿âµÄ·â×°Àà.
+*	\brief		MySQLæ•°æ®åº“çš„å°è£…ç±».
 */
 
 #ifndef _CPPMYSQL_H_
@@ -33,11 +33,11 @@
 #define NULL 0
 
 /*!
-	\brief		Ä¬ÈÏ·µ»ØµÄ´íÎóÏûÏ¢ÖĞÔö¼Ó "[MYSQL]"				\n
-				ÆäËû·µ»ØµÄ·Ö±ğÔö¼Ó		"[CppMySQLDB]"			\n
-				ÆäËû·µ»ØµÄ·Ö±ğÔö¼Ó		"[CppMySQLQuery]"		\n
-				ÆäËû·µ»ØµÄ·Ö±ğÔö¼Ó		"[CppMySQLResultSet]"	\n
-				ÆäËû·µ»ØµÄ·Ö±ğÔö¼Ó		"[CppMySQLStatement]"	\n
+	\brief		é»˜è®¤è¿”å›çš„é”™è¯¯æ¶ˆæ¯ä¸­å¢åŠ  "[MYSQL]"				\n
+				å…¶ä»–è¿”å›çš„åˆ†åˆ«å¢åŠ 		"[CppMySQLDB]"			\n
+				å…¶ä»–è¿”å›çš„åˆ†åˆ«å¢åŠ 		"[CppMySQLQuery]"		\n
+				å…¶ä»–è¿”å›çš„åˆ†åˆ«å¢åŠ 		"[CppMySQLResultSet]"	\n
+				å…¶ä»–è¿”å›çš„åˆ†åˆ«å¢åŠ 		"[CppMySQLStatement]"	\n
 
 */
 enum errorCode
@@ -50,7 +50,7 @@ enum errorCode
 
 /*!
 	\class		CppMySQLException 
-	\brief		MySQLÒì³£Àà
+	\brief		MySQLå¼‚å¸¸ç±»
 */
 class CPPMYSQL_API CppMySQLException 
 {
@@ -77,7 +77,7 @@ class CppMySQLStatement;
 
 /*!
 	\class		CppMySQLDB 
-	\brief		·â×°MySQL³£¼û²Ù×÷¡£
+	\brief		å°è£…MySQLå¸¸è§æ“ä½œã€‚
 */
 class CPPMYSQL_API CppMySQLDB
 {
@@ -86,112 +86,112 @@ public:
 	virtual ~CppMySQLDB();
 
 	/*!
-	\brief		Á¬½ÓÊı¾İ¿â
-	\remarks	Èç¹ûĞèÒªµ÷ÓÃsetOptions±ØĞëÔÚµ÷ÓÃ¸Ãº¯ÊıÖ®Ç°Ö´ĞĞ
+	\brief		è¿æ¥æ•°æ®åº“
+	\remarks	å¦‚æœéœ€è¦è°ƒç”¨setOptionså¿…é¡»åœ¨è°ƒç”¨è¯¥å‡½æ•°ä¹‹å‰æ‰§è¡Œ
 	*/
 	void			connect(const char* Host, const char* user, const char* passwd, 
 						const char* db = NULL, unsigned int port = 0, unsigned long client_flag = 0);
 	/*!
-	\brief		Ê¹ÓÃ×Ö·û´®Á¬½ÓÊı¾İ¿â
-	\param[in]	szConnectionString - Á¬½Ó×Ö·û´®
-	\remarks	¸ñÊ½:"user=root;password=root;db=test;compress=true;auto-reconnect=true;default-character-set=utf8"
+	\brief		ä½¿ç”¨å­—ç¬¦ä¸²è¿æ¥æ•°æ®åº“
+	\param[in]	szConnectionString - è¿æ¥å­—ç¬¦ä¸²
+	\remarks	æ ¼å¼:"user=root;password=root;db=test;compress=true;auto-reconnect=true;default-character-set=utf8"
 	*/
 	void			connect(const char* szConnectionString);
 	/*!
-	\brief		ÇĞ»»Êı¾İ¿â
+	\brief		åˆ‡æ¢æ•°æ®åº“
 	\remarks
-		¿ÉÄÜ³öÏÖÒ»ÏÂ´íÎó£º\n
-		CR_COMMANDS_OUT_OF_SYNC£ºÒÔ²»Ç¡µ±µÄË³ĞòÖ´ĞĞÁËÃüÁî£»\n
-		CR_SERVER_GONE_ERROR£ºMySQL·şÎñÆ÷²»¿ÉÓÃ£»\n
-		CR_SERVER_LOST:ÔÚ²éÑ¯¹ı³ÌÖĞ£¬Óë·şÎñÆ÷µÄÁ¬½Ó¶ªÊ§¡£
+		å¯èƒ½å‡ºç°ä¸€ä¸‹é”™è¯¯ï¼š\n
+		CR_COMMANDS_OUT_OF_SYNCï¼šä»¥ä¸æ°å½“çš„é¡ºåºæ‰§è¡Œäº†å‘½ä»¤ï¼›\n
+		CR_SERVER_GONE_ERRORï¼šMySQLæœåŠ¡å™¨ä¸å¯ç”¨ï¼›\n
+		CR_SERVER_LOST:åœ¨æŸ¥è¯¢è¿‡ç¨‹ä¸­ï¼Œä¸æœåŠ¡å™¨çš„è¿æ¥ä¸¢å¤±ã€‚
 	*/
 	void			open(const char* szDBName);
 	void			close();
 
 	/*!
-	\brief		²éÑ¯Ä³¸ö±íÊÇ·ñ´æÔÚ£¬Í¨¹ıexecScalar²éÑ¯¡£
+	\brief		æŸ¥è¯¢æŸä¸ªè¡¨æ˜¯å¦å­˜åœ¨ï¼Œé€šè¿‡execScalaræŸ¥è¯¢ã€‚
 	\see		execScalar
 	*/
 	bool			tableExists(const char* szTable);
 	/*!
-	\brief	Ö´ĞĞÊı¾İ¿â²Ù×÷Óï¾ä(DML)£¬Èçcreate/drop/insert/update/delete 
-	\return	ÊÜÓ°ÏìµÄĞĞÊı
+	\brief	æ‰§è¡Œæ•°æ®åº“æ“ä½œè¯­å¥(DML)ï¼Œå¦‚create/drop/insert/update/delete 
+	\return	å—å½±å“çš„è¡Œæ•°
 	\remarks
-		ÔÚÖ´ĞĞexecDMLÖ®Ç°£¬±ØĞëÈ·±£ËùÓĞµÄCppMySQLQuery¶ÔÏóÒÑ¾­µ÷ÓÃclearº¯Êı¡£
+		åœ¨æ‰§è¡ŒexecDMLä¹‹å‰ï¼Œå¿…é¡»ç¡®ä¿æ‰€æœ‰çš„CppMySQLQueryå¯¹è±¡å·²ç»è°ƒç”¨clearå‡½æ•°ã€‚
 	*/
 	int				execDML(const char* szSQL);	
 	int				execDML(std::string& str);
 
 	/*!
-	\brief	Ö´ĞĞÊı¾İ¿â²éÑ¯Óï¾ä
-	\return	·µ»ØCppMySQLQuery¶ÔÏó£¬Í¨¹ı¸Ã¶ÔÏó·ÃÎÊ²éÑ¯½á¹û
+	\brief	æ‰§è¡Œæ•°æ®åº“æŸ¥è¯¢è¯­å¥
+	\return	è¿”å›CppMySQLQueryå¯¹è±¡ï¼Œé€šè¿‡è¯¥å¯¹è±¡è®¿é—®æŸ¥è¯¢ç»“æœ
 	*/
 	CppMySQLQuery	execQuery(const char* szSQL);
 	
 	/*!
-	\brief	²éÑ¯½á¹ûµÄµÚÒ»¸ö×Ö¶ÎÖĞµÄµÚÒ»ĞĞ¡£ÆäËûµÄĞĞºÍÁĞ½«±»ºöÂÔ
-	\param[in]	nNullValue - µ±µÚÒ»¸ö×Ö¶ÎÀàĞÍÎªNULLÊ±£¬·µ»ØÌæ´úµÄÖµ
-	\return	½«²éÑ¯µÄ½á¹ûÒÔintÀàĞÍ·µ»Ø
+	\brief	æŸ¥è¯¢ç»“æœçš„ç¬¬ä¸€ä¸ªå­—æ®µä¸­çš„ç¬¬ä¸€è¡Œã€‚å…¶ä»–çš„è¡Œå’Œåˆ—å°†è¢«å¿½ç•¥
+	\param[in]	nNullValue - å½“ç¬¬ä¸€ä¸ªå­—æ®µç±»å‹ä¸ºNULLæ—¶ï¼Œè¿”å›æ›¿ä»£çš„å€¼
+	\return	å°†æŸ¥è¯¢çš„ç»“æœä»¥intç±»å‹è¿”å›
 	\remarks	
-		ÀıÈç£º"select count(*) from XX" or "select max(empno) from XX"
+		ä¾‹å¦‚ï¼š"select count(*) from XX" or "select max(empno) from XX"
 	*/
 	int				execScalar(const char* szSQL, int nNullValue = 0);
 
 	/*!
-	\brief	Ò»´Î·µ»ØÈ«²¿²éÑ¯½á¹û£¬¶ø²»ÊÇÒ»´ÎÈ¡Ò»ĞĞ
-	\return	·µ»ØCppMySQLQuery¶ÔÏó£¬¸Ã¶ÔÏó°üº¬ÍêÕûµÄ²éÑ¯½á¹û
+	\brief	ä¸€æ¬¡è¿”å›å…¨éƒ¨æŸ¥è¯¢ç»“æœï¼Œè€Œä¸æ˜¯ä¸€æ¬¡å–ä¸€è¡Œ
+	\return	è¿”å›CppMySQLQueryå¯¹è±¡ï¼Œè¯¥å¯¹è±¡åŒ…å«å®Œæ•´çš„æŸ¥è¯¢ç»“æœ
 	\remarks	
-		¸ÃÍêÕûµÄ¶ÔÏóÊÇÔÚCppMySQLResultSetµÄ¹¹Ôìº¯ÊıÖĞ´´½¨µÄ¡£´´½¨ÍêÒÔºó£¬²»ÔÙĞèÒªresule¾ä±ú
+		è¯¥å®Œæ•´çš„å¯¹è±¡æ˜¯åœ¨CppMySQLResultSetçš„æ„é€ å‡½æ•°ä¸­åˆ›å»ºçš„ã€‚åˆ›å»ºå®Œä»¥åï¼Œä¸å†éœ€è¦resuleå¥æŸ„
 	*/
 	CppMySQLResultSet getResultSet(const char* szSQL);
 
 	CppMySQLStatement compileStatement(const char* szSQL);
 
 	/*!
-	\brief	¿ªÊ¼ÊÂÎñ
+	\brief	å¼€å§‹äº‹åŠ¡
 	\remarks
-		×¢Òâ£ºÓĞĞ©MySQLÒıÇæÊÇ²»Ö§³ÖÊÂÎñµÄ¡£ÈçInnoDBÖ§³ÖÊÂÎñ£¬¶øMyISAM²»Ö§³Ö
+		æ³¨æ„ï¼šæœ‰äº›MySQLå¼•æ“æ˜¯ä¸æ”¯æŒäº‹åŠ¡çš„ã€‚å¦‚InnoDBæ”¯æŒäº‹åŠ¡ï¼Œè€ŒMyISAMä¸æ”¯æŒ
 	*/
 	void			startTransaction();
 	/*!
-	\brief	Ìá½»ÊÂÎñ
+	\brief	æäº¤äº‹åŠ¡
 	*/
 	void			commitTransaction();
 	/*!
-	\brief	»Ø¹öÊÂÎñ
+	\brief	å›æ»šäº‹åŠ¡
 	*/
 	void			rollback();
 	/*!
-	\brief	ÊÇ·ñÕıÔÚ½øĞĞÊÂÎñ£¬Í¨¹ı¼ì²âm_inTransactionÊÇ·ñÎª0
+	\brief	æ˜¯å¦æ­£åœ¨è¿›è¡Œäº‹åŠ¡ï¼Œé€šè¿‡æ£€æµ‹m_inTransactionæ˜¯å¦ä¸º0
 	*/
 	bool			isTransaction();
 
 	/*!
-	\brief	´´½¨Êı¾İ¿â£¬Ä¬ÈÏ×Ö·û¼¯ÊÇutf8
+	\brief	åˆ›å»ºæ•°æ®åº“ï¼Œé»˜è®¤å­—ç¬¦é›†æ˜¯utf8
 	*/
 	void			createDB(const char* szName);	
 	/*!
-	\brief	É¾³ıÊı¾İ¿â
+	\brief	åˆ é™¤æ•°æ®åº“
 	*/
 	void			dropDB(const char* szName);	
 	/*!
-	\brief	²âÊÔmysql·şÎñÆ÷ÊÇ·ñÄÜpingÍ¨
+	\brief	æµ‹è¯•mysqlæœåŠ¡å™¨æ˜¯å¦èƒ½pingé€š
 	*/
 	bool			ping();		
 
 	/*!
-	\brief	Îªµ±Ç°Á¬½ÓÉèÖÃÄ¬ÈÏµÄ×Ö·û¼¯
+	\brief	ä¸ºå½“å‰è¿æ¥è®¾ç½®é»˜è®¤çš„å­—ç¬¦é›†
 	*/
 	bool			setCharacterSet(const char *szName);
 	/*!
-	\brief	»ñÈ¡µ±Ç°Á¬½ÓÉèÖÃÄ¬ÈÏµÄ×Ö·û¼¯
+	\brief	è·å–å½“å‰è¿æ¥è®¾ç½®é»˜è®¤çš„å­—ç¬¦é›†
 	*/
 	const char*		getCharacterSetName();	
 
 	/*!
-	\brief	¿ÉÓÃÓÚÉèÖÃ¶îÍâµÄÁ¬½ÓÑ¡Ïî£¬²¢Ó°ÏìÁ¬½ÓµÄĞĞÎª
+	\brief	å¯ç”¨äºè®¾ç½®é¢å¤–çš„è¿æ¥é€‰é¡¹ï¼Œå¹¶å½±å“è¿æ¥çš„è¡Œä¸º
 	\remarks
-		×¢Òâ£ºÓ¦ÔÚconnectÖ®Ç°µ÷ÓÃsetOptions()
+		æ³¨æ„ï¼šåº”åœ¨connectä¹‹å‰è°ƒç”¨setOptions()
 	*/
 	void			setOptions(int opt);
 	void			setOptions(int opt, const char* arg);
@@ -202,10 +202,10 @@ private:
 	//CppMySQLDB(const CppMySQLDB* pdb);
 	//CppMySQLDB& operator=(const CppMySQLDB* pdb);
 	/*!
-	\brief	¼ì²éÊı¾İ¿â¾ä±úm_pDBÒÔ¼°m_pDB->db
-	\param[in]	isCheck_db - ÊÇ·ñ¼ì²ém_pDB->db
+	\brief	æ£€æŸ¥æ•°æ®åº“å¥æŸ„m_pDBä»¥åŠm_pDB->db
+	\param[in]	isCheck_db - æ˜¯å¦æ£€æŸ¥m_pDB->db
 	\remarks	
-		ÓĞĞ©º¯ÊıÊÇ²»¿ÉÒÔ¼ì²ém_pDB->dbµÄ£¬ÒòÎªÄÇÊ±db»¹Ã»ÓĞ±»¸³Öµ
+		æœ‰äº›å‡½æ•°æ˜¯ä¸å¯ä»¥æ£€æŸ¥m_pDB->dbçš„ï¼Œå› ä¸ºé‚£æ—¶dbè¿˜æ²¡æœ‰è¢«èµ‹å€¼
 	*/
 	void			checkDB(bool isCheck_db = true);
 
@@ -215,8 +215,8 @@ private:
 
 /*!
 	\class		CppMySQLQuery 
-	\brief		·â×°MySQL²éÑ¯½á¹û¼¯¡£
-	\remarks	×¢Òâ£ºCppMySQLQuery²»¿ÉÒÔË«Ïò±éÀú£¬Èç¹ûĞèÒªË«Ïò±éÀú,¿ÉÒÔÊ¹ÓÃCppMySQLDB::getResultSet
+	\brief		å°è£…MySQLæŸ¥è¯¢ç»“æœé›†ã€‚
+	\remarks	æ³¨æ„ï¼šCppMySQLQueryä¸å¯ä»¥åŒå‘éå†ï¼Œå¦‚æœéœ€è¦åŒå‘éå†,å¯ä»¥ä½¿ç”¨CppMySQLDB::getResultSet
 */
 class CPPMYSQL_API CppMySQLQuery
 {
@@ -225,122 +225,122 @@ public:
 	virtual ~CppMySQLQuery();
 
 	/*!
-	\brief	Ö»ÓĞÒ»¸ö¶ÔÏóÓµÓĞMYSQL_RES¾ä±ú£¬Òò´Ë£¬µ±Ö´ĞĞ¿½±´¹¹Ôìº¯Êıºó£¬rQuery²»ÄÜÔÙÊ¹ÓÃ
+	\brief	åªæœ‰ä¸€ä¸ªå¯¹è±¡æ‹¥æœ‰MYSQL_RESå¥æŸ„ï¼Œå› æ­¤ï¼Œå½“æ‰§è¡Œæ‹·è´æ„é€ å‡½æ•°åï¼ŒrQueryä¸èƒ½å†ä½¿ç”¨
 	*/
 	CppMySQLQuery(const CppMySQLQuery& rQuery);
 
 	/*!
-	\brief		¹¹ÔìCppMySQLQuery¶ÔÏó£¬ÓĞÇÒ½öÄÜÓĞÒ»¸ö¶ÔÏó
+	\brief		æ„é€ CppMySQLQueryå¯¹è±¡ï¼Œæœ‰ä¸”ä»…èƒ½æœ‰ä¸€ä¸ªå¯¹è±¡
 	\see		execQuery
-	\param[in]	pRES - result¾ä±ú
-	\remarks	pRES²»¿ÉÒÔÎªNULL
+	\param[in]	pRES - resultå¥æŸ„
+	\remarks	pRESä¸å¯ä»¥ä¸ºNULL
 	*/
 
 	explicit CppMySQLQuery(MYSQL_RES* pRES);
 	/*!
-	\brief	Ö»ÓĞÒ»¸ö¶ÔÏóÓµÓĞMYSQL_RES¾ä±ú£¬Òò´Ë£¬µ±Ö´ĞĞ¸³Öµ¹¹Ôìº¯Êıºó£¬rQuery²»ÄÜÔÙÊ¹ÓÃ
+	\brief	åªæœ‰ä¸€ä¸ªå¯¹è±¡æ‹¥æœ‰MYSQL_RESå¥æŸ„ï¼Œå› æ­¤ï¼Œå½“æ‰§è¡Œèµ‹å€¼æ„é€ å‡½æ•°åï¼ŒrQueryä¸èƒ½å†ä½¿ç”¨
 	*/
 	CppMySQLQuery& operator=(const CppMySQLQuery& rQuery);
 
 	/*!
-	\brief	·µ»Ø¶àÉÙÁĞ£¬¼´×Ö¶ÎµÄ¸öÊı
+	\brief	è¿”å›å¤šå°‘åˆ—ï¼Œå³å­—æ®µçš„ä¸ªæ•°
 	*/
 	int				numFields();
 	/*!
-	\brief	·µ»Ø¶àÉÙĞĞ
+	\brief	è¿”å›å¤šå°‘è¡Œ
 	*/
 	unsigned long	numRows();
 
 	/*!
-	\brief	¸ù¾İ×Ö¶ÎÃû³Æ£¬·µ»Ø×Ö¶ÎµÄÁĞºÅ
+	\brief	æ ¹æ®å­—æ®µåç§°ï¼Œè¿”å›å­—æ®µçš„åˆ—å·
 	*/
 	int				fieldIndex(const char* szField);
 	/*!
-	\brief	¸ù¾İ×Ö¶ÎÁĞºÅ£¬·µ»Ø×Ö¶ÎµÄÃû³Æ
+	\brief	æ ¹æ®å­—æ®µåˆ—å·ï¼Œè¿”å›å­—æ®µçš„åç§°
 	*/
 	const char*		fieldName(int nCol);
 
 	/*!
-	\brief	¸ù¾İ×Ö¶ÎÁĞºÅ£¬·µ»Ø×Ö¶ÎµÄÀàĞÍ
-	\return	·µ»Ø×Ö¶ÎÀàĞÍ£¬¾ßÌåÇë²é¿´MySQLµÄenum_field_types
+	\brief	æ ¹æ®å­—æ®µåˆ—å·ï¼Œè¿”å›å­—æ®µçš„ç±»å‹
+	\return	è¿”å›å­—æ®µç±»å‹ï¼Œå…·ä½“è¯·æŸ¥çœ‹MySQLçš„enum_field_types
 	*/
 	int				fieldDataType(int nCol);
 
 	/*!
-	\brief	·µ»Øµ±Ç°ĞĞÄ³¸ö×Ö¶ÎµÄÖµ
-	\param[in]	nField - ×Ö¶ÎºÅ
-	\return	µ±Ç°ĞĞ×Ö¶ÎµÄÖµ
+	\brief	è¿”å›å½“å‰è¡ŒæŸä¸ªå­—æ®µçš„å€¼
+	\param[in]	nField - å­—æ®µå·
+	\return	å½“å‰è¡Œå­—æ®µçš„å€¼
 	*/
 	const char*		fieldValue(int nField);
 
 	/*!
-	\brief	·µ»Øµ±Ç°ĞĞÄ³¸ö×Ö¶ÎµÄÖµ
-	\param[in]	szField - ×Ö¶ÎÃû³Æ
-	\return	µ±Ç°ĞĞ×Ö¶ÎµÄÖµ
+	\brief	è¿”å›å½“å‰è¡ŒæŸä¸ªå­—æ®µçš„å€¼
+	\param[in]	szField - å­—æ®µåç§°
+	\return	å½“å‰è¡Œå­—æ®µçš„å€¼
 	*/
 	const char*		fieldValue(const char* szField);
 
 
 	/*!
-	\brief	·µ»Øµ±Ç°ĞĞintÀàĞÍ×Ö¶ÎµÄÖµ
-	\param[in]	nField - ×Ö¶ÎºÅ
-	\param[in]	nNullValue - µ±×Ö¶ÎÀàĞÍÎªNULLÊ±£¬´úÌæ·µ»ØµÄÄ¬ÈÏÖµ
+	\brief	è¿”å›å½“å‰è¡Œintç±»å‹å­—æ®µçš„å€¼
+	\param[in]	nField - å­—æ®µå·
+	\param[in]	nNullValue - å½“å­—æ®µç±»å‹ä¸ºNULLæ—¶ï¼Œä»£æ›¿è¿”å›çš„é»˜è®¤å€¼
 	*/
 	int				getIntField(int nField, int nNullValue = 0);
 	/*!
-	\brief	·µ»Øµ±Ç°ĞĞintÀàĞÍ×Ö¶ÎµÄÖµ
-	\param[in]	szField - ×Ö¶ÎÃû³Æ
-	\param[in]	nNullValue - µ±×Ö¶ÎÀàĞÍÎªNULLÊ±£¬´úÌæ·µ»ØµÄÄ¬ÈÏÖµ
+	\brief	è¿”å›å½“å‰è¡Œintç±»å‹å­—æ®µçš„å€¼
+	\param[in]	szField - å­—æ®µåç§°
+	\param[in]	nNullValue - å½“å­—æ®µç±»å‹ä¸ºNULLæ—¶ï¼Œä»£æ›¿è¿”å›çš„é»˜è®¤å€¼
 	*/
 	int				getIntField(const char* szField, int nNullValue = 0);
 
 	/*!
-	\brief	·µ»Øµ±Ç°ĞĞDoubleÀàĞÍ×Ö¶ÎµÄÖµ
-	\param[in]	nField - ×Ö¶ÎºÅ
-	\param[in]	fNullValue - µ±×Ö¶ÎÀàĞÍÎªNULLÊ±£¬´úÌæ·µ»ØµÄÄ¬ÈÏÖµ
+	\brief	è¿”å›å½“å‰è¡ŒDoubleç±»å‹å­—æ®µçš„å€¼
+	\param[in]	nField - å­—æ®µå·
+	\param[in]	fNullValue - å½“å­—æ®µç±»å‹ä¸ºNULLæ—¶ï¼Œä»£æ›¿è¿”å›çš„é»˜è®¤å€¼
 	*/
 	double			getDoubleField(int nField, double fNullValue = 0.0);
 	/*!
-	\brief	·µ»Øµ±Ç°ĞĞDoubleÀàĞÍ×Ö¶ÎµÄÖµ
-	\param[in]	szField - ×Ö¶ÎÃû³Æ
-	\param[in]	fNullValue - µ±×Ö¶ÎÀàĞÍÎªNULLÊ±£¬´úÌæ·µ»ØµÄÄ¬ÈÏÖµ
+	\brief	è¿”å›å½“å‰è¡ŒDoubleç±»å‹å­—æ®µçš„å€¼
+	\param[in]	szField - å­—æ®µåç§°
+	\param[in]	fNullValue - å½“å­—æ®µç±»å‹ä¸ºNULLæ—¶ï¼Œä»£æ›¿è¿”å›çš„é»˜è®¤å€¼
 	*/
 	double			getDoubleField(const char* szField, double fNullValue = 0.0);
 
 	/*!
-	\brief	·µ»Øµ±Ç°ĞĞconst char*ÀàĞÍ×Ö¶ÎµÄÖµ
-	\param[in]	nField - ×Ö¶ÎºÅ
-	\param[in]	szNullValue - µ±×Ö¶ÎÀàĞÍÎªNULLÊ±£¬´úÌæ·µ»ØµÄÄ¬ÈÏÖµ
+	\brief	è¿”å›å½“å‰è¡Œconst char*ç±»å‹å­—æ®µçš„å€¼
+	\param[in]	nField - å­—æ®µå·
+	\param[in]	szNullValue - å½“å­—æ®µç±»å‹ä¸ºNULLæ—¶ï¼Œä»£æ›¿è¿”å›çš„é»˜è®¤å€¼
 	*/
 	const char*		getStringField(int nField, const char* szNullValue = "");
 	/*!
-	\brief	·µ»Øµ±Ç°ĞĞconst char*ÀàĞÍ×Ö¶ÎµÄÖµ
-	\param[in]	szField - ×Ö¶ÎÃû³Æ
-	\param[in]	szNullValue - µ±×Ö¶ÎÀàĞÍÎªNULLÊ±£¬´úÌæ·µ»ØµÄÄ¬ÈÏÖµ
+	\brief	è¿”å›å½“å‰è¡Œconst char*ç±»å‹å­—æ®µçš„å€¼
+	\param[in]	szField - å­—æ®µåç§°
+	\param[in]	szNullValue - å½“å­—æ®µç±»å‹ä¸ºNULLæ—¶ï¼Œä»£æ›¿è¿”å›çš„é»˜è®¤å€¼
 	*/
 	const char*		getStringField(const char* szField, const char* szNullValue = "");
 
 	/*!
-	\brief	¼ì²â×Ö¶ÎÊÇ²»ÊÇMYSQL_TYPE_NULLÀàĞÍ
-	\return	true:ÊÇ
+	\brief	æ£€æµ‹å­—æ®µæ˜¯ä¸æ˜¯MYSQL_TYPE_NULLç±»å‹
+	\return	true:æ˜¯
 	*/
 	bool			fieldDataIsNull(int nField);
 
 	/*!
-	\brief	¼ì²éÊÇ²»ÊÇ×îºóÒ»ĞĞ
-	\return	true:ÊÇ
+	\brief	æ£€æŸ¥æ˜¯ä¸æ˜¯æœ€åä¸€è¡Œ
+	\return	true:æ˜¯
 	*/
 	bool			eof();
 	/*!
-	\brief	½«µü´úÆ÷ÇĞ»»µ½ÏÂÒ»ĞĞ
+	\brief	å°†è¿­ä»£å™¨åˆ‡æ¢åˆ°ä¸‹ä¸€è¡Œ
 	*/
 	void			nextRow();
 	
 	
 	/*!
-	\brief	½«µü´úÆ÷Ö¸ÏòÈÎÒâĞĞ
-	\param[in]	offerset - Æ«ÒÆÖµĞĞºÅ£¬·¶Î§´Ó0µ½m_numRows-1£¬Èç¹û²»ÔÚ·¶Î§£¬Ç¿ÖÆÉèÖÃ·¶Î§
-	\return	·µ»ØÊµ¼ÊÆ«ÒÆµÄĞĞºÅ
+	\brief	å°†è¿­ä»£å™¨æŒ‡å‘ä»»æ„è¡Œ
+	\param[in]	offerset - åç§»å€¼è¡Œå·ï¼ŒèŒƒå›´ä»0åˆ°m_numRows-1ï¼Œå¦‚æœä¸åœ¨èŒƒå›´ï¼Œå¼ºåˆ¶è®¾ç½®èŒƒå›´
+	\return	è¿”å›å®é™…åç§»çš„è¡Œå·
 	*/
 	unsigned long	seekRow(unsigned long offerset);
 	void			clear();
@@ -359,7 +359,7 @@ private:
 
 /*!
 	\class		CppMySQLResultSet 
-	\brief		½«²éÑ¯½á¹û¼¯´æ·Åµ½ÄÚ´æÖĞ£¬Ö§³ÖË«Ïò±éÀú
+	\brief		å°†æŸ¥è¯¢ç»“æœé›†å­˜æ”¾åˆ°å†…å­˜ä¸­ï¼Œæ”¯æŒåŒå‘éå†
 */
 class CPPMYSQL_API CppMySQLResultSet
 {
@@ -368,100 +368,100 @@ public:
 	CppMySQLResultSet();
 	virtual ~CppMySQLResultSet();
 	/*!
-	\brief	Ö»ÓĞÒ»¸ö¶ÔÏóÓµÓĞm_pResultSet£¬Òò´Ë£¬µ±Ö´ĞĞ¿½±´¹¹Ôìº¯Êıºó£¬rResultSet²»ÄÜÔÙÊ¹ÓÃ
+	\brief	åªæœ‰ä¸€ä¸ªå¯¹è±¡æ‹¥æœ‰m_pResultSetï¼Œå› æ­¤ï¼Œå½“æ‰§è¡Œæ‹·è´æ„é€ å‡½æ•°åï¼ŒrResultSetä¸èƒ½å†ä½¿ç”¨
 	*/
 	CppMySQLResultSet(const CppMySQLResultSet& rResultSet);
 
 	/*!
-	\brief	×¢ÒâpRES±¾µØ²»¿ÉÒÔ±£´æ£¬ÒòÎª±¾µØÃ»ÓĞ¿ØÖÆpRESµÄÊÍ·Å
+	\brief	æ³¨æ„pRESæœ¬åœ°ä¸å¯ä»¥ä¿å­˜ï¼Œå› ä¸ºæœ¬åœ°æ²¡æœ‰æ§åˆ¶pRESçš„é‡Šæ”¾
 	*/
 	explicit CppMySQLResultSet(MYSQL_RES* pRES);
 	/*!
-	\brief	Ö»ÓĞÒ»¸ö¶ÔÏóÓµÓĞm_pResultSet£¬Òò´Ë£¬µ±Ö´ĞĞ¸³Öµ¹¹Ôìº¯Êıºó£¬rResultSet²»ÄÜÔÙÊ¹ÓÃ
+	\brief	åªæœ‰ä¸€ä¸ªå¯¹è±¡æ‹¥æœ‰m_pResultSetï¼Œå› æ­¤ï¼Œå½“æ‰§è¡Œèµ‹å€¼æ„é€ å‡½æ•°åï¼ŒrResultSetä¸èƒ½å†ä½¿ç”¨
 	*/
 	CppMySQLResultSet& operator=(const CppMySQLResultSet& rResultSet);
 
 	/*!
-	\brief	·µ»Ø¶àÉÙÁĞ£¬¼´×Ö¶ÎµÄ¸öÊı
+	\brief	è¿”å›å¤šå°‘åˆ—ï¼Œå³å­—æ®µçš„ä¸ªæ•°
 	*/
 	int					numFields();
 	/*!
-	\brief	·µ»Ø¶àÉÙĞĞ
+	\brief	è¿”å›å¤šå°‘è¡Œ
 	*/
 	unsigned long		numRows();
 
 	/*!
-	\brief	¸ù¾İ×Ö¶ÎÃû³Æ£¬·µ»Ø×Ö¶ÎµÄÁĞºÅ
+	\brief	æ ¹æ®å­—æ®µåç§°ï¼Œè¿”å›å­—æ®µçš„åˆ—å·
 	*/
 	int					FieldColIndex(const char* szField);
 	/*!
-	\brief	¸ù¾İ×Ö¶ÎÁĞºÅ£¬·µ»Ø×Ö¶ÎµÄÃû³Æ
+	\brief	æ ¹æ®å­—æ®µåˆ—å·ï¼Œè¿”å›å­—æ®µçš„åç§°
 	*/
 	const char*			fieldName(int nCol);
 	/*!
-	\brief	·µ»Øµ±Ç°ĞĞÄ³¸ö×Ö¶ÎµÄÖµ
-	\param[in]	nField - ×Ö¶ÎºÅ
-	\return	µ±Ç°ĞĞ×Ö¶ÎµÄÖµ
+	\brief	è¿”å›å½“å‰è¡ŒæŸä¸ªå­—æ®µçš„å€¼
+	\param[in]	nField - å­—æ®µå·
+	\return	å½“å‰è¡Œå­—æ®µçš„å€¼
 	*/
 	const char*			fieldValue(int nField);
 	/*!
-	\brief	·µ»Øµ±Ç°ĞĞÄ³¸ö×Ö¶ÎµÄÖµ
-	\param[in]	szField - ×Ö¶ÎÃû³Æ
-	\return	µ±Ç°ĞĞ×Ö¶ÎµÄÖµ
+	\brief	è¿”å›å½“å‰è¡ŒæŸä¸ªå­—æ®µçš„å€¼
+	\param[in]	szField - å­—æ®µåç§°
+	\return	å½“å‰è¡Œå­—æ®µçš„å€¼
 	*/
 	const char*			fieldValue(const char* szField);
 
 	/*!
-	\brief	¼ì²éÊÇ²»ÊÇ×îºóÒ»ĞĞ
-	\return	true:ÊÇ
+	\brief	æ£€æŸ¥æ˜¯ä¸æ˜¯æœ€åä¸€è¡Œ
+	\return	true:æ˜¯
 	*/
 	bool				eof();
 	/*!
-	\brief	½«µü´úÆ÷ÇĞ»»µ½ÏÂÒ»ĞĞ
+	\brief	å°†è¿­ä»£å™¨åˆ‡æ¢åˆ°ä¸‹ä¸€è¡Œ
 	*/
 	void				nextRow();
 	
 	/*!
-	\brief	½«m_nCurrentRowÖ¸ÏòÈÎÒâĞĞ
-	\param[in]	nRow - Æ«ÒÆÖµĞĞºÅ£¬·¶Î§´Ó0µ½m_nRows-1£¬Èç¹û²»ÔÚ·¶Î§£¬Ç¿ÖÆÉèÖÃ·¶Î§
-	\return	·µ»ØÊµ¼ÊÆ«ÒÆµÄĞĞºÅ
+	\brief	å°†m_nCurrentRowæŒ‡å‘ä»»æ„è¡Œ
+	\param[in]	nRow - åç§»å€¼è¡Œå·ï¼ŒèŒƒå›´ä»0åˆ°m_nRows-1ï¼Œå¦‚æœä¸åœ¨èŒƒå›´ï¼Œå¼ºåˆ¶è®¾ç½®èŒƒå›´
+	\return	è¿”å›å®é™…åç§»çš„è¡Œå·
 	\remarks
-		ÕâÀïÍ¨¹ım_nCurrentRowÊµÏÖÆ«ÒÆ£¬ÓëCppMySQLResultSetÖĞµÄm_Row²»Ò»Ñù¡£\n
-		Òò´Ë£¬¿ÉÒÔÊµÏÖË«Ïò·ÃÎÊÊı¾İ
+		è¿™é‡Œé€šè¿‡m_nCurrentRowå®ç°åç§»ï¼Œä¸CppMySQLResultSetä¸­çš„m_Rowä¸ä¸€æ ·ã€‚\n
+		å› æ­¤ï¼Œå¯ä»¥å®ç°åŒå‘è®¿é—®æ•°æ®
 	*/
 	int					seekRow(unsigned long nRow);
 
 	bool				fieldDataIsNull(int nField);
 	/*!
-	\brief	×ÊÔ´ÇåÀí£¬½¨ÒéÖ÷¶¯µ÷ÓÃ
+	\brief	èµ„æºæ¸…ç†ï¼Œå»ºè®®ä¸»åŠ¨è°ƒç”¨
 	*/
 	void				clear();
 private:
 
 	/*!
-	\brief	´´½¨ËùÓĞÊı¾İ¼¯ºÏ£¬±£´æÖÁm_pResultSetÖ¸ÏòµÄÄÚ´æ
+	\brief	åˆ›å»ºæ‰€æœ‰æ•°æ®é›†åˆï¼Œä¿å­˜è‡³m_pResultSetæŒ‡å‘çš„å†…å­˜
 	*/
 	void				buildResultSet(MYSQL_RES* pRES);
 	/*!
-	\brief	´´½¨ËùÓĞ×Ö¶Î<id, Ãû³Æ>map±í£¬±£´æÖÁm_pFieldMapÖ¸ÏòµÄÄÚ´æ
+	\brief	åˆ›å»ºæ‰€æœ‰å­—æ®µ<id, åç§°>mapè¡¨ï¼Œä¿å­˜è‡³m_pFieldMapæŒ‡å‘çš„å†…å­˜
 	*/
 	void				buildFieldMap(MYSQL_RES* pRES);
 
 	void				checkResults();
 	void				checkFields();
 
-	std::vector<std::vector<std::string> >* m_pResultSet;	//!< ½á¹û¼¯Êı×é
-	std::map<int, std::string>*				m_pFieldMap;	//!< ×Ö¶ÎºÅºÍ×Ö¶ÎÃû³Æmap±í
+	std::vector<std::vector<std::string> >* m_pResultSet;	//!< ç»“æœé›†æ•°ç»„
+	std::map<int, std::string>*				m_pFieldMap;	//!< å­—æ®µå·å’Œå­—æ®µåç§°mapè¡¨
 
 	unsigned long		m_nCurrentRow;
-	unsigned long		m_nRows;							//!< ĞĞÊı
-	unsigned int		m_nCols;							//!< ×Ö¶ÎÊı
+	unsigned long		m_nRows;							//!< è¡Œæ•°
+	unsigned int		m_nCols;							//!< å­—æ®µæ•°
 };
 
 
 /*!
 	\class		CppMySQLStatement 
-	\brief		MySQL statementÀà£¬Ö»Ö§³ÖÊı¾İ¿â²Ù×÷Óï¾ä(DML)£¬Èçcreate/drop/insert/update/delete 
+	\brief		MySQL statementç±»ï¼Œåªæ”¯æŒæ•°æ®åº“æ“ä½œè¯­å¥(DML)ï¼Œå¦‚create/drop/insert/update/delete 
 */
 class CPPMYSQL_API CppMySQLStatement
 {
@@ -471,28 +471,28 @@ public:
 	virtual ~CppMySQLStatement();
 
 	/*!
-	\brief	Ö»ÓĞÒ»¸ö¶ÔÏóÓµÓĞm_pStmt£¬Òò´Ë£¬µ±Ö´ĞĞ¿½±´¹¹Ôìº¯Êıºó£¬rStatement²»ÄÜÔÙÊ¹ÓÃ
+	\brief	åªæœ‰ä¸€ä¸ªå¯¹è±¡æ‹¥æœ‰m_pStmtï¼Œå› æ­¤ï¼Œå½“æ‰§è¡Œæ‹·è´æ„é€ å‡½æ•°åï¼ŒrStatementä¸èƒ½å†ä½¿ç”¨
 	*/
 	CppMySQLStatement(const CppMySQLStatement& rStatement);
 	/*!
-	\brief	¸øm_pStmt£¬m_pBindArrayµÈ³õÊ¼»¯
+	\brief	ç»™m_pStmtï¼Œm_pBindArrayç­‰åˆå§‹åŒ–
 	*/
 	explicit CppMySQLStatement(MYSQL* mysql, const char* szDML);
 	/*!
-	\brief	Ö»ÓĞÒ»¸ö¶ÔÏóÓµÓĞm_pStmt£¬Òò´Ë£¬µ±Ö´ĞĞ¸³Öµ¹¹Ôìº¯Êıºó£¬rStatement²»ÄÜÔÙÊ¹ÓÃ
+	\brief	åªæœ‰ä¸€ä¸ªå¯¹è±¡æ‹¥æœ‰m_pStmtï¼Œå› æ­¤ï¼Œå½“æ‰§è¡Œèµ‹å€¼æ„é€ å‡½æ•°åï¼ŒrStatementä¸èƒ½å†ä½¿ç”¨
 	*/
 	CppMySQLStatement& operator=(const CppMySQLStatement& rStatement);
 
 	/*!
-	\brief	Ö´ĞĞÊı¾İ¿â²Ù×÷Óï¾ä(DML)£¬Èçcreate/drop/insert/update/delete 
-	\return	ÊÜÓ°ÏìµÄĞĞÊı
+	\brief	æ‰§è¡Œæ•°æ®åº“æ“ä½œè¯­å¥(DML)ï¼Œå¦‚create/drop/insert/update/delete 
+	\return	å—å½±å“çš„è¡Œæ•°
 	\remarks
-		×¢Òâ£ºCppMySQLStatement²»Ö§³ÖselectµÈ²éÑ¯Óï¾ä
+		æ³¨æ„ï¼šCppMySQLStatementä¸æ”¯æŒselectç­‰æŸ¥è¯¢è¯­å¥
 	*/
 	int					execDML();
 
 	/*!
-	\brief	½«°ó¶¨²ÎÊı´æ·Åµ½m_pBindArrayÖĞ£¬ÔÚexecuteÊ±Ö´ĞĞÕæÕı°ó¶¨
+	\brief	å°†ç»‘å®šå‚æ•°å­˜æ”¾åˆ°m_pBindArrayä¸­ï¼Œåœ¨executeæ—¶æ‰§è¡ŒçœŸæ­£ç»‘å®š
 	\see realBind execute
 	*/
 	void				bind(int nParam, std::string& str);
@@ -502,13 +502,13 @@ public:
 	void				bind(int nParam, const MYSQL_TIME& val);
 
 	/*!
-	\brief	½«statement»Ö¸´µ½Ä¬ÈÏ×´Ì¬
+	\brief	å°†statementæ¢å¤åˆ°é»˜è®¤çŠ¶æ€
 	\remarks
-		×¢Òâ£ºÒ»¶¨ÒªÔÚexecDMLºóµ÷ÓÃreset£¬·ñÔòÎŞ·¨Çå³ıbind×´Ì¬
+		æ³¨æ„ï¼šä¸€å®šè¦åœ¨execDMLåè°ƒç”¨resetï¼Œå¦åˆ™æ— æ³•æ¸…é™¤bindçŠ¶æ€
 	*/
 	void				reset();
 	/*!
-	\brief	×ÊÔ´ÇåÀí£¬½¨ÒéÖ÷¶¯µ÷ÓÃ
+	\brief	èµ„æºæ¸…ç†ï¼Œå»ºè®®ä¸»åŠ¨è°ƒç”¨
 	*/
 	void				clear();
 
@@ -517,24 +517,24 @@ public:
 private:
 
 	/*!
-	\brief	Ö´ĞĞ°ó¶¨²ÎÊı£¬Ö´ĞĞstatement
+	\brief	æ‰§è¡Œç»‘å®šå‚æ•°ï¼Œæ‰§è¡Œstatement
 	*/
 	void				execute();
 	/*!
-	\brief	bind²ÎÊıÍ³Ò»´¦Àí£¬½«²ÎÊı´æ·Åµ½m_pBindArrayÖĞ
+	\brief	bindå‚æ•°ç»Ÿä¸€å¤„ç†ï¼Œå°†å‚æ•°å­˜æ”¾åˆ°m_pBindArrayä¸­
 	*/
 	void				realBind(int pos, enum_field_types type, const void* buffer, int length);
 	void				checkStmt();
 	void				checkBindArray();
 
-	std::vector<MYSQL_BIND>* m_pBindArray;		//!< ´æ·Åbind²ÎÊıÊı×é
-	int						m_state;			//!< statement×´Ì¬£¬ÓĞSTMT_INITED£¬ STMT_COMPILED£¬ STMT_EXECUTEDÕâÈıÖÖ
+	std::vector<MYSQL_BIND>* m_pBindArray;		//!< å­˜æ”¾bindå‚æ•°æ•°ç»„
+	int						m_state;			//!< statementçŠ¶æ€ï¼Œæœ‰STMT_INITEDï¼Œ STMT_COMPILEDï¼Œ STMT_EXECUTEDè¿™ä¸‰ç§
 	MYSQL_STMT*				m_pStmt;			
-	int						m_nParamsCount;		//!< bind²ÎÊı¸öÊı
-	int						m_nBindIndex;		//!< bindµÄµ±Ç°Î»ÖÃ
+	int						m_nParamsCount;		//!< bindå‚æ•°ä¸ªæ•°
+	int						m_nBindIndex;		//!< bindçš„å½“å‰ä½ç½®
 
 	/*!
-	\brief	statement×´Ì¬
+	\brief	statementçŠ¶æ€
 	*/
 	enum State
 	{

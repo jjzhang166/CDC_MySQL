@@ -7,7 +7,7 @@ using namespace std;
 
 int main()
 {
-    CppMySQLDB* pDB;     // ±ØĞëÒ»¸ö¶ÔÏó
+    CppMySQLDB* pDB;     // å¿…é¡»ä¸€ä¸ªå¯¹è±¡
 	const char* gszDB = "test_dev";
 	#define Host		"127.0.0.1"
 	#define USER		"root"
@@ -23,15 +23,15 @@ int main()
 	CDC_User* _pUserObj;
 
 	////////////////////////////////////////
-    // Á¬½Ó´´½¨Êı¾İ¿â£¬ÉèÖÃÊı¾İ¿â×Ö·û¼¯£¬ÏÔÊ¾ºº×ÖĞèÒªÉèÖÃÎªgbk
+    // è¿æ¥åˆ›å»ºæ•°æ®åº“ï¼Œè®¾ç½®æ•°æ®åº“å­—ç¬¦é›†ï¼Œæ˜¾ç¤ºæ±‰å­—éœ€è¦è®¾ç½®ä¸ºutf8
     pDB = new CppMySQLDB();
-	pDB->setOptions(MYSQL_SET_CHARSET_NAME, "gbk");
+	pDB->setOptions(MYSQL_SET_CHARSET_NAME, "utf8");
 	pDB->connect(Host, USER, PASSWORD);
 	pDB->dropDB(gszDB);
 	pDB->createDB(gszDB);
 	pDB->open(gszDB);
 	
-	//´´½¨ÓÃ»§×é±í
+	//åˆ›å»ºç”¨æˆ·ç»„è¡¨
 	string sql = "CREATE TABLE IF NOT EXISTS CDC_UserGroup (\
 		UserGroup_ID bigint(20) not null AUTO_INCREMENT,\
 		UserGroup_Name Varchar(255) not null,\
@@ -41,7 +41,7 @@ int main()
 	pDB->execDML(sql);
 	_pUserGroupObj = new CDC_UserGroup(pDB);
 
-	/// ´´½¨ÓÃ»§±í
+	/// åˆ›å»ºç”¨æˆ·è¡¨
 	sql = "CREATE TABLE IF NOT EXISTS CDC_User (\
 			User_ID bigint(20) not null AUTO_INCREMENT,\
 			User_Role INT not null,\
@@ -60,32 +60,32 @@ int main()
 	_pUserObj = new CDC_User(pDB);
 
     //////////////////////////////////////
-    //²åÈëµ½ÓÃ»§×é±í
+    //æ’å…¥åˆ°ç”¨æˆ·ç»„è¡¨
     json = cJSON_CreateObject();
 	cJSON_AddStringToObject(json, "Method", "Part");
-	cJSON_AddStringToObject(json, "UserGroup_Name", "11aa¹ş¹ş");
+	cJSON_AddStringToObject(json, "UserGroup_Name", "11aaå“ˆå“ˆ");
 	out = cJSON_Print(json);
 	req = out;
 	cJSON_Delete(json);
-	result = _pUserGroupObj->CDC_UserGroup_Add(req); //µ÷ÓÃ²åÈë½Ó¿Ú
+	result = _pUserGroupObj->CDC_UserGroup_Add(req); //è°ƒç”¨æ’å…¥æ¥å£
 
 	string success = "{\n\t\"Result\":\t1,\n\t\"UserGroup_ID\":\t1\n}";
 	assert(success == result);
     
 
-	//²åÈëµ½ÓÃ»§±í£¬ºÍÓÃ»§×éÓĞ¹ØÁª
+	//æ’å…¥åˆ°ç”¨æˆ·è¡¨ï¼Œå’Œç”¨æˆ·ç»„æœ‰å…³è”
 	json = cJSON_CreateObject();
 	cJSON_AddStringToObject(json, "Method", "Part");
 	cJSON_AddNumberToObject(json, "User_Role", 1);
-	cJSON_AddNumberToObject(json, "User_UserGroup_ID", 1); // ¹ØÁª
-	cJSON_AddStringToObject(json, "User_Name", "testJsonAdd¹ş¹ş");
+	cJSON_AddNumberToObject(json, "User_UserGroup_ID", 1); // å…³è”
+	cJSON_AddStringToObject(json, "User_Name", "testJsonAddå“ˆå“ˆ");
 	cJSON_AddStringToObject(json, "User_LoginName", "testJsonAdd_11");
 	cJSON_AddStringToObject(json, "User_Password", "testJsonAdd_222");
-	cJSON_AddStringToObject(json, "User_Remarks", "haha¹ş¹ş");
+	cJSON_AddStringToObject(json, "User_Remarks", "hahaå“ˆå“ˆ");
 	out = cJSON_Print(json);
 	req = out;
 	cJSON_Delete(json);
-	result = _pUserObj->CDC_User_Add(req);  //µ÷ÓÃ²åÈë½Ó¿Ú
+	result = _pUserObj->CDC_User_Add(req);  //è°ƒç”¨æ’å…¥æ¥å£
 
 	success = "{\n\t\"Result\":\t1,\n\t\"User_ID\":\t1\n}";
 	assert(success == result);
@@ -96,7 +96,7 @@ int main()
 	out = cJSON_Print(json);
 	req = out;
 	cJSON_Delete(json);
-	result = _pUserObj->CDC_User_Del(req); //µ÷ÓÃÉ¾³ı½Ó¿Ú
+	result = _pUserObj->CDC_User_Del(req); //è°ƒç”¨åˆ é™¤æ¥å£
 #define SUCCESS_JSON_RESULT  "{\n\t\"Result\":\t1\n}"
 	assert(SUCCESS_JSON_RESULT == result);
 

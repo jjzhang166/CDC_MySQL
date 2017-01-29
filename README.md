@@ -17,8 +17,10 @@
 
 ## 使用方法
 * 请参考开发包目录为CDC_MySQL_dev中的samplete程序：test_dev.cpp
-* 注意：因为mysql操作句柄只有一个，因此要保证CppMySQLDB对象只有一个，new多个CppMySQLDB对象可能会发生未知的错误。
+### 注意
+* 因为mysql操作句柄只有一个，因此要保证CppMySQLDB对象只有一个，new多个CppMySQLDB对象可能会发生未知的错误。
 * 单元测试程序以及samplete程序中的，数据库Host、USER、PASSWORD需要根据实际情况修改。
+* .h和.cpp最好以utf8格式保存，这样设置字符集**setOptions(MYSQL_SET_CHARSET_NAME, "utf8");**。
 
 ## 单元测试程序运行
 测试程序为bin/Tests,运行依赖libCDC_MySQL.so和libCppUnit.so

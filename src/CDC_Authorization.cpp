@@ -518,7 +518,7 @@ int CDC_Authorization::Authorization_Find(const std::string& id, TCDC_Authorizat
 
 		CppMySQLQuery q;
 		char buf[1024] = { 0 };
-		sprintf(buf, "select * from CDC_Authorization where Authorization_MachineID = '%s';", id);
+		sprintf(buf, "select * from CDC_Authorization where Authorization_MachineID = '%s';", id.c_str());
 
 		q = _pdb->execQuery(buf);
 

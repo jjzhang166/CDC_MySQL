@@ -1,4 +1,4 @@
-#include "CDC_User_Tests.h"
+ï»¿#include "CDC_User_Tests.h"
 #include "CppMySQL.h"
 #include "CppUnit/TestCaller.h"
 #include "CppUnit/TestSuite.h"
@@ -119,10 +119,10 @@ void CDC_User_Tests::testJsonAdd()
 	cJSON_AddStringToObject(json, "Method", "Part");
 	cJSON_AddNumberToObject(json, "User_Role", 1);
 	cJSON_AddNumberToObject(json, "User_UserGroup_ID", 1001);
-	cJSON_AddStringToObject(json, "User_Name", "testJsonAdd¹þ¹þ");
+	cJSON_AddStringToObject(json, "User_Name", "testJsonAddå“ˆå“ˆ");
 	cJSON_AddStringToObject(json, "User_LoginName", "testJsonAdd_11");
 	cJSON_AddStringToObject(json, "User_Password", "testJsonAdd_222");
-	cJSON_AddStringToObject(json, "User_Remarks", "haha¹þ¹þ");
+	cJSON_AddStringToObject(json, "User_Remarks", "hahaå“ˆå“ˆ");
 	out = cJSON_Print(json);
 	req = out;
 	cJSON_Delete(json);
@@ -149,7 +149,7 @@ void CDC_User_Tests::testJsonDel()
 	User1.User_Role = 1;
 	User1.User_UserGroup_ID = 1001;
 	User1.User_Name = "testJsonDel1";
-	User1.User_LoginName = "¹þ¹þ¹þ";
+	User1.User_LoginName = "å“ˆå“ˆå“ˆ";
 	User1.User_Password = "testJsonDel2222";
 	id = _pObj->User_Add(User1);
 	assert(id > 0);
@@ -170,7 +170,7 @@ void CDC_User_Tests::testJsonUpdate()
 	User1.User_Role = 1;
 	User1.User_UserGroup_ID = 1001;
 	User1.User_Name = "testJsonUpdate1";
-	User1.User_LoginName = "¹þ¹þ¹þ";
+	User1.User_LoginName = "å“ˆå“ˆå“ˆ";
 	User1.User_Password = "testJsonUpdate2222";
 	id = _pObj->User_Add(User1);
 	assert(id > 0);
@@ -180,10 +180,10 @@ void CDC_User_Tests::testJsonUpdate()
 	cJSON_AddNumberToObject(json, "User_ID", id);
 	cJSON_AddNumberToObject(json, "User_Role", 1);
 	cJSON_AddNumberToObject(json, "User_UserGroup_ID", 1001);
-	cJSON_AddStringToObject(json, "User_Name", "testJsonAdd¹þ¹þ");
+	cJSON_AddStringToObject(json, "User_Name", "testJsonAddå“ˆå“ˆ");
 	cJSON_AddStringToObject(json, "User_LoginName", "testJsonAdd_11");
 	cJSON_AddStringToObject(json, "User_Password", "testJsonAdd_222");
-	cJSON_AddStringToObject(json, "User_Remarks", "haha¹þ¹þ");
+	cJSON_AddStringToObject(json, "User_Remarks", "hahaå“ˆå“ˆ");
 	out = cJSON_Print(json);
 	req = out;
 	cJSON_Delete(json);
@@ -197,9 +197,9 @@ void CDC_User_Tests::testJsonFind()
 	User1.User_Role = 1;
 	User1.User_UserGroup_ID = 1001;
 	User1.User_Name = "testJsonFind11";
-	User1.User_LoginName = "¹þ¹þ¹þ11";
+	User1.User_LoginName = "å“ˆå“ˆå“ˆ11";
 	User1.User_Password = "testJsonFind111";
-	User1.User_Remarks = "±¸×¢dsds";
+	User1.User_Remarks = "å¤‡æ³¨dsds";
 	id = _pObj->User_Add(User1);
 	assert(id > 0);
 
@@ -207,7 +207,7 @@ void CDC_User_Tests::testJsonFind()
 	User2.User_Role = 1;
 	User2.User_UserGroup_ID = 1001;
 	User2.User_Name = "testJsonFind22";
-	User2.User_LoginName = "¹þ¹þ¹þ222";
+	User2.User_LoginName = "å“ˆå“ˆå“ˆ222";
 	User2.User_Password = "testJsonFind22";
 	id = _pObj->User_Add(User2);
 	assert(id > 0);
@@ -216,7 +216,7 @@ void CDC_User_Tests::testJsonFind()
 	cJSON_AddStringToObject(json, "Method", "Part");
 	cJSON_AddNumberToObject(json, "User_Role", 1);
 	cJSON_AddStringToObject(json, "User_Name", "testJsonFind22");
-	cJSON_AddStringToObject(json, "User_LoginName", "¹þ¹þ¹þ222");
+	cJSON_AddStringToObject(json, "User_LoginName", "å“ˆå“ˆå“ˆ222");
 	out = cJSON_Print(json);
 	req = out;
 	cJSON_Delete(json);
@@ -240,7 +240,7 @@ void CDC_User_Tests::testJsonFindCount()
 	User1.User_Role = 1;
 	User1.User_UserGroup_ID = 1001;
 	User1.User_Name = "testJsonFindCount11";
-	User1.User_LoginName = "¹þ¹þ¹þ11";
+	User1.User_LoginName = "å“ˆå“ˆå“ˆ11";
 	User1.User_Password = "testJsonFindCount11111";
 	id = _pObj->User_Add(User1);
 	assert(id > 0);
@@ -249,7 +249,7 @@ void CDC_User_Tests::testJsonFindCount()
 	User2.User_Role = 1;
 	User2.User_UserGroup_ID = 1001;
 	User2.User_Name = "testJsonFindCount22";
-	User2.User_LoginName = "¹þ¹þ¹þ222";
+	User2.User_LoginName = "å“ˆå“ˆå“ˆ222";
 	User2.User_Password = "testJsonFindCount22";
 	id = _pObj->User_Add(User2);
 	assert(id > 0);
@@ -259,7 +259,7 @@ void CDC_User_Tests::testJsonFindCount()
 	cJSON_AddNumberToObject(json, "User_Role", 1);
 	cJSON_AddNumberToObject(json, "User_UserGroup_ID", 1001);
 	cJSON_AddStringToObject(json, "User_Name", "testJsonFindCount11");
-	cJSON_AddStringToObject(json, "User_LoginName", "¹þ¹þ¹þ11");
+	cJSON_AddStringToObject(json, "User_LoginName", "å“ˆå“ˆå“ˆ11");
 	out = cJSON_Print(json);
 	req = out;
 	cJSON_Delete(json);
@@ -286,10 +286,10 @@ void CDC_User_Tests::testCount()
 	user.User_ID = 3003;
 	user.User_Role = 0;
 	user.User_UserGroup_ID = 1001;
-	user.User_Name = "¼ÆÊý";
+	user.User_Name = "è®¡æ•°";
 	user.User_LoginName = "test_Count11";
 	user.User_Password = "test_Count1";
-	user.User_Remarks = "±¸×¢123_";
+	user.User_Remarks = "å¤‡æ³¨123_";
 	id = _pObj->User_Add(user);
 	assert(id > 0);
 
@@ -303,10 +303,10 @@ void CDC_User_Tests::testAdd()
 	user.User_ID = 10011;
 	user.User_Role = 0;
 	user.User_UserGroup_ID = 1001;
-	user.User_Name = "Ôö¼Ó";
+	user.User_Name = "å¢žåŠ ";
 	user.User_LoginName = "test_Add1";
 	user.User_Password = "test_Add1";
-	user.User_Remarks = "±¸×¢123_";
+	user.User_Remarks = "å¤‡æ³¨123_";
 	id = _pObj->User_Add(user);
 	assert(id > 0);
 }
@@ -317,10 +317,10 @@ void CDC_User_Tests::testDel()
 	user1.User_ID = 10011;
 	user1.User_Role = 0;
 	user1.User_UserGroup_ID = 1001;
-	user1.User_Name = "É¾³ý";
+	user1.User_Name = "åˆ é™¤";
 	user1.User_LoginName = "test_Del1";
 	user1.User_Password = "test_Del1";
-	user1.User_Remarks = "±¸×¢123_";
+	user1.User_Remarks = "å¤‡æ³¨123_";
 	id = _pObj->User_Add(user1);
 	assert(id > 0);
 
@@ -328,10 +328,10 @@ void CDC_User_Tests::testDel()
 	user2.User_ID = 10012;
 	user2.User_Role = 0;
 	user2.User_UserGroup_ID = 1002;
-	user2.User_Name = "É¾³ý";
+	user2.User_Name = "åˆ é™¤";
 	user2.User_LoginName = "test_Del2";
 	user2.User_Password = "test_Del2";
-	user2.User_Remarks = "±¸×¢123_";
+	user2.User_Remarks = "å¤‡æ³¨123_";
 	id = _pObj->User_Add(user2);
 	assert(id > 0);
 
@@ -348,10 +348,10 @@ void CDC_User_Tests::testUpdate()
 	user1.User_ID = 10011;
 	user1.User_Role = 0;
 	user1.User_UserGroup_ID = 1001;
-	user1.User_Name = "¸üÐÂ";
+	user1.User_Name = "æ›´æ–°";
 	user1.User_LoginName = "test_Update2";
 	user1.User_Password = "test_Update2";
-	user1.User_Remarks = "±¸×¢123_";
+	user1.User_Remarks = "å¤‡æ³¨123_";
 	id = _pObj->User_Add(user1);
 	assert(id > 0);
 
@@ -359,10 +359,10 @@ void CDC_User_Tests::testUpdate()
 	user2.User_ID = 10011;
 	user2.User_Role = 1;
 	user2.User_UserGroup_ID = 1002;
-	user2.User_Name = "¸üÐÂ22";
+	user2.User_Name = "æ›´æ–°22";
 	user2.User_LoginName = "test_Update33";
 	user2.User_Password = "test_Update44";
-	user2.User_Remarks = "°¡°¡";
+	user2.User_Remarks = "å•Šå•Š";
 	ret = _pObj->User_Update(user2);
 	assert(ret == success);
 }
@@ -373,10 +373,10 @@ void CDC_User_Tests::testFind()
 	user1.User_ID = 10011;
 	user1.User_Role = 0;
 	user1.User_UserGroup_ID = 1001;
-	user1.User_Name = "²éÕÒ";
+	user1.User_Name = "æŸ¥æ‰¾";
 	user1.User_LoginName = "test_Find1";
 	user1.User_Password = "test_Find1";
-	user1.User_Remarks = "±¸×¢123_";
+	user1.User_Remarks = "å¤‡æ³¨123_";
 	id = _pObj->User_Add(user1);
 	assert(id > 0);
 
@@ -384,10 +384,10 @@ void CDC_User_Tests::testFind()
 	user2.User_ID = 10012;
 	user2.User_Role = 0;
 	user2.User_UserGroup_ID = 1002;
-	user2.User_Name = "²éÕÒ";
+	user2.User_Name = "æŸ¥æ‰¾";
 	user2.User_LoginName = "test_Find2";
 	user2.User_Password = "test_Find2";
-	user2.User_Remarks = "±¸×¢123_";
+	user2.User_Remarks = "å¤‡æ³¨123_";
 	id = _pObj->User_Add(user2);
 	assert(id > 0);
 

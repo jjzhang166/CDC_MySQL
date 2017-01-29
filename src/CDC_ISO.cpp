@@ -1,26 +1,28 @@
-#include "CDC_User.h"
+#include "CDC_ISO.h"
 #include "LogHelper.h"
 #include "ComDef.h"
 #include "cJSON.h"
 #include "utility.h"
+#include <stdio.h>
 #include <assert.h> 
 #include <stdio.h>
 #include <algorithm>
 
 using namespace std;
 
-CDC_User::CDC_User(CppMySQLDB& db)
+CDC_ISO::CDC_ISO(CppMySQLDB& db)
 	:_db(db)
 {
 }
 
 
-CDC_User::~CDC_User()
+CDC_ISO::~CDC_ISO()
 {
 	_stmt.clear();
 }
 
-std::string CDC_User::CDC_User_Add(const std::string& req)
+
+std::string CDC_ISO::CDC_ISO_Add(const std::string& req)
 {
 	int ret = 0;
 	double id = -1;
@@ -42,27 +44,19 @@ std::string CDC_User::CDC_User_Add(const std::string& req)
 			assert(ToLower(method) == "part");
 		}
 
-	#define JSON_ADD_ONE_ELEMENT(X, Y) \
+#define JSON_ADD_ONE_ELEMENT(X, Y) \
 		tmp = cJSON_GetObjectItem(json, #X);\
 		if (tmp) t.X = tmp->Y;\
-		else goto END;
+				else goto END;
 
-	#define JSON_ADD_ONE_ELEMENT2(X, Y) \
-		tmp = cJSON_GetObjectItem(json, #X);\
-		if (tmp) t.X = tmp->Y;
+		TCDC_ISO t;
+		JSON_ADD_ONE_ELEMENT(ISO_HostID, valuedouble);
+		JSON_ADD_ONE_ELEMENT(ISO_Name, valuestring);
+		JSON_ADD_ONE_ELEMENT(ISO_Path, valuestring);
 
-		TCDC_User t;
-		JSON_ADD_ONE_ELEMENT(User_Role, valueint);
-		JSON_ADD_ONE_ELEMENT(User_UserGroup_ID, valuedouble);
-		JSON_ADD_ONE_ELEMENT(User_Name, valuestring);
-		JSON_ADD_ONE_ELEMENT(User_LoginName, valuestring);
-		JSON_ADD_ONE_ELEMENT(User_Password, valuestring);
-		JSON_ADD_ONE_ELEMENT(User_Remarks, valuestring);	
+#undef JSON_ADD_ONE_ELEMENT
 
-	#undef JSON_ADD_ONE_ELEMENT
-	#undef JSON_ADD_ONE_ELEMENT2
-
-		id = User_Add(t);
+		id = ISO_Add(t);
 	}
 
 END:
@@ -71,15 +65,16 @@ END:
 	ret = (id >= 0) ? 1 : 0;
 	cJSON *result = cJSON_CreateObject();
 	cJSON_AddNumberToObject(result, "Result", ret);
+	// if success then return id
 	if (ret > 0)
-		cJSON_AddNumberToObject(result, "User_ID", id);
+		cJSON_AddNumberToObject(result, "ISO_ID", id);
 	char *out = cJSON_Print(result);
 	cJSON_Delete(result);
 
 	return string(out);
 }
 
-std::string CDC_User::CDC_User_Del(const std::string& req)
+std::string CDC_ISO::CDC_ISO_Del(const std::string& req)
 {
 	int ret = 0;
 	cJSON *json, *tmp, *element;
@@ -100,12 +95,12 @@ std::string CDC_User::CDC_User_Del(const std::string& req)
 		}
 
 		double id;
-		tmp = cJSON_GetObjectItem(json, "User_ID");
+		tmp = cJSON_GetObjectItem(json, "ISO_ID");
 		if (tmp)
 			id = tmp->valuedouble;
 		else
 			goto END;
-		ret = User_Del(id);
+		ret = ISO_Del(id);
 	}
 
 END:
@@ -119,7 +114,7 @@ END:
 	return string(out);
 }
 
-std::string CDC_User::CDC_User_Update(const std::string& req)
+std::string CDC_ISO::CDC_ISO_Update(const std::string& req)
 {
 	int ret = 0;
 	bool hasItem = false;
@@ -142,36 +137,33 @@ std::string CDC_User::CDC_User_Update(const std::string& req)
 			assert(ToLower(method) == "part");
 		}
 
-
 	#define JSON_GET_OBJECT_ITEM(X, Y) \
 		tmp = cJSON_GetObjectItem(json, #X);\
 		if (tmp){\
 			if (!hasItem) hasItem = true;\
 			t.X = tmp->Y;\
 			keyList.push_back(#X);\
-		}
+				}
 
-		TCDC_User t;
-		const char *key = "User_ID";
+		TCDC_ISO t;
+		const char *key = "ISO_ID";
 		tmp = cJSON_GetObjectItem(json, key);
 		if (tmp)
 		{
 			if (!hasItem) hasItem = true;
-			t.User_ID = tmp->valuedouble;
+			t.ISO_ID = tmp->valuedouble;
 			keyList.push_back(key);
 		}
-		JSON_GET_OBJECT_ITEM(User_ID, valuedouble);
-		JSON_GET_OBJECT_ITEM(User_Role, valueint);
-		JSON_GET_OBJECT_ITEM(User_UserGroup_ID, valuedouble);
-		JSON_GET_OBJECT_ITEM(User_Name, valuestring);
-		JSON_GET_OBJECT_ITEM(User_LoginName, valuestring);
-		JSON_GET_OBJECT_ITEM(User_Password, valuestring);
-		JSON_GET_OBJECT_ITEM(User_Remarks, valuestring);
+		JSON_GET_OBJECT_ITEM(ISO_ID, valuedouble);
+		JSON_GET_OBJECT_ITEM(ISO_HostID, valuedouble);
+		JSON_GET_OBJECT_ITEM(ISO_Name, valuestring);
+		JSON_GET_OBJECT_ITEM(ISO_Path, valuestring);
+
 	#undef JSON_GET_OBJECT_ITEM
 
 		if (!hasItem) goto END;
 
-		ret = User_Update(t, keyList);
+		ret = ISO_Update(t, keyList);
 	}
 
 END:
@@ -185,16 +177,14 @@ END:
 	return string(out);
 }
 
-
-
-std::string CDC_User::CDC_User_Find(const std::string& req)
+std::string CDC_ISO::CDC_ISO_Find(const std::string& req)
 {
 	int ret = 0;
 	bool hasItem = false;
 	bool isAll = true;
 	cJSON *json, *tmp, *element;
-	TCDC_User user;
-	list<TCDC_User> lst;
+	TCDC_ISO t;
+	list<TCDC_ISO> lst;
 	json = cJSON_Parse(req.c_str());
 	if (!json)
 	{
@@ -229,31 +219,20 @@ std::string CDC_User::CDC_User_Find(const std::string& req)
 			if (!hasItem){\
 				ss << " " << X << " = ";\
 				hasItem = true;\
-			}\
-			else\
-				ss << " AND " << X << " = ";\
-		}
+						}else\
+				ss << " AND " << X << " = ";}
 
 		stringstream ss;
-		JSON_GET_OBJECT_ITEM("User_ID");
+		JSON_GET_OBJECT_ITEM("ISO_ID");
 		if (tmp) ss << tmp->valuedouble;
 
-		JSON_GET_OBJECT_ITEM("User_Role");
-		if (tmp) ss << tmp->valueint;
-		
-		JSON_GET_OBJECT_ITEM("User_UserGroup_ID");
+		JSON_GET_OBJECT_ITEM("ISO_HostID");
 		if (tmp) ss << tmp->valuedouble;
-		
-		JSON_GET_OBJECT_ITEM("User_Name");
-		if (tmp) ss << "'" << tmp->valuestring << "'";
-		
-		JSON_GET_OBJECT_ITEM("User_LoginName");
+
+		JSON_GET_OBJECT_ITEM("ISO_Name");
 		if (tmp) ss << "'" << tmp->valuestring << "'";
 
-		JSON_GET_OBJECT_ITEM("User_Password");
-		if (tmp) ss << "'" << tmp->valuestring << "'";
-
-		JSON_GET_OBJECT_ITEM("User_Remarks");
+		JSON_GET_OBJECT_ITEM("ISO_Path");
 		if (tmp) ss << "'" << tmp->valuestring << "'";
 
 	#undef JSON_GET_OBJECT_ITEM
@@ -261,7 +240,7 @@ std::string CDC_User::CDC_User_Find(const std::string& req)
 		if (!hasItem) goto END;
 
 		string whereSql = ss.str();
-		ret = User_Find2(whereSql, user);
+		ret = ISO_Find2(whereSql, t);
 	}
 
 END:
@@ -275,13 +254,10 @@ END:
 	else
 	{
 	#define JSON_ADD_ONE_ELEMENT \
-		cJSON_AddNumberToObject(data, "User_ID", user.User_ID);\
-		cJSON_AddNumberToObject(data, "User_Role", user.User_Role);\
-		cJSON_AddNumberToObject(data, "User_UserGroup_ID", user.User_UserGroup_ID);\
-		cJSON_AddStringToObject(data, "User_Name", user.User_Name.c_str());\
-		cJSON_AddStringToObject(data, "User_LoginName", user.User_LoginName.c_str());\
-		cJSON_AddStringToObject(data, "User_Password", user.User_Password.c_str());\
-		cJSON_AddStringToObject(data, "User_Remarks", user.User_Remarks.c_str());
+		cJSON_AddNumberToObject(data, "ISO_ID", t.ISO_ID);\
+		cJSON_AddNumberToObject(data, "ISO_HostID", t.ISO_HostID);\
+		cJSON_AddStringToObject(data, "ISO_Name", t.ISO_Name.c_str());\
+		cJSON_AddStringToObject(data, "ISO_Path", t.ISO_Path.c_str());
 
 		cJSON *dataArr, *data = 0;
 		if (!isAll)
@@ -296,9 +272,9 @@ END:
 			if (lst.size() > 1)
 			{
 				cJSON_AddItemToObject(result, "Data", dataArr = cJSON_CreateArray());
-				for (list<TCDC_User>::iterator it = lst.begin(); it != lst.end(); ++it)
+				for (list<TCDC_ISO>::iterator it = lst.begin(); it != lst.end(); ++it)
 				{
-					user = *it;
+					t = *it;
 					cJSON_AddItemToArray(dataArr, data = cJSON_CreateObject());
 					JSON_ADD_ONE_ELEMENT;
 				}
@@ -306,7 +282,7 @@ END:
 			else if (lst.size() == 1)
 			{
 				cJSON_AddItemToObject(result, "Data", data = cJSON_CreateObject());
-				user = lst.back();
+				t = lst.back();
 				JSON_ADD_ONE_ELEMENT;
 			}
 		}
@@ -317,8 +293,7 @@ END:
 	return string(out);
 }
 
-
-std::string CDC_User::CDC_User_FindCount(const std::string& req)
+std::string CDC_ISO::CDC_ISO_FindCount(const std::string& req)
 {
 	int ret = 0;
 	bool hasItem = false;
@@ -348,49 +323,38 @@ std::string CDC_User::CDC_User_FindCount(const std::string& req)
 
 		if (isAll)
 		{
-			count = User_Count();
+			count = ISO_Count();
 			goto END;
 		}
 
-	#define JSON_GET_OBJECT_ITEM(X) \
+#define JSON_GET_OBJECT_ITEM(X) \
 		tmp = cJSON_GetObjectItem(json, X);\
 		if (tmp){\
 			if (!hasItem){\
 				ss << " " << X << " = ";\
 				hasItem = true;\
-						}\
-					else\
-				ss << " AND " << X << " = ";\
-			}
+			}else\
+				ss << " AND " << X << " = ";}
 
 		stringstream ss;
-		JSON_GET_OBJECT_ITEM("User_ID");
+		JSON_GET_OBJECT_ITEM("ISO_ID");
 		if (tmp) ss << tmp->valuedouble;
 
-		JSON_GET_OBJECT_ITEM("User_Role");
-		if (tmp) ss << tmp->valueint;
-
-		JSON_GET_OBJECT_ITEM("User_UserGroup_ID");
+		JSON_GET_OBJECT_ITEM("ISO_HostID");
 		if (tmp) ss << tmp->valuedouble;
 
-		JSON_GET_OBJECT_ITEM("User_Name");
+		JSON_GET_OBJECT_ITEM("ISO_Name");
 		if (tmp) ss << "'" << tmp->valuestring << "'";
 
-		JSON_GET_OBJECT_ITEM("User_LoginName");
+		JSON_GET_OBJECT_ITEM("ISO_Path");
 		if (tmp) ss << "'" << tmp->valuestring << "'";
 
-		JSON_GET_OBJECT_ITEM("User_Password");
-		if (tmp) ss << "'" << tmp->valuestring << "'";
-
-		JSON_GET_OBJECT_ITEM("User_Remarks");
-		if (tmp) ss << "'" << tmp->valuestring << "'";
-
-	#undef JSON_GET_OBJECT_ITEM
+#undef JSON_GET_OBJECT_ITEM
 
 		if (!hasItem) goto END;
 
 		string whereSql = ss.str();
-		count = User_Count(whereSql);
+		count = ISO_Count(whereSql);
 	}
 
 END:
@@ -401,33 +365,30 @@ END:
 		cJSON_AddNumberToObject(result, "Result", 0);
 	else
 		cJSON_AddNumberToObject(result, "Result", count);
-	
 	out = cJSON_Print(result);
 	cJSON_Delete(result);
 	return string(out);
 }
 
-/////////////////////////////
-double CDC_User::User_Add(TCDC_User& src)
+////////////////////////////////////////////////////////////
+
+double CDC_ISO::ISO_Add(TCDC_ISO& src)
 {
 	double id = -1;
 	try
 	{
-		if (User_Find(src.User_ID))
+		if (ISO_Find(src.ISO_ID))
 			return exists;
 
-		_stmt = _db.compileStatement("insert into CDC_User values (?, ?, ?, ?, ?, ?, ?);");
-		if (src.User_ID != INVALID_NUM && src.User_ID > 0)
-			id = src.User_ID;
+		_stmt = _db.compileStatement("insert into CDC_ISO values (?, ?, ?, ?);");
+		if (src.ISO_ID != INVALID_NUM && src.ISO_ID > 0)
+			id = src.ISO_ID;
 		else
 			id = GetMaxID() + 1;
 		_stmt.bind(1, id);
-		_stmt.bind(2, src.User_Role);
-		_stmt.bind(3, src.User_UserGroup_ID);
-		_stmt.bind(4, src.User_Name);
-		_stmt.bind(5, src.User_LoginName);
-		_stmt.bind(6, src.User_Password);
-		_stmt.bind(7, src.User_Remarks);
+		_stmt.bind(2, src.ISO_HostID);
+		_stmt.bind(3, src.ISO_Name);
+		_stmt.bind(4, src.ISO_Path);
 
 		_stmt.execDML();
 		_stmt.reset();
@@ -440,14 +401,14 @@ double CDC_User::User_Add(TCDC_User& src)
 	return id;
 }
 
-int CDC_User::User_Del(double id)
+int CDC_ISO::ISO_Del(double id)
 {
 	try
 	{
-		if (!User_Find(id))
+		if (!ISO_Find(id))
 			return notExists;
 
-		_stmt = _db.compileStatement("delete from CDC_User where User_ID = ?;");
+		_stmt = _db.compileStatement("delete from CDC_ISO where ISO_ID = ?;");
 		_stmt.bind(1, id);
 		_stmt.execDML();
 		_stmt.reset();
@@ -460,15 +421,15 @@ int CDC_User::User_Del(double id)
 	return success;
 }
 
-int CDC_User::User_Del(const std::string& name)
+int CDC_ISO::ISO_Del(const std::string& name)
 {
 	try
 	{
-		if (!User_Find(name))
+		if (!ISO_Find(name))
 			return notExists;
 
 		char buf[1024] = { 0 };
-		sprintf(buf, "delete from CDC_User where User_Name = %s;", name.c_str());
+		sprintf(buf, "delete from CDC_ISO where ISO_Name = %s;", name.c_str());
 		_db.execDML(buf);
 	}
 	catch (CppMySQLException& e)
@@ -479,25 +440,20 @@ int CDC_User::User_Del(const std::string& name)
 	return success;
 }
 
-int CDC_User::User_Update(TCDC_User& src)
+int CDC_ISO::ISO_Update(TCDC_ISO& src)
 {
 	try
 	{
-		if (!User_Find(src.User_ID))
+		if (!ISO_Find(src.ISO_ID))
 			return notExists;
 
-		_stmt = _db.compileStatement("update CDC_User \
-			set User_Role = ?, User_UserGroup_ID = ?, User_Name = ?, \
-			User_LoginName = ?, User_Password = ?, User_Remarks = ? \
-		where User_ID = ?;");
+		_stmt = _db.compileStatement("update CDC_ISO \
+			set ISO_HostID = ?, ISO_Name = ?, ISO_Path = ? where ISO_ID = ?;");
 		
-		_stmt.bind(1, src.User_Role);
-		_stmt.bind(2, src.User_UserGroup_ID);
-		_stmt.bind(3, src.User_Name);
-		_stmt.bind(4, src.User_LoginName);
-		_stmt.bind(5, src.User_Password);
-		_stmt.bind(6, src.User_Remarks);
-		_stmt.bind(7, src.User_ID);
+		_stmt.bind(1, src.ISO_HostID);
+		_stmt.bind(2, src.ISO_Name);
+		_stmt.bind(3, src.ISO_Path);
+		_stmt.bind(4, src.ISO_ID);
 
 		_stmt.execDML();
 		_stmt.reset();
@@ -510,46 +466,40 @@ int CDC_User::User_Update(TCDC_User& src)
 	return success;
 }
 
-int CDC_User::User_Update(TCDC_User& src, std::list<string>& keyList)
+int CDC_ISO::ISO_Update(TCDC_ISO& src, std::list<std::string>& keyList)
 {
 	try
 	{
-		list<string>::iterator it = find(keyList.begin(), keyList.end(), "User_ID");
+		list<string>::iterator it = find(keyList.begin(), keyList.end(), "ISO_ID");
 		if (it == keyList.end())
 			return inputConditionError;
-			
-		if (!User_Find(src.User_ID))
+
+		if (!ISO_Find(src.ISO_ID))
 			return notExists;
 
-		string updateSql = "update CDC_User set ";
+		string updateSql = "update CDC_ISO set ";
 		for (list<string>::iterator it = keyList.begin(); it != keyList.end(); ++it)
 		{
-			if (*it != "User_ID")
+			if (*it != "ISO_ID")
 				updateSql = updateSql + *it + " = ?, ";
 		}
 		updateSql = Trim(updateSql);
 		updateSql = updateSql.substr(0, updateSql.size() - 1);
-		updateSql += " where User_ID = ?;";
+		updateSql += " where ISO_ID = ?;";
 
 		_stmt = _db.compileStatement(updateSql.c_str());
 
 		int index = 1;
 		for (list<string>::iterator it = keyList.begin(); it != keyList.end(); ++it)
 		{
-			if (*it == "User_Role")
-				_stmt.bind(index++, src.User_Role);
-			else if (*it == "User_UserGroup_ID")
-				_stmt.bind(index++, src.User_UserGroup_ID);
-			else if (*it == "User_Name")
-				_stmt.bind(index++, src.User_Name);
-			else if (*it == "User_LoginName")
-				_stmt.bind(index++, src.User_LoginName);
-			else if (*it == "User_Password")
-				_stmt.bind(index++, src.User_Password);
-			else if (*it == "User_Remarks")
-				_stmt.bind(index++, src.User_Remarks);
+			if (*it == "ISO_HostID")
+				_stmt.bind(index++, src.ISO_HostID);
+			else if (*it == "ISO_Name")
+				_stmt.bind(index++, src.ISO_Name);
+			else if (*it == "ISO_Path")
+				_stmt.bind(index++, src.ISO_Path);
 		}
-		_stmt.bind(index, src.User_ID);
+		_stmt.bind(index, src.ISO_ID);
 
 		_stmt.execDML();
 		_stmt.reset();
@@ -562,15 +512,14 @@ int CDC_User::User_Update(TCDC_User& src, std::list<string>& keyList)
 	return success;
 }
 
-bool CDC_User::User_Find(double id)
+bool CDC_ISO::ISO_Find(double id)
 {
 	if (id == INVALID_NUM)
 		return false;
-
 	try
 	{
 		char buf[1024] = { 0 };
-		sprintf(buf, "select count(*) from CDC_User where User_ID = %f;", id);
+		sprintf(buf, "select count(*) from CDC_ISO where ISO_ID = %f;", id);
 		return (_db.execScalar(buf) != 0);
 	}
 	catch (CppMySQLException& e)
@@ -581,12 +530,12 @@ bool CDC_User::User_Find(double id)
 	return true;
 }
 
-bool CDC_User::User_Find(const std::string& name)
+bool CDC_ISO::ISO_Find(const std::string& name)
 {
 	try
 	{
 		char buf[1024] = { 0 };
-		sprintf(buf, "select count(*) from CDC_User where User_LoginName = '%s';", name.c_str());
+		sprintf(buf, "select count(*) from CDC_ISO where ISO_Name = '%s';", name.c_str());
 		int dd = _db.execScalar(buf);
 		return (_db.execScalar(buf) != 0);
 	}
@@ -599,28 +548,25 @@ bool CDC_User::User_Find(const std::string& name)
 }
 
 
-int CDC_User::User_Find(double id, TCDC_User& t)
+int CDC_ISO::ISO_Find(double id, TCDC_ISO& t)
 {
 	try
 	{
-		if (!User_Find(id))
+		if (!ISO_Find(id))
 			return notExists;
 
 		CppMySQLQuery q;
 		char buf[1024] = { 0 };
-		sprintf(buf, "select * from CDC_User where User_ID = %f;", id);
+		sprintf(buf, "select * from CDC_ISO where ISO_ID = %f;", id);
 
 		q = _db.execQuery(buf);
 
 		if (!q.eof())
 		{
-			t.User_ID = q.getDoubleField(0);
-			t.User_Role = q.getIntField(1);
-			t.User_UserGroup_ID = q.getDoubleField(2);
-			t.User_Name = q.getStringField(3);
-			t.User_LoginName = q.getStringField(4);
-			t.User_Password = q.getStringField(5);
-			t.User_Remarks = q.getStringField(6);
+			t.ISO_ID = q.getDoubleField("ISO_ID");
+			t.ISO_HostID = q.getDoubleField("ISO_HostID");
+			t.ISO_Name = q.fieldValue("ISO_Name");
+			t.ISO_Path = q.fieldValue("ISO_Path");
 			return success;
 		}
 		MDEBUG << "not find, id: " << id;
@@ -634,28 +580,25 @@ int CDC_User::User_Find(double id, TCDC_User& t)
 	return success;
 }
 
-int CDC_User::User_Find(const std::string& name, TCDC_User& t)
+int CDC_ISO::ISO_Find(const std::string& name, TCDC_ISO& t)
 {
 	try
 	{
-		if (!User_Find(name))
+		if (!ISO_Find(name))
 			return notExists;
 
 		CppMySQLQuery q;
 		char buf[1024] = { 0 };
-		sprintf(buf, "select * from CDC_User where User_LoginName = '%s';", name.c_str());
+		sprintf(buf, "select * from CDC_ISO where ISO_Name = '%s';", name.c_str());
 
 		q = _db.execQuery(buf);
 
 		if (!q.eof())
 		{
-			t.User_ID = q.getDoubleField(0);
-			t.User_Role = q.getIntField(1);
-			t.User_UserGroup_ID = q.getDoubleField(2);
-			t.User_Name = q.getStringField(3);
-			t.User_LoginName = q.getStringField(4);
-			t.User_Password = q.getStringField(5);
-			t.User_Remarks = q.getStringField(6);
+			t.ISO_ID = q.getDoubleField("ISO_ID");
+			t.ISO_HostID = q.getDoubleField("ISO_HostID");
+			t.ISO_Name = q.fieldValue("ISO_Name");
+			t.ISO_Path = q.fieldValue("ISO_Path");
 			return success;
 		}
 		MDEBUG << "not find, name: " << name;
@@ -669,26 +612,22 @@ int CDC_User::User_Find(const std::string& name, TCDC_User& t)
 	return success;
 }
 
-
-int CDC_User::User_Find2(const std::string& whereSql, TCDC_User& t)
+int CDC_ISO::ISO_Find2(const std::string& whereSql, TCDC_ISO& t)
 {
 	try
 	{
 		CppMySQLQuery q;
 		char buf[1024] = { 0 };
-		sprintf(buf, "select * from CDC_User where %s;", whereSql.c_str());
+		sprintf(buf, "select * from CDC_ISO where %s;", whereSql.c_str());
 
 		q = _db.execQuery(buf);
 
 		if (!q.eof())
 		{
-			t.User_ID = q.getDoubleField(0);
-			t.User_Role = q.getIntField(1);
-			t.User_UserGroup_ID = q.getDoubleField(2);
-			t.User_Name = q.getStringField(3);
-			t.User_LoginName = q.getStringField(4);
-			t.User_Password = q.getStringField(5);
-			t.User_Remarks = q.getStringField(6);
+			t.ISO_ID = q.getDoubleField("ISO_ID");
+			t.ISO_HostID = q.getDoubleField("ISO_HostID");
+			t.ISO_Name = q.fieldValue("ISO_Name");
+			t.ISO_Path = q.fieldValue("ISO_Path");
 			return success;
 		}
 		MDEBUG << "not find, whereSql: " << whereSql;
@@ -702,11 +641,11 @@ int CDC_User::User_Find2(const std::string& whereSql, TCDC_User& t)
 	return success;
 }
 
-int CDC_User::User_Count()
+int CDC_ISO::ISO_Count()
 {
 	try
 	{
-		return _db.execScalar("select count(*) from CDC_User;");
+		return _db.execScalar("select count(*) from CDC_ISO;");
 	}
 	catch (CppMySQLException& e)
 	{
@@ -716,12 +655,12 @@ int CDC_User::User_Count()
 	return 0;
 }
 
-int CDC_User::User_Count(const std::string& whereSql)
+int CDC_ISO::ISO_Count(const std::string& whereSql)
 {
 	try
 	{
 		char buf[1024] = { 0 };
-		sprintf(buf, "select count(*) from CDC_User where %s;", whereSql.c_str());
+		sprintf(buf, "select count(*) from CDC_ISO where %s;", whereSql.c_str());
 
 		return _db.execScalar(buf);
 	}
@@ -733,23 +672,19 @@ int CDC_User::User_Count(const std::string& whereSql)
 	return 0;
 }
 
-
-std::list<TCDC_User> CDC_User::GetAll()
+std::list<TCDC_ISO> CDC_ISO::GetAll()
 {
-	std::list<TCDC_User> lst;
+	std::list<TCDC_ISO> lst;
 	try
 	{
-		CppMySQLQuery q = _db.execQuery("select * from CDC_User;");
+		CppMySQLQuery q = _db.execQuery("select * from CDC_ISO;");
 		while (!q.eof())
 		{
-			TCDC_User t;
-			t.User_ID = q.getDoubleField(0);
-			t.User_Role = q.getIntField(1);
-			t.User_UserGroup_ID = q.getDoubleField(2);
-			t.User_Name = q.getStringField(3);
-			t.User_LoginName = q.getStringField(4);
-			t.User_Password = q.getStringField(5);
-			t.User_Remarks = q.getStringField(6);
+			TCDC_ISO t;
+			t.ISO_ID = q.getDoubleField(0);
+			t.ISO_HostID = q.getDoubleField(1);
+			t.ISO_Name = q.getStringField(2);
+			t.ISO_Path = q.getStringField(3);
 
 			lst.push_back(t);
 			q.nextRow();
@@ -763,11 +698,10 @@ std::list<TCDC_User> CDC_User::GetAll()
 	return lst;
 }
 
-
-double CDC_User::GetMaxID()
+double CDC_ISO::GetMaxID()
 {
 	char buf[1024] = { 0 };
-	sprintf(buf, "select max(User_ID) from CDC_User");
+	sprintf(buf, "select max(ISO_ID) from CDC_ISO");
 	CppMySQLQuery q = _db.execQuery(buf);
 
 	if (q.eof() || q.numFields() < 1)

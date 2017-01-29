@@ -15,7 +15,7 @@ namespace
 {
 	CppMySQLDB* pDB;
 	const char* gszDB = "CDCMySQLTest";
-	#define HOST		"127.0.0.1"
+	#define Host		"127.0.0.1"
 	#define USER		"root"
 	#define PASSWORD	"123456"
 	int ret = -1;
@@ -42,7 +42,7 @@ void CDC_Host_Tests::setUp()
 	{
 		pDB = new CppMySQLDB();
 		pDB->setOptions(MYSQL_SET_CHARSET_NAME, "gbk");	
-		pDB->connect(HOST, USER, PASSWORD);
+		pDB->connect(Host, USER, PASSWORD);
 		pDB->dropDB(gszDB);
 		pDB->createDB(gszDB);
 		pDB->open(gszDB);
@@ -219,12 +219,12 @@ void CDC_Host_Tests::testCount()
 	int count = _pObj->Host_Count();
 	assert(count == 0);
 
-	TCDC_Host host;
-	host.Host_ID = 3003;
-	host.Host_Name = "计数";
-	host.Host_IP = "test_Count11";
-	host.Host_VirtNet = "test_Count1";
-	id = _pObj->Host_Add(host);
+	TCDC_Host t1;
+	t1.Host_ID = 3003;
+	t1.Host_Name = "计数";
+	t1.Host_IP = "test_Count11";
+	t1.Host_VirtNet = "test_Count1";
+	id = _pObj->Host_Add(t1);
 	assert(id > 0);
 
 	count = _pObj->Host_Count();
@@ -233,31 +233,31 @@ void CDC_Host_Tests::testCount()
 
 void CDC_Host_Tests::testAdd()
 {
-	TCDC_Host host;
-	host.Host_ID = 10011;
-	host.Host_Name = "增加";
-	host.Host_IP = "test_Add1";
-	host.Host_VirtNet = "test_Add1";
-	id = _pObj->Host_Add(host);
+	TCDC_Host t1;
+	t1.Host_ID = 10011;
+	t1.Host_Name = "增加";
+	t1.Host_IP = "test_Add1";
+	t1.Host_VirtNet = "test_Add1";
+	id = _pObj->Host_Add(t1);
 	assert(id > 0);
 }
 
 void CDC_Host_Tests::testDel()
 {
-	TCDC_Host host1;
-	host1.Host_ID = 10011;
-	host1.Host_Name = "删除";
-	host1.Host_IP = "test_Del1";
-	host1.Host_VirtNet = "test_Del1";
-	id = _pObj->Host_Add(host1);
+	TCDC_Host Host1;
+	Host1.Host_ID = 10011;
+	Host1.Host_Name = "删除";
+	Host1.Host_IP = "test_Del1";
+	Host1.Host_VirtNet = "test_Del1";
+	id = _pObj->Host_Add(Host1);
 	assert(id > 0);
 
-	TCDC_Host host2;
-	host2.Host_ID = 10012;
-	host2.Host_Name = "删除";
-	host2.Host_IP = "test_Del2";
-	host2.Host_VirtNet = "test_Del2";
-	id = _pObj->Host_Add(host2);
+	TCDC_Host Host2;
+	Host2.Host_ID = 10012;
+	Host2.Host_Name = "删除";
+	Host2.Host_IP = "test_Del2";
+	Host2.Host_VirtNet = "test_Del2";
+	id = _pObj->Host_Add(Host2);
 	assert(id > 0);
 
 	ret = _pObj->Host_Del(1002);
@@ -269,39 +269,39 @@ void CDC_Host_Tests::testDel()
 
 void CDC_Host_Tests::testUpdate()
 {
-	TCDC_Host host1;
-	host1.Host_ID = 10011;
-	host1.Host_Name = "更新";
-	host1.Host_IP = "test_Update2";
-	host1.Host_VirtNet = "test_Update2";
-	id = _pObj->Host_Add(host1);
+	TCDC_Host Host1;
+	Host1.Host_ID = 10011;
+	Host1.Host_Name = "更新";
+	Host1.Host_IP = "test_Update2";
+	Host1.Host_VirtNet = "test_Update2";
+	id = _pObj->Host_Add(Host1);
 	assert(id > 0);
 
-	TCDC_Host host2;
-	host2.Host_ID = 10011;
-	host2.Host_Name = "更新22";
-	host2.Host_IP = "test_Update33";
-	host2.Host_VirtNet = "test_Update44";
-	ret = _pObj->Host_Update(host2);
+	TCDC_Host Host2;
+	Host2.Host_ID = 10011;
+	Host2.Host_Name = "更新22";
+	Host2.Host_IP = "test_Update33";
+	Host2.Host_VirtNet = "test_Update44";
+	ret = _pObj->Host_Update(Host2);
 	assert(ret == success);
 }
 
 void CDC_Host_Tests::testFind()
 {
-	TCDC_Host host1;
-	host1.Host_ID = 10011;
-	host1.Host_Name = "查找1";
-	host1.Host_IP = "test_Find1";
-	host1.Host_VirtNet = "test_Find1";
-	id = _pObj->Host_Add(host1);
+	TCDC_Host Host1;
+	Host1.Host_ID = 10011;
+	Host1.Host_Name = "查找1";
+	Host1.Host_IP = "test_Find1";
+	Host1.Host_VirtNet = "test_Find1";
+	id = _pObj->Host_Add(Host1);
 	assert(id > 0);
 
-	TCDC_Host host2;
-	host2.Host_ID = 10012;
-	host2.Host_Name = "查找2";
-	host2.Host_IP = "test_Find2";
-	host2.Host_VirtNet = "test_Find2";
-	id = _pObj->Host_Add(host2);
+	TCDC_Host Host2;
+	Host2.Host_ID = 10012;
+	Host2.Host_Name = "查找2";
+	Host2.Host_IP = "test_Find2";
+	Host2.Host_VirtNet = "test_Find2";
+	id = _pObj->Host_Add(Host2);
 	assert(id > 0);
 
 	bool find = _pObj->Host_Find(10011);

@@ -88,9 +88,15 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="..\include\CDC_Authorization.h" />
+    <ClInclude Include="..\include\CDC_EDU_VM.h" />
     <ClInclude Include="..\include\CDC_Host.h" />
+    <ClInclude Include="..\include\CDC_ISO.h" />
+    <ClInclude Include="..\include\CDC_Template.h" />
+    <ClInclude Include="..\include\CDC_ThinClientGroup.h" />
     <ClInclude Include="..\include\CDC_User.h" />
     <ClInclude Include="..\include\CDC_UserGroup.h" />
+    <ClInclude Include="..\include\CDC_VM.h" />
     <ClInclude Include="..\include\cJSON.h" />
     <ClInclude Include="..\include\ComDef.h" />
     <ClInclude Include="..\include\CppMySQL.h" />
@@ -99,9 +105,16 @@
     <ClInclude Include="..\include\utility.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\src\CDC_Authorization.cpp" />
+    <ClCompile Include="..\src\CDC_EDU_VM.cpp" />
     <ClCompile Include="..\src\CDC_Host.cpp" />
+    <ClCompile Include="..\src\CDC_ISO.cpp" />
+    <ClCompile Include="..\src\CDC_Template.cpp" />
+    <ClCompile Include="..\src\CDC_ThinClient.cpp" />
+    <ClCompile Include="..\src\CDC_ThinClientGroup.cpp" />
     <ClCompile Include="..\src\CDC_User.cpp" />
     <ClCompile Include="..\src\CDC_UserGroup.cpp" />
+    <ClCompile Include="..\src\CDC_VM.cpp" />
     <ClCompile Include="..\src\cJSON.c" />
     <ClCompile Include="..\src\CppMySQL.cpp" />
     <ClCompile Include="..\src\utility.cpp" />

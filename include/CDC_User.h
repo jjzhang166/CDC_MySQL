@@ -9,6 +9,7 @@
 
 class CDC_MYSQL_API CDC_User
 {
+	DISABLE_COPY(CDC_User);
 public:
 
 	std::string CDC_User_Add(const std::string& req);
@@ -33,7 +34,7 @@ public:
 	bool User_Find(const std::string& name);
 	int User_Find(double id, TCDC_User& t);
 	int User_Find(const std::string& name, TCDC_User& t);
-	int User_find2(const std::string& whereSql, TCDC_User& t);
+	int User_Find2(const std::string& whereSql, TCDC_User& t);
 
 	int User_Count();
 	int User_Count(const std::string& whereSql);

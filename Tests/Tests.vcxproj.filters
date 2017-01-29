@@ -39,6 +39,27 @@
     <ClCompile Include="..\src\cJSON.c">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="CDC_Template_Tests.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="CDC_ISO_Tests.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="CDC_ThinClientGroup_Tests.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="CDC_ThinClient_Tests.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="CDC_VM_Tests.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="CDC_EDU_VM_Tests.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="CDC_Authorization_Tests.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="CDC_UserGroup_Tests.h">
@@ -57,6 +78,27 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="ComDef.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="CDC_Template_Tests.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="CDC_ISO_Tests.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="CDC_ThinClientGroup_Tests.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="CDC_ThinClient_Tests.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="CDC_VM_Tests.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="CDC_EDU_VM_Tests.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="CDC_Authorization_Tests.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

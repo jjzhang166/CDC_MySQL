@@ -1,4 +1,4 @@
-#include "CDC_UserGroup.h"
+#include "CDC_ThinClientGroup.h"
 #include "LogHelper.h"
 #include "ComDef.h"
 #include "cJSON.h"
@@ -9,19 +9,19 @@
 
 using namespace std;
 
-CDC_UserGroup::CDC_UserGroup(CppMySQLDB& db)
+CDC_ThinClientGroup::CDC_ThinClientGroup(CppMySQLDB& db)
 	:_db(db)
 {
 }
 
 
-CDC_UserGroup::~CDC_UserGroup()
+CDC_ThinClientGroup::~CDC_ThinClientGroup()
 {
 	_stmt.clear();
 }
 
 
-std::string CDC_UserGroup::CDC_UserGroup_Add(const std::string& req)
+std::string CDC_ThinClientGroup::CDC_ThinClientGroup_Add(const std::string& req)
 {
 	int ret = 0;
 	double id = -1;
@@ -43,13 +43,13 @@ std::string CDC_UserGroup::CDC_UserGroup_Add(const std::string& req)
 			assert(ToLower(method) == "part");
 		}
 		
-		TCDC_UserGroup userGroup;
-		tmp = cJSON_GetObjectItem(json, "UserGroup_Name");
+		TCDC_ThinClientGroup ThinClientGroup;
+		tmp = cJSON_GetObjectItem(json, "ThinClientGroup_Name");
 		if (tmp)
-			userGroup.UserGroup_Name = tmp->valuestring;
+			ThinClientGroup.ThinClientGroup_Name = tmp->valuestring;
 		else
 			goto END;
-		id = UserGroup_Add(userGroup);
+		id = ThinClientGroup_Add(ThinClientGroup);
 	}
 
 END:
@@ -59,14 +59,14 @@ END:
 	cJSON *result = cJSON_CreateObject();
 	cJSON_AddNumberToObject(result, "Result", ret);
 	if (ret > 0)
-		cJSON_AddNumberToObject(result, "UserGroup_ID", id);
+		cJSON_AddNumberToObject(result, "ThinClientGroup_ID", id);
 	char *out = cJSON_Print(result);
 	cJSON_Delete(result);
 
 	return string(out);
 }
 
-std::string CDC_UserGroup::CDC_UserGroup_Del(const std::string& req)
+std::string CDC_ThinClientGroup::CDC_ThinClientGroup_Del(const std::string& req)
 {
 	int ret = 0;
 	cJSON *json, *tmp, *element;
@@ -87,12 +87,12 @@ std::string CDC_UserGroup::CDC_UserGroup_Del(const std::string& req)
 		}
 
 		double id;
-		tmp = cJSON_GetObjectItem(json, "UserGroup_ID");
+		tmp = cJSON_GetObjectItem(json, "ThinClientGroup_ID");
 		if (tmp)
 			id = tmp->valuedouble;
 		else
 			goto END;
-		ret = UserGroup_Del(id);
+		ret = ThinClientGroup_Del(id);
 	}
 
 END:
@@ -107,7 +107,7 @@ END:
 }
 
 
-std::string CDC_UserGroup::CDC_UserGroup_Update(const std::string& req)
+std::string CDC_ThinClientGroup::CDC_ThinClientGroup_Update(const std::string& req)
 {
 	int ret = 0;
 	bool hasItem = false;
@@ -128,23 +128,23 @@ std::string CDC_UserGroup::CDC_UserGroup_Update(const std::string& req)
 			assert(ToLower(method) == "part");
 		}
 
-		TCDC_UserGroup userGroup;
-		tmp = cJSON_GetObjectItem(json, "UserGroup_ID");
+		TCDC_ThinClientGroup ThinClientGroup;
+		tmp = cJSON_GetObjectItem(json, "ThinClientGroup_ID");
 		if (tmp)
 		{
 			if (!hasItem) hasItem = true;
-			userGroup.UserGroup_ID = tmp->valuedouble;
+			ThinClientGroup.ThinClientGroup_ID = tmp->valuedouble;
 		}
-		tmp = cJSON_GetObjectItem(json, "UserGroup_Name");
+		tmp = cJSON_GetObjectItem(json, "ThinClientGroup_Name");
 		if (tmp)
 		{
 			if (!hasItem) hasItem = true;
-			userGroup.UserGroup_Name = tmp->valuestring;
+			ThinClientGroup.ThinClientGroup_Name = tmp->valuestring;
 		}
 		
 		if (!hasItem) goto END;
 
-		ret = UserGroup_Update(userGroup);
+		ret = ThinClientGroup_Update(ThinClientGroup);
 	}
 
 END:
@@ -158,14 +158,14 @@ END:
 	return string(out);
 }
 
-std::string CDC_UserGroup::CDC_UserGroup_Find(const std::string& req)
+std::string CDC_ThinClientGroup::CDC_ThinClientGroup_Find(const std::string& req)
 {
 	int ret = 0;
 	bool hasItem = false;
 	bool isAll = true;
 	cJSON *json, *tmp, *element;
-	TCDC_UserGroup userGroup;
-	list<TCDC_UserGroup> lst;
+	TCDC_ThinClientGroup ThinClientGroup;
+	list<TCDC_ThinClientGroup> lst;
 	json = cJSON_Parse(req.c_str());
 	if (!json)
 	{
@@ -195,29 +195,29 @@ std::string CDC_UserGroup::CDC_UserGroup_Find(const std::string& req)
 		}
 
 		stringstream ss;
-		tmp = cJSON_GetObjectItem(json, "UserGroup_ID");
+		tmp = cJSON_GetObjectItem(json, "ThinClientGroup_ID");
 		if (tmp)
 		{
 			if (!hasItem)
 			{
-				ss << " UserGroup_ID = ";
+				ss << " ThinClientGroup_ID = ";
 				hasItem = true;
 			}
 			else
-				ss << " AND UserGroup_ID = ";
+				ss << " AND ThinClientGroup_ID = ";
 			ss << tmp->valuedouble;
 		}
-		tmp = cJSON_GetObjectItem(json, "UserGroup_Name");
+		tmp = cJSON_GetObjectItem(json, "ThinClientGroup_Name");
 		if (tmp)
 		{
 			if (!hasItem)
 			{
-				ss << " UserGroup_Name = ";
+				ss << " ThinClientGroup_Name = ";
 				hasItem = true;
 			}
 			else
 			{
-				ss << " AND UserGroup_Name = ";
+				ss << " AND ThinClientGroup_Name = ";
 			}
 			ss << "'" << tmp->valuestring << "'";
 		}
@@ -225,7 +225,7 @@ std::string CDC_UserGroup::CDC_UserGroup_Find(const std::string& req)
 		if (!hasItem) goto END;
 
 		string whereSql = ss.str();
-		ret = UserGroup_Find2(whereSql, userGroup);
+		ret = ThinClientGroup_Find2(whereSql, ThinClientGroup);
 	}
 
 END:
@@ -243,8 +243,8 @@ END:
 		{
 			cJSON_AddNumberToObject(result, "Result", 1);
 			cJSON_AddItemToObject(result, "Data", data = cJSON_CreateObject());
-			cJSON_AddNumberToObject(data, "UserGroup_ID", userGroup.UserGroup_ID);
-			cJSON_AddStringToObject(data, "UserGroup_Name", userGroup.UserGroup_Name.c_str());
+			cJSON_AddNumberToObject(data, "ThinClientGroup_ID", ThinClientGroup.ThinClientGroup_ID);
+			cJSON_AddStringToObject(data, "ThinClientGroup_Name", ThinClientGroup.ThinClientGroup_Name.c_str());
 		}
 		else
 		{
@@ -252,19 +252,19 @@ END:
 			if (lst.size() > 1)
 			{
 				cJSON_AddItemToObject(result, "Data", dataArr = cJSON_CreateArray());
-				for (list<TCDC_UserGroup>::iterator it = lst.begin(); it != lst.end(); ++it)
+				for (list<TCDC_ThinClientGroup>::iterator it = lst.begin(); it != lst.end(); ++it)
 				{
 					cJSON_AddItemToArray(dataArr, data = cJSON_CreateObject());
-					cJSON_AddNumberToObject(data, "UserGroup_ID", (*it).UserGroup_ID);
-					cJSON_AddStringToObject(data, "UserGroup_Name", (*it).UserGroup_Name.c_str());
+					cJSON_AddNumberToObject(data, "ThinClientGroup_ID", (*it).ThinClientGroup_ID);
+					cJSON_AddStringToObject(data, "ThinClientGroup_Name", (*it).ThinClientGroup_Name.c_str());
 				}
 			}
 			else if (lst.size() == 1)
 			{
 				cJSON_AddItemToObject(result, "Data", data = cJSON_CreateObject());
-				userGroup = lst.back();
-				cJSON_AddNumberToObject(data, "UserGroup_ID", userGroup.UserGroup_ID);
-				cJSON_AddStringToObject(data, "UserGroup_Name", userGroup.UserGroup_Name.c_str());
+				ThinClientGroup = lst.back();
+				cJSON_AddNumberToObject(data, "ThinClientGroup_ID", ThinClientGroup.ThinClientGroup_ID);
+				cJSON_AddStringToObject(data, "ThinClientGroup_Name", ThinClientGroup.ThinClientGroup_Name.c_str());
 			}
 
 		}
@@ -275,7 +275,7 @@ END:
 }
 
 
-std::string CDC_UserGroup::CDC_UserGroup_FindCount(const std::string& req)
+std::string CDC_ThinClientGroup::CDC_ThinClientGroup_FindCount(const std::string& req)
 {
 	int ret = 0;
 	bool hasItem = false;
@@ -305,40 +305,40 @@ std::string CDC_UserGroup::CDC_UserGroup_FindCount(const std::string& req)
 
 		if (isAll)
 		{
-			count = UserGroup_Count();
+			count = ThinClientGroup_Count();
 			goto END;
 		}
 
 		stringstream ss;
-		tmp = cJSON_GetObjectItem(json, "UserGroup_ID");
+		tmp = cJSON_GetObjectItem(json, "ThinClientGroup_ID");
 		if (tmp)
 		{
 			if (!hasItem)
 			{
-				ss << " UserGroup_ID = ";
+				ss << " ThinClientGroup_ID = ";
 				hasItem = true;
 			}
 			else
-				ss << " AND UserGroup_ID = ";
+				ss << " AND ThinClientGroup_ID = ";
 			ss << tmp->valuedouble;
 		}
-		tmp = cJSON_GetObjectItem(json, "UserGroup_Name");
+		tmp = cJSON_GetObjectItem(json, "ThinClientGroup_Name");
 		if (tmp)
 		{
 			if (!hasItem)
 			{
-				ss << " UserGroup_Name = ";
+				ss << " ThinClientGroup_Name = ";
 				hasItem = true;
 			}
 			else
-				ss << " AND UserGroup_Name = ";
+				ss << " AND ThinClientGroup_Name = ";
 			ss << "'" << tmp->valuestring << "'";
 		}
 
 		if (!hasItem) goto END;
 
 		string whereSql = ss.str();
-		count = UserGroup_Count(whereSql);
+		count = ThinClientGroup_Count(whereSql);
 	}
 
 END:
@@ -354,10 +354,10 @@ END:
 	return string(out);
 }
 
-double CDC_UserGroup::GetMaxID()
+double CDC_ThinClientGroup::GetMaxID()
 {
 	char buf[1024] = { 0 };
-	sprintf(buf, "select max(UserGroup_ID) from CDC_UserGroup");
+	sprintf(buf, "select max(ThinClientGroup_ID) from CDC_ThinClientGroup");
 	CppMySQLQuery q = _db.execQuery(buf);
 
 	if (q.eof() || q.numFields() < 1)
@@ -368,22 +368,22 @@ double CDC_UserGroup::GetMaxID()
 	return q.getDoubleField(0);
 }
 
-double CDC_UserGroup::UserGroup_Add(TCDC_UserGroup& src)
+double CDC_ThinClientGroup::ThinClientGroup_Add(TCDC_ThinClientGroup& src)
 {
 	double id = -1;
 	try
 	{
-		if (UserGroup_Find(src.UserGroup_ID))
+		if (ThinClientGroup_Find(src.ThinClientGroup_ID))
 			return exists;
 
-		_stmt = _db.compileStatement("insert into CDC_UserGroup values (?, ?);");
+		_stmt = _db.compileStatement("insert into CDC_ThinClientGroup values (?, ?);");
 
-		if (src.UserGroup_ID != INVALID_NUM)
-			id = src.UserGroup_ID;
+		if (src.ThinClientGroup_ID != INVALID_NUM)
+			id = src.ThinClientGroup_ID;
 		else
 			id = GetMaxID() + 1;
 		_stmt.bind(1, id);
-		_stmt.bind(2, src.UserGroup_Name);
+		_stmt.bind(2, src.ThinClientGroup_Name);
 
 		_stmt.execDML();
 		_stmt.reset();
@@ -396,15 +396,15 @@ double CDC_UserGroup::UserGroup_Add(TCDC_UserGroup& src)
 	return id;
 }
 
-int CDC_UserGroup::UserGroup_Del(double id)
+int CDC_ThinClientGroup::ThinClientGroup_Del(double id)
 {
 	try
 	{
-		if (!UserGroup_Find(id))
+		if (!ThinClientGroup_Find(id))
 			return notExists;
 
 		char buf[1024] = { 0 };
-		sprintf(buf, "delete from CDC_UserGroup where UserGroup_ID = %f;", id);
+		sprintf(buf, "delete from CDC_ThinClientGroup where ThinClientGroup_ID = %f;", id);
 		_db.execDML(buf);
 	}
 	catch (CppMySQLException& e)
@@ -415,35 +415,16 @@ int CDC_UserGroup::UserGroup_Del(double id)
 	return success;
 }
 
-int CDC_UserGroup::UserGroup_Del(std::string& name)
+int CDC_ThinClientGroup::ThinClientGroup_Update(TCDC_ThinClientGroup& src)
 {
 	try
 	{
-		if (!UserGroup_Find(name))
+		if (!ThinClientGroup_Find(src.ThinClientGroup_ID))
 			return notExists;
 
-		char buf[1024] = { 0 };
-		sprintf(buf, "delete from CDC_UserGroup where UserGroup_Name = '%s';", name.c_str());
-		_db.execDML(buf);
-	}
-	catch (CppMySQLException& e)
-	{
-		MERR << e.errorCode() << ":" << e.errorMessage();
-		return DBError;
-	}
-	return success;
-}
-
-int CDC_UserGroup::UserGroup_Update(TCDC_UserGroup& src)
-{
-	try
-	{
-		if (!UserGroup_Find(src.UserGroup_ID))
-			return notExists;
-
-		_stmt = _db.compileStatement("update CDC_UserGroup set UserGroup_Name = ? where UserGroup_ID = ?;");
-		_stmt.bind(1, src.UserGroup_Name);
-		_stmt.bind(2, src.UserGroup_ID);
+		_stmt = _db.compileStatement("update CDC_ThinClientGroup set ThinClientGroup_Name = ? where ThinClientGroup_ID = ?;");
+		_stmt.bind(1, src.ThinClientGroup_Name);
+		_stmt.bind(2, src.ThinClientGroup_ID);
 		_stmt.execDML();
 		_stmt.reset();
 	}
@@ -456,30 +437,15 @@ int CDC_UserGroup::UserGroup_Update(TCDC_UserGroup& src)
 }
 
 
-bool CDC_UserGroup::UserGroup_Find(double id)
+bool CDC_ThinClientGroup::ThinClientGroup_Find(double id)
 {
 	if (id == INVALID_NUM)
 		return false;
+
 	try
 	{
 		char buf[1024] = {0};
-		sprintf(buf, "select count(*) from CDC_UserGroup where UserGroup_ID = %f;", id);
-		return (_db.execScalar(buf) != 0);
-	}
-	catch (CppMySQLException& e)
-	{
-		MERR << e.errorCode() << ":" << e.errorMessage();
-		return false;
-	}
-	return true;
-}
-
-bool CDC_UserGroup::UserGroup_Find(std::string& name)
-{
-	try
-	{
-		char buf[1024] = { 0 };
-		sprintf(buf, "select count(*) from CDC_UserGroup where UserGroup_Name = '%s';", name.c_str());
+		sprintf(buf, "select count(*) from CDC_ThinClientGroup where ThinClientGroup_ID = %f;", id);
 		return (_db.execScalar(buf) != 0);
 	}
 	catch (CppMySQLException& e)
@@ -491,23 +457,23 @@ bool CDC_UserGroup::UserGroup_Find(std::string& name)
 }
 
 
-int CDC_UserGroup::UserGroup_Find(double id, TCDC_UserGroup& t)
+int CDC_ThinClientGroup::ThinClientGroup_Find(double id, TCDC_ThinClientGroup& t)
 {
 	try
 	{
-		if (!UserGroup_Find(id))
+		if (!ThinClientGroup_Find(id))
 			return notExists;
 
 		CppMySQLQuery q;
 		char buf[1024] = { 0 };
-		sprintf(buf, "select * from CDC_UserGroup where UserGroup_ID = %f;", id);
+		sprintf(buf, "select * from CDC_ThinClientGroup where ThinClientGroup_ID = %f;", id);
 
 		q = _db.execQuery(buf);
 
 		if (!q.eof())
 		{
-			t.UserGroup_ID = q.getDoubleField("UserGroup_ID");
-			t.UserGroup_Name = q.fieldValue("UserGroup_Name");
+			t.ThinClientGroup_ID = q.getDoubleField("ThinClientGroup_ID");
+			t.ThinClientGroup_Name = q.fieldValue("ThinClientGroup_Name");
 			return success;
 		}
 		MDEBUG << "not find, id: " << id;
@@ -521,50 +487,20 @@ int CDC_UserGroup::UserGroup_Find(double id, TCDC_UserGroup& t)
 	return success;
 }
 
-int CDC_UserGroup::UserGroup_Find(std::string& name, TCDC_UserGroup& t)
-{
-	try
-	{
-		if (!UserGroup_Find(name))
-			return notExists;
-
-		CppMySQLQuery q;
-		char buf[1024] = { 0 };
-		sprintf(buf, "select * from CDC_UserGroup where UserGroup_Name = '%s';", name.c_str());
-
-		q = _db.execQuery(buf);
-
-		if (!q.eof())
-		{
-			t.UserGroup_ID = q.getDoubleField("UserGroup_ID");
-			t.UserGroup_Name = q.fieldValue("UserGroup_Name");
-			return success;
-		}
-		MDEBUG << "not find, name: " << name;
-		return notExists;
-	}
-	catch (CppMySQLException& e)
-	{
-		MERR << e.errorCode() << ":" << e.errorMessage();
-		return DBError;
-	}
-	return success;
-}
-
-int CDC_UserGroup::UserGroup_Find2(std::string& whereSql, TCDC_UserGroup& t)
+int CDC_ThinClientGroup::ThinClientGroup_Find2(std::string& whereSql, TCDC_ThinClientGroup& t)
 {
 	try
 	{
 		CppMySQLQuery q;
 		char buf[1024] = { 0 };
-		sprintf(buf, "select * from CDC_UserGroup where %s;", whereSql.c_str());
+		sprintf(buf, "select * from CDC_ThinClientGroup where %s;", whereSql.c_str());
 
 		q = _db.execQuery(buf);
 
 		if (!q.eof())
 		{
-			t.UserGroup_ID = q.getDoubleField("UserGroup_ID");
-			t.UserGroup_Name = q.fieldValue("UserGroup_Name");
+			t.ThinClientGroup_ID = q.getDoubleField("ThinClientGroup_ID");
+			t.ThinClientGroup_Name = q.fieldValue("ThinClientGroup_Name");
 			return success;
 		}
 		MDEBUG << "not find, whereSql: " << whereSql;
@@ -578,11 +514,11 @@ int CDC_UserGroup::UserGroup_Find2(std::string& whereSql, TCDC_UserGroup& t)
 	return success;
 }
 
-int CDC_UserGroup::UserGroup_Count()
+int CDC_ThinClientGroup::ThinClientGroup_Count()
 {
 	try
 	{
-		return _db.execScalar("select count(*) from CDC_UserGroup;");
+		return _db.execScalar("select count(*) from CDC_ThinClientGroup;");
 	}
 	catch (CppMySQLException& e)
 	{
@@ -592,12 +528,12 @@ int CDC_UserGroup::UserGroup_Count()
 	return 0;
 }
 
-int CDC_UserGroup::UserGroup_Count(std::string& whereSql)
+int CDC_ThinClientGroup::ThinClientGroup_Count(std::string& whereSql)
 {
 	try
 	{
 		char buf[1024] = { 0 };
-		sprintf(buf, "select count(*) from CDC_UserGroup where %s;", whereSql.c_str());
+		sprintf(buf, "select count(*) from CDC_ThinClientGroup where %s;", whereSql.c_str());
 
 		return _db.execScalar(buf);
 	}
@@ -609,17 +545,17 @@ int CDC_UserGroup::UserGroup_Count(std::string& whereSql)
 	return 0;
 }
 
-std::list<TCDC_UserGroup> CDC_UserGroup::GetAll()
+std::list<TCDC_ThinClientGroup> CDC_ThinClientGroup::GetAll()
 {
-	std::list<TCDC_UserGroup> lst;
+	std::list<TCDC_ThinClientGroup> lst;
 	try
 	{
-		CppMySQLQuery q = _db.execQuery("select * from CDC_UserGroup;");
+		CppMySQLQuery q = _db.execQuery("select * from CDC_ThinClientGroup;");
 		while (!q.eof())
 		{
-			TCDC_UserGroup t;
-			t.UserGroup_ID = q.getDoubleField(0);
-			t.UserGroup_Name = q.getStringField(1);
+			TCDC_ThinClientGroup t;
+			t.ThinClientGroup_ID = q.getDoubleField(0);
+			t.ThinClientGroup_Name = q.getStringField(1);
 			lst.push_back(t);
 			q.nextRow();
 		}

@@ -13,7 +13,6 @@ public:
 	CDC_User_Tests(const std::string& name);
 	~CDC_User_Tests();
 
-	void dependsFuc();
 	void setUp();
 	void tearDown();
 
@@ -34,6 +33,9 @@ public:
 private:
 	CDC_User* _pObj;
 	CDC_UserGroup* _pCDC_UserGroupObj;
+
+private:
+	void dependsFuc();
 };
 
 

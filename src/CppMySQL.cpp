@@ -100,12 +100,12 @@ CppMySQLDB::~CppMySQLDB()
 	}
 }
 
-void CppMySQLDB::connect(const char* host, const char* user, const char* passwd, 
+void CppMySQLDB::connect(const char* Host, const char* user, const char* passwd, 
 	const char* db, unsigned int port, unsigned long client_flag)
 {
 	checkDB(false);
 
-	if (NULL == mysql_real_connect(m_pDB, host, user, passwd, db, port, NULL, client_flag))
+	if (NULL == mysql_real_connect(m_pDB, Host, user, passwd, db, port, NULL, client_flag))
 	{
 		throw CppMySQLException(mysql_errno(m_pDB), mysql_error(m_pDB));
 	}
@@ -132,7 +132,7 @@ void CppMySQLDB::connect(const char* szConnectionString)
 	const char* db = NULL;
 	int port;
 	// Default values
-	options["host"] = "127.0.0.1";
+	options["Host"] = "127.0.0.1";
 	options["port"] = "3306";
 	options["user"] = "";
 	options["password"] = "";
@@ -227,7 +227,7 @@ void CppMySQLDB::connect(const char* szConnectionString)
 	//
 	// Real connect
 	//
-	connect(options["host"].c_str(), options["user"].c_str(), options["password"].c_str(), 
+	connect(options["Host"].c_str(), options["user"].c_str(), options["password"].c_str(), 
 		db, port);
 	s_DBName = options["db"];
 
@@ -1051,6 +1051,11 @@ void CppMySQLStatement::bind(int nParam, const int& nValue)
 void CppMySQLStatement::bind(int nParam, const double& dwValue)
 {
 	realBind(nParam - 1, MYSQL_TYPE_DOUBLE, &dwValue, sizeof(double));
+}
+
+void CppMySQLStatement::bind(int nParam, const MYSQL_TIME& val)
+{
+	realBind(nParam - 1, MYSQL_TYPE_DATETIME, &val, sizeof(MYSQL_TIME));
 }
 
 void CppMySQLStatement::reset()

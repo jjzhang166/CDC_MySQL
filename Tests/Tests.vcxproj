@@ -83,18 +83,32 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="..\src\cJSON.c" />
+    <ClCompile Include="CDC_Authorization_Tests.cpp" />
+    <ClCompile Include="CDC_EDU_VM_Tests.cpp" />
     <ClCompile Include="CDC_Host_Tests.cpp" />
+    <ClCompile Include="CDC_ISO_Tests.cpp" />
+    <ClCompile Include="CDC_Template_Tests.cpp" />
+    <ClCompile Include="CDC_ThinClientGroup_Tests.cpp" />
+    <ClCompile Include="CDC_ThinClient_Tests.cpp" />
     <ClCompile Include="CDC_UserGroup_Tests.cpp" />
     <ClCompile Include="CDC_MySQL_TestsSuite.cpp" />
     <ClCompile Include="CDC_User_Tests.cpp" />
+    <ClCompile Include="CDC_VM_Tests.cpp" />
     <ClCompile Include="Driver.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\include\cJSON.h" />
+    <ClInclude Include="CDC_Authorization_Tests.h" />
+    <ClInclude Include="CDC_EDU_VM_Tests.h" />
     <ClInclude Include="CDC_Host_Tests.h" />
+    <ClInclude Include="CDC_ISO_Tests.h" />
+    <ClInclude Include="CDC_Template_Tests.h" />
+    <ClInclude Include="CDC_ThinClientGroup_Tests.h" />
+    <ClInclude Include="CDC_ThinClient_Tests.h" />
     <ClInclude Include="CDC_UserGroup_Tests.h" />
     <ClInclude Include="CDC_MySQL_TestsSuite.h" />
     <ClInclude Include="CDC_User_Tests.h" />
+    <ClInclude Include="CDC_VM_Tests.h" />
     <ClInclude Include="ComDef.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

@@ -10,6 +10,7 @@
 
 class CDC_MYSQL_API CDC_UserGroup
 {
+	DISABLE_COPY(CDC_UserGroup);
 public:
 	CDC_UserGroup(CppMySQLDB& db);
 	~CDC_UserGroup();
@@ -32,7 +33,7 @@ public:
 	bool UserGroup_Find(std::string& name);
 	int UserGroup_Find(double id, TCDC_UserGroup& t);
 	int UserGroup_Find(std::string& name, TCDC_UserGroup& t);
-	int UserGroup_find2(std::string& whereSql, TCDC_UserGroup& t);
+	int UserGroup_Find2(std::string& whereSql, TCDC_UserGroup& t);
 
 	int UserGroup_Count();
 	int UserGroup_Count(std::string& whereSql);

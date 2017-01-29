@@ -1,4 +1,4 @@
-#include "CDC_Host.h"
+#include "CDC_Authorization.h"
 #include "LogHelper.h"
 #include "ComDef.h"
 #include "cJSON.h"
@@ -10,22 +10,22 @@
 
 using namespace std;
 
-CDC_Host::CDC_Host(CppMySQLDB& db)
+CDC_Authorization::CDC_Authorization(CppMySQLDB& db)
 	:_db(db)
 {
 }
 
 
-CDC_Host::~CDC_Host()
+CDC_Authorization::~CDC_Authorization()
 {
 	_stmt.clear();
 }
 
 
-std::string CDC_Host::CDC_Host_Add(const std::string& req)
+std::string CDC_Authorization::CDC_Authorization_Add(const std::string& req)
 {
 	int ret = 0;
-	double id = -1;
+	std::string id;
 
 	cJSON *json, *tmp, *element;
 	json = cJSON_Parse(req.c_str());
@@ -49,32 +49,33 @@ std::string CDC_Host::CDC_Host_Add(const std::string& req)
 		if (tmp) t.X = tmp->Y;\
 				else goto END;
 
-		TCDC_Host t;
-		JSON_ADD_ONE_ELEMENT(Host_Name, valuestring);
-		JSON_ADD_ONE_ELEMENT(Host_IP, valuestring);
-		JSON_ADD_ONE_ELEMENT(Host_VirtNet, valuestring);
+		TCDC_Authorization t;
+		JSON_ADD_ONE_ELEMENT(Authorization_MachineID, valuestring);
+		JSON_ADD_ONE_ELEMENT(Authorization_MaxClientNum, valuedouble);
+		JSON_ADD_ONE_ELEMENT(Authorization_Deadline, valuestring);
+		JSON_ADD_ONE_ELEMENT(Authorization_Company, valuestring);
 
 #undef JSON_ADD_ONE_ELEMENT
 
-		id = Host_Add(t);
+		id = Authorization_Add(t);
 	}
 
 END:
 	cJSON_Delete(json);
 
-	ret = (id >= 0) ? 1 : 0;
+	ret = (id != "") ? 1 : 0;
 	cJSON *result = cJSON_CreateObject();
 	cJSON_AddNumberToObject(result, "Result", ret);
 	// if success then return id
 	if (ret > 0)
-		cJSON_AddNumberToObject(result, "Host_ID", id);
+		cJSON_AddStringToObject(result, "Authorization_MachineID", id.c_str());
 	char *out = cJSON_Print(result);
 	cJSON_Delete(result);
 
 	return string(out);
 }
 
-std::string CDC_Host::CDC_Host_Del(const std::string& req)
+std::string CDC_Authorization::CDC_Authorization_Del(const std::string& req)
 {
 	int ret = 0;
 	cJSON *json, *tmp, *element;
@@ -94,13 +95,13 @@ std::string CDC_Host::CDC_Host_Del(const std::string& req)
 			assert(ToLower(method) == "part");
 		}
 
-		double id;
-		tmp = cJSON_GetObjectItem(json, "Host_ID");
+		std::string id;
+		tmp = cJSON_GetObjectItem(json, "Authorization_MachineID");
 		if (tmp)
-			id = tmp->valuedouble;
+			id = tmp->valuestring;
 		else
 			goto END;
-		ret = Host_Del(id);
+		ret = Authorization_Del(id);
 	}
 
 END:
@@ -114,7 +115,7 @@ END:
 	return string(out);
 }
 
-std::string CDC_Host::CDC_Host_Update(const std::string& req)
+std::string CDC_Authorization::CDC_Authorization_Update(const std::string& req)
 {
 	int ret = 0;
 	bool hasItem = false;
@@ -145,25 +146,25 @@ std::string CDC_Host::CDC_Host_Update(const std::string& req)
 			keyList.push_back(#X);\
 				}
 
-		TCDC_Host t;
-		const char *key = "Host_ID";
+		TCDC_Authorization t;
+		const char *key = "Authorization_ID";
 		tmp = cJSON_GetObjectItem(json, key);
 		if (tmp)
 		{
 			if (!hasItem) hasItem = true;
-			t.Host_ID = tmp->valuedouble;
+			t.Authorization_MachineID = tmp->valuestring;
 			keyList.push_back(key);
 		}
-		JSON_GET_OBJECT_ITEM(Host_ID, valuedouble);
-		JSON_GET_OBJECT_ITEM(Host_Name, valuestring);
-		JSON_GET_OBJECT_ITEM(Host_IP, valuestring);
-		JSON_GET_OBJECT_ITEM(Host_VirtNet, valuestring);
+		JSON_GET_OBJECT_ITEM(Authorization_MachineID, valuestring);
+		JSON_GET_OBJECT_ITEM(Authorization_MaxClientNum, valuedouble);
+		JSON_GET_OBJECT_ITEM(Authorization_Deadline, valuestring);
+		JSON_GET_OBJECT_ITEM(Authorization_Company, valuestring);
 
 	#undef JSON_GET_OBJECT_ITEM
 
 		if (!hasItem) goto END;
 
-		ret = Host_Update(t, keyList);
+		ret = Authorization_Update(t, keyList);
 	}
 
 END:
@@ -177,14 +178,14 @@ END:
 	return string(out);
 }
 
-std::string CDC_Host::CDC_Host_Find(const std::string& req)
+std::string CDC_Authorization::CDC_Authorization_Find(const std::string& req)
 {
 	int ret = 0;
 	bool hasItem = false;
 	bool isAll = true;
 	cJSON *json, *tmp, *element;
-	TCDC_Host t;
-	list<TCDC_Host> lst;
+	TCDC_Authorization t;
+	list<TCDC_Authorization> lst;
 	json = cJSON_Parse(req.c_str());
 	if (!json)
 	{
@@ -223,16 +224,17 @@ std::string CDC_Host::CDC_Host_Find(const std::string& req)
 				ss << " AND " << X << " = ";}
 
 		stringstream ss;
-		JSON_GET_OBJECT_ITEM("Host_ID");
+		JSON_GET_OBJECT_ITEM("Authorization_MachineID");
+		if (tmp) ss << "'" << tmp->valuestring << "'";
+		
+
+		JSON_GET_OBJECT_ITEM("Authorization_MaxClientNum");
 		if (tmp) ss << tmp->valuedouble;
 
-		JSON_GET_OBJECT_ITEM("Host_Name");
+		JSON_GET_OBJECT_ITEM("Authorization_Deadline");
 		if (tmp) ss << "'" << tmp->valuestring << "'";
 
-		JSON_GET_OBJECT_ITEM("Host_IP");
-		if (tmp) ss << "'" << tmp->valuestring << "'";
-
-		JSON_GET_OBJECT_ITEM("Host_VirtNet");
+		JSON_GET_OBJECT_ITEM("Authorization_Company");
 		if (tmp) ss << "'" << tmp->valuestring << "'";
 
 	#undef JSON_GET_OBJECT_ITEM
@@ -240,7 +242,7 @@ std::string CDC_Host::CDC_Host_Find(const std::string& req)
 		if (!hasItem) goto END;
 
 		string whereSql = ss.str();
-		ret = Host_Find2(whereSql, t);
+		ret = Authorization_Find2(whereSql, t);
 	}
 
 END:
@@ -254,10 +256,10 @@ END:
 	else
 	{
 	#define JSON_ADD_ONE_ELEMENT \
-		cJSON_AddNumberToObject(data, "Host_ID", t.Host_ID);\
-		cJSON_AddStringToObject(data, "Host_Name", t.Host_Name.c_str());\
-		cJSON_AddStringToObject(data, "Host_IP", t.Host_IP.c_str());\
-		cJSON_AddStringToObject(data, "Host_VirtNet", t.Host_VirtNet.c_str());
+		cJSON_AddStringToObject(data, "Authorization_MachineID", t.Authorization_MachineID.c_str());\
+		cJSON_AddNumberToObject(data, "Authorization_MaxClientNum", t.Authorization_MaxClientNum);\
+		cJSON_AddStringToObject(data, "Authorization_Deadline", t.Authorization_Deadline.c_str());\
+		cJSON_AddStringToObject(data, "Authorization_Company", t.Authorization_Company.c_str());
 
 		cJSON *dataArr, *data = 0;
 		if (!isAll)
@@ -272,7 +274,7 @@ END:
 			if (lst.size() > 1)
 			{
 				cJSON_AddItemToObject(result, "Data", dataArr = cJSON_CreateArray());
-				for (list<TCDC_Host>::iterator it = lst.begin(); it != lst.end(); ++it)
+				for (list<TCDC_Authorization>::iterator it = lst.begin(); it != lst.end(); ++it)
 				{
 					t = *it;
 					cJSON_AddItemToArray(dataArr, data = cJSON_CreateObject());
@@ -293,7 +295,7 @@ END:
 	return string(out);
 }
 
-std::string CDC_Host::CDC_Host_FindCount(const std::string& req)
+std::string CDC_Authorization::CDC_Authorization_FindCount(const std::string& req)
 {
 	int ret = 0;
 	bool hasItem = false;
@@ -323,7 +325,7 @@ std::string CDC_Host::CDC_Host_FindCount(const std::string& req)
 
 		if (isAll)
 		{
-			count = Host_Count();
+			count = Authorization_Count();
 			goto END;
 		}
 
@@ -337,16 +339,16 @@ std::string CDC_Host::CDC_Host_FindCount(const std::string& req)
 				ss << " AND " << X << " = ";}
 
 		stringstream ss;
-		JSON_GET_OBJECT_ITEM("Host_ID");
+		JSON_GET_OBJECT_ITEM("Authorization_MachineID");
+		if (tmp) ss << "'" << tmp->valuestring << "'";
+		
+		JSON_GET_OBJECT_ITEM("Authorization_MaxClientNum");
 		if (tmp) ss << tmp->valuedouble;
 
-		JSON_GET_OBJECT_ITEM("Host_Name");
+		JSON_GET_OBJECT_ITEM("Authorization_Deadline");
 		if (tmp) ss << "'" << tmp->valuestring << "'";
 
-		JSON_GET_OBJECT_ITEM("Host_IP");
-		if (tmp) ss << "'" << tmp->valuestring << "'";
-
-		JSON_GET_OBJECT_ITEM("Host_VirtNet");
+		JSON_GET_OBJECT_ITEM("Authorization_Company");
 		if (tmp) ss << "'" << tmp->valuestring << "'";
 
 #undef JSON_GET_OBJECT_ITEM
@@ -354,7 +356,7 @@ std::string CDC_Host::CDC_Host_FindCount(const std::string& req)
 		if (!hasItem) goto END;
 
 		string whereSql = ss.str();
-		count = Host_Count(whereSql);
+		count = Authorization_Count(whereSql);
 	}
 
 END:
@@ -372,23 +374,18 @@ END:
 
 ////////////////////////////////////////////////////////////
 
-double CDC_Host::Host_Add(TCDC_Host& src)
+std::string CDC_Authorization::Authorization_Add(TCDC_Authorization& src)
 {
-	double id = -1;
 	try
 	{
-		if (Host_Find(src.Host_ID))
-			return exists;
+		if (Authorization_Find(src.Authorization_MachineID))
+			return "";
 
-		_stmt = _db.compileStatement("insert into CDC_Host values (?, ?, ?, ?);");
-		if (src.Host_ID != INVALID_NUM && src.Host_ID > 0)
-			id = src.Host_ID;
-		else
-			id = GetMaxID() + 1;
-		_stmt.bind(1, id);
-		_stmt.bind(2, src.Host_Name);
-		_stmt.bind(3, src.Host_IP);
-		_stmt.bind(4, src.Host_VirtNet);
+		_stmt = _db.compileStatement("insert into CDC_Authorization values (?, ?, ?, ?);");
+		_stmt.bind(1, src.Authorization_MachineID);
+		_stmt.bind(2, src.Authorization_MaxClientNum);
+		_stmt.bind(3, String2MySQLTime(src.Authorization_Deadline));
+		_stmt.bind(4, src.Authorization_Company);
 
 		_stmt.execDML();
 		_stmt.reset();
@@ -396,20 +393,20 @@ double CDC_Host::Host_Add(TCDC_Host& src)
 	catch (CppMySQLException& e)
 	{
 		MERR << e.errorCode() << ":" << e.errorMessage();
-		return DBError;
+		return "";
 	}
-	return id;
+	return src.Authorization_MachineID;
 }
 
-int CDC_Host::Host_Del(double id)
+int CDC_Authorization::Authorization_Del(const std::string& id)
 {
 	try
 	{
-		if (!Host_Find(id))
+		if (!Authorization_Find(id))
 			return notExists;
 
-		_stmt = _db.compileStatement("delete from CDC_Host where Host_ID = ?;");
-		_stmt.bind(1, id);
+		_stmt = _db.compileStatement("delete from CDC_Authorization where Authorization_MachineID = ?;");
+		_stmt.bind(1, id.c_str());
 		_stmt.execDML();
 		_stmt.reset();
 	}
@@ -421,39 +418,20 @@ int CDC_Host::Host_Del(double id)
 	return success;
 }
 
-int CDC_Host::Host_Del(const std::string& name)
+int CDC_Authorization::Authorization_Update(TCDC_Authorization& src)
 {
 	try
 	{
-		if (!Host_Find(name))
+		if (!Authorization_Find(src.Authorization_MachineID))
 			return notExists;
 
-		char buf[1024] = { 0 };
-		sprintf(buf, "delete from CDC_Host where Host_Name = %s;", name.c_str());
-		_db.execDML(buf);
-	}
-	catch (CppMySQLException& e)
-	{
-		MERR << e.errorCode() << ":" << e.errorMessage();
-		return DBError;
-	}
-	return success;
-}
-
-int CDC_Host::Host_Update(TCDC_Host& src)
-{
-	try
-	{
-		if (!Host_Find(src.Host_ID))
-			return notExists;
-
-		_stmt = _db.compileStatement("update CDC_Host \
-			set Host_Name = ?, Host_IP = ?, Host_VirtNet = ? where Host_ID = ?;");
+		_stmt = _db.compileStatement("update CDC_Authorization \
+			set Authorization_MaxClientNum = ?, Authorization_Deadline = ?, Authorization_Company = ? where Authorization_MachineID = ?;");
 		
-		_stmt.bind(1, src.Host_Name);
-		_stmt.bind(2, src.Host_IP);
-		_stmt.bind(3, src.Host_VirtNet);
-		_stmt.bind(4, src.Host_ID);
+		_stmt.bind(1, src.Authorization_MaxClientNum);
+		_stmt.bind(2, String2MySQLTime(src.Authorization_Deadline));
+		_stmt.bind(3, src.Authorization_Company);
+		_stmt.bind(4, src.Authorization_MachineID);
 
 		_stmt.execDML();
 		_stmt.reset();
@@ -466,40 +444,40 @@ int CDC_Host::Host_Update(TCDC_Host& src)
 	return success;
 }
 
-int CDC_Host::Host_Update(TCDC_Host& src, std::list<std::string>& keyList)
+int CDC_Authorization::Authorization_Update(TCDC_Authorization& src, std::list<std::string>& keyList)
 {
 	try
 	{
-		list<string>::iterator it = find(keyList.begin(), keyList.end(), "Host_ID");
+		list<string>::iterator it = find(keyList.begin(), keyList.end(), "Authorization_MachineID");
 		if (it == keyList.end())
 			return inputConditionError;
 
-		if (!Host_Find(src.Host_ID))
+		if (!Authorization_Find(src.Authorization_MachineID))
 			return notExists;
 
-		string updateSql = "update CDC_Host set ";
+		string updateSql = "update CDC_Authorization set ";
 		for (list<string>::iterator it = keyList.begin(); it != keyList.end(); ++it)
 		{
-			if (*it != "Host_ID")
+			if (*it != "Authorization_MachineID")
 				updateSql = updateSql + *it + " = ?, ";
 		}
 		updateSql = Trim(updateSql);
 		updateSql = updateSql.substr(0, updateSql.size() - 1);
-		updateSql += " where Host_ID = ?;";
+		updateSql += " where Authorization_MachineID = ?;";
 
 		_stmt = _db.compileStatement(updateSql.c_str());
 
 		int index = 1;
 		for (list<string>::iterator it = keyList.begin(); it != keyList.end(); ++it)
 		{
-			if (*it == "Host_Name")
-				_stmt.bind(index++, src.Host_Name);
-			else if (*it == "Host_IP")
-				_stmt.bind(index++, src.Host_IP);
-			else if (*it == "Host_VirtNet")
-				_stmt.bind(index++, src.Host_VirtNet);
+			if (*it == "Authorization_MaxClientNum")
+				_stmt.bind(index++, src.Authorization_MaxClientNum);
+			else if (*it == "Authorization_Deadline")
+				_stmt.bind(index++, String2MySQLTime(src.Authorization_Deadline));
+			else if (*it == "Authorization_Company")
+				_stmt.bind(index++, src.Authorization_Company);
 		}
-		_stmt.bind(index, src.Host_ID);
+		_stmt.bind(index, src.Authorization_MachineID);
 
 		_stmt.execDML();
 		_stmt.reset();
@@ -512,31 +490,14 @@ int CDC_Host::Host_Update(TCDC_Host& src, std::list<std::string>& keyList)
 	return success;
 }
 
-bool CDC_Host::Host_Find(double id)
+bool CDC_Authorization::Authorization_Find(const std::string& id)
 {
-	if (id == INVALID_NUM)
+	if (id == "")
 		return false;
 	try
 	{
 		char buf[1024] = { 0 };
-		sprintf(buf, "select count(*) from CDC_Host where Host_ID = %f;", id);
-		return (_db.execScalar(buf) != 0);
-	}
-	catch (CppMySQLException& e)
-	{
-		MERR << e.errorCode() << ":" << e.errorMessage();
-		return false;
-	}
-	return true;
-}
-
-bool CDC_Host::Host_Find(const std::string& name)
-{
-	try
-	{
-		char buf[1024] = { 0 };
-		sprintf(buf, "select count(*) from CDC_Host where Host_Name = '%s';", name.c_str());
-		int dd = _db.execScalar(buf);
+		sprintf(buf, "select count(*) from CDC_Authorization where Authorization_MachineID = '%s';", id.c_str());
 		return (_db.execScalar(buf) != 0);
 	}
 	catch (CppMySQLException& e)
@@ -548,25 +509,25 @@ bool CDC_Host::Host_Find(const std::string& name)
 }
 
 
-int CDC_Host::Host_Find(double id, TCDC_Host& t)
+int CDC_Authorization::Authorization_Find(const std::string& id, TCDC_Authorization& t)
 {
 	try
 	{
-		if (!Host_Find(id))
+		if (!Authorization_Find(id))
 			return notExists;
 
 		CppMySQLQuery q;
 		char buf[1024] = { 0 };
-		sprintf(buf, "select * from CDC_Host where Host_ID = %f;", id);
+		sprintf(buf, "select * from CDC_Authorization where Authorization_MachineID = '%s';", id);
 
 		q = _db.execQuery(buf);
 
 		if (!q.eof())
 		{
-			t.Host_ID = q.getDoubleField("Host_ID");
-			t.Host_Name = q.fieldValue("Host_Name");
-			t.Host_IP = q.fieldValue("Host_IP");
-			t.Host_VirtNet = q.fieldValue("Host_VirtNet");
+			t.Authorization_MachineID = q.getStringField(0);
+			t.Authorization_MaxClientNum = q.getDoubleField(1);
+			t.Authorization_Deadline = q.getStringField(2);
+			t.Authorization_Company = q.getStringField(3);
 			return success;
 		}
 		MDEBUG << "not find, id: " << id;
@@ -580,54 +541,22 @@ int CDC_Host::Host_Find(double id, TCDC_Host& t)
 	return success;
 }
 
-int CDC_Host::Host_Find(const std::string& name, TCDC_Host& t)
-{
-	try
-	{
-		if (!Host_Find(name))
-			return notExists;
-
-		CppMySQLQuery q;
-		char buf[1024] = { 0 };
-		sprintf(buf, "select * from CDC_Host where Host_Name = '%s';", name.c_str());
-
-		q = _db.execQuery(buf);
-
-		if (!q.eof())
-		{
-			t.Host_ID = q.getDoubleField("Host_ID");
-			t.Host_Name = q.fieldValue("Host_Name");
-			t.Host_IP = q.fieldValue("Host_IP");
-			t.Host_VirtNet = q.fieldValue("Host_VirtNet");
-			return success;
-		}
-		MDEBUG << "not find, name: " << name;
-		return notExists;
-	}
-	catch (CppMySQLException& e)
-	{
-		MERR << e.errorCode() << ":" << e.errorMessage();
-		return DBError;
-	}
-	return success;
-}
-
-int CDC_Host::Host_Find2(const std::string& whereSql, TCDC_Host& t)
+int CDC_Authorization::Authorization_Find2(const std::string& whereSql, TCDC_Authorization& t)
 {
 	try
 	{
 		CppMySQLQuery q;
 		char buf[1024] = { 0 };
-		sprintf(buf, "select * from CDC_Host where %s;", whereSql.c_str());
+		sprintf(buf, "select * from CDC_Authorization where %s;", whereSql.c_str());
 
 		q = _db.execQuery(buf);
 
 		if (!q.eof())
 		{
-			t.Host_ID = q.getDoubleField("Host_ID");
-			t.Host_Name = q.fieldValue("Host_Name");
-			t.Host_IP = q.fieldValue("Host_IP");
-			t.Host_VirtNet = q.fieldValue("Host_VirtNet");
+			t.Authorization_MachineID = q.getStringField(0);
+			t.Authorization_MaxClientNum = q.getDoubleField(1);
+			t.Authorization_Deadline = q.getStringField(2);
+			t.Authorization_Company = q.getStringField(3);
 			return success;
 		}
 		MDEBUG << "not find, whereSql: " << whereSql;
@@ -641,11 +570,11 @@ int CDC_Host::Host_Find2(const std::string& whereSql, TCDC_Host& t)
 	return success;
 }
 
-int CDC_Host::Host_Count()
+int CDC_Authorization::Authorization_Count()
 {
 	try
 	{
-		return _db.execScalar("select count(*) from CDC_Host;");
+		return _db.execScalar("select count(*) from CDC_Authorization;");
 	}
 	catch (CppMySQLException& e)
 	{
@@ -655,12 +584,12 @@ int CDC_Host::Host_Count()
 	return 0;
 }
 
-int CDC_Host::Host_Count(const std::string& whereSql)
+int CDC_Authorization::Authorization_Count(const std::string& whereSql)
 {
 	try
 	{
 		char buf[1024] = { 0 };
-		sprintf(buf, "select count(*) from CDC_Host where %s;", whereSql.c_str());
+		sprintf(buf, "select count(*) from CDC_Authorization where %s;", whereSql.c_str());
 
 		return _db.execScalar(buf);
 	}
@@ -672,19 +601,19 @@ int CDC_Host::Host_Count(const std::string& whereSql)
 	return 0;
 }
 
-std::list<TCDC_Host> CDC_Host::GetAll()
+std::list<TCDC_Authorization> CDC_Authorization::GetAll()
 {
-	std::list<TCDC_Host> lst;
+	std::list<TCDC_Authorization> lst;
 	try
 	{
-		CppMySQLQuery q = _db.execQuery("select * from CDC_Host;");
+		CppMySQLQuery q = _db.execQuery("select * from CDC_Authorization;");
 		while (!q.eof())
 		{
-			TCDC_Host t;
-			t.Host_ID = q.getDoubleField(0);
-			t.Host_Name = q.getStringField(1);
-			t.Host_IP = q.getStringField(2);
-			t.Host_VirtNet = q.getStringField(3);
+			TCDC_Authorization t;
+			t.Authorization_MachineID = q.getStringField(0);
+			t.Authorization_MaxClientNum = q.getDoubleField(1);
+			t.Authorization_Deadline = q.getStringField(2);
+			t.Authorization_Company = q.getStringField(3);
 
 			lst.push_back(t);
 			q.nextRow();
@@ -698,10 +627,10 @@ std::list<TCDC_Host> CDC_Host::GetAll()
 	return lst;
 }
 
-double CDC_Host::GetMaxID()
+double CDC_Authorization::GetMaxID()
 {
 	char buf[1024] = { 0 };
-	sprintf(buf, "select max(Host_ID) from CDC_Host");
+	sprintf(buf, "select max(Authorization_ID) from CDC_Authorization");
 	CppMySQLQuery q = _db.execQuery(buf);
 
 	if (q.eof() || q.numFields() < 1)

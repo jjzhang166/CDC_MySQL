@@ -1,4 +1,4 @@
-#include "CDC_Host.h"
+#include "CDC_ThinClient.h"
 #include "LogHelper.h"
 #include "ComDef.h"
 #include "cJSON.h"
@@ -10,19 +10,19 @@
 
 using namespace std;
 
-CDC_Host::CDC_Host(CppMySQLDB& db)
+CDC_ThinClient::CDC_ThinClient(CppMySQLDB& db)
 	:_db(db)
 {
 }
 
 
-CDC_Host::~CDC_Host()
+CDC_ThinClient::~CDC_ThinClient()
 {
 	_stmt.clear();
 }
 
 
-std::string CDC_Host::CDC_Host_Add(const std::string& req)
+std::string CDC_ThinClient::CDC_ThinClient_Add(const std::string& req)
 {
 	int ret = 0;
 	double id = -1;
@@ -49,14 +49,19 @@ std::string CDC_Host::CDC_Host_Add(const std::string& req)
 		if (tmp) t.X = tmp->Y;\
 				else goto END;
 
-		TCDC_Host t;
-		JSON_ADD_ONE_ELEMENT(Host_Name, valuestring);
-		JSON_ADD_ONE_ELEMENT(Host_IP, valuestring);
-		JSON_ADD_ONE_ELEMENT(Host_VirtNet, valuestring);
+		TCDC_ThinClient t;
+		JSON_ADD_ONE_ELEMENT(ThinClient_ThinGroup_ID, valuedouble);
+		JSON_ADD_ONE_ELEMENT(ThinClient_Mode, valueint);
+		JSON_ADD_ONE_ELEMENT(ThinClient_Version, valuestring);
+		JSON_ADD_ONE_ELEMENT(ThinClient_State, valueint);
+		JSON_ADD_ONE_ELEMENT(ThinClient_Protocol, valueint);
+		JSON_ADD_ONE_ELEMENT(ThinClient_Name, valuestring);
+		JSON_ADD_ONE_ELEMENT(ThinClient_IP, valuestring);
+		JSON_ADD_ONE_ELEMENT(ThinClient_MAC, valuestring);
 
 #undef JSON_ADD_ONE_ELEMENT
 
-		id = Host_Add(t);
+		id = ThinClient_Add(t);
 	}
 
 END:
@@ -67,14 +72,14 @@ END:
 	cJSON_AddNumberToObject(result, "Result", ret);
 	// if success then return id
 	if (ret > 0)
-		cJSON_AddNumberToObject(result, "Host_ID", id);
+		cJSON_AddNumberToObject(result, "ThinClient_ID", id);
 	char *out = cJSON_Print(result);
 	cJSON_Delete(result);
 
 	return string(out);
 }
 
-std::string CDC_Host::CDC_Host_Del(const std::string& req)
+std::string CDC_ThinClient::CDC_ThinClient_Del(const std::string& req)
 {
 	int ret = 0;
 	cJSON *json, *tmp, *element;
@@ -95,12 +100,12 @@ std::string CDC_Host::CDC_Host_Del(const std::string& req)
 		}
 
 		double id;
-		tmp = cJSON_GetObjectItem(json, "Host_ID");
+		tmp = cJSON_GetObjectItem(json, "ThinClient_ID");
 		if (tmp)
 			id = tmp->valuedouble;
 		else
 			goto END;
-		ret = Host_Del(id);
+		ret = ThinClient_Del(id);
 	}
 
 END:
@@ -114,7 +119,7 @@ END:
 	return string(out);
 }
 
-std::string CDC_Host::CDC_Host_Update(const std::string& req)
+std::string CDC_ThinClient::CDC_ThinClient_Update(const std::string& req)
 {
 	int ret = 0;
 	bool hasItem = false;
@@ -145,25 +150,29 @@ std::string CDC_Host::CDC_Host_Update(const std::string& req)
 			keyList.push_back(#X);\
 				}
 
-		TCDC_Host t;
-		const char *key = "Host_ID";
+		TCDC_ThinClient t;
+		const char *key = "ThinClient_ID";
 		tmp = cJSON_GetObjectItem(json, key);
 		if (tmp)
 		{
 			if (!hasItem) hasItem = true;
-			t.Host_ID = tmp->valuedouble;
+			t.ThinClient_ID = tmp->valuedouble;
 			keyList.push_back(key);
 		}
-		JSON_GET_OBJECT_ITEM(Host_ID, valuedouble);
-		JSON_GET_OBJECT_ITEM(Host_Name, valuestring);
-		JSON_GET_OBJECT_ITEM(Host_IP, valuestring);
-		JSON_GET_OBJECT_ITEM(Host_VirtNet, valuestring);
+		JSON_GET_OBJECT_ITEM(ThinClient_ThinGroup_ID, valuedouble);
+		JSON_GET_OBJECT_ITEM(ThinClient_Mode, valueint);
+		JSON_GET_OBJECT_ITEM(ThinClient_Version, valuestring);
+		JSON_GET_OBJECT_ITEM(ThinClient_State, valueint);
+		JSON_GET_OBJECT_ITEM(ThinClient_Protocol, valueint);
+		JSON_GET_OBJECT_ITEM(ThinClient_Name, valuestring);
+		JSON_GET_OBJECT_ITEM(ThinClient_IP, valuestring);
+		JSON_GET_OBJECT_ITEM(ThinClient_MAC, valuestring);
 
 	#undef JSON_GET_OBJECT_ITEM
 
 		if (!hasItem) goto END;
 
-		ret = Host_Update(t, keyList);
+		ret = ThinClient_Update(t, keyList);
 	}
 
 END:
@@ -177,14 +186,14 @@ END:
 	return string(out);
 }
 
-std::string CDC_Host::CDC_Host_Find(const std::string& req)
+std::string CDC_ThinClient::CDC_ThinClient_Find(const std::string& req)
 {
 	int ret = 0;
 	bool hasItem = false;
 	bool isAll = true;
 	cJSON *json, *tmp, *element;
-	TCDC_Host t;
-	list<TCDC_Host> lst;
+	TCDC_ThinClient t;
+	list<TCDC_ThinClient> lst;
 	json = cJSON_Parse(req.c_str());
 	if (!json)
 	{
@@ -223,16 +232,31 @@ std::string CDC_Host::CDC_Host_Find(const std::string& req)
 				ss << " AND " << X << " = ";}
 
 		stringstream ss;
-		JSON_GET_OBJECT_ITEM("Host_ID");
+		JSON_GET_OBJECT_ITEM("ThinClient_ID");
 		if (tmp) ss << tmp->valuedouble;
 
-		JSON_GET_OBJECT_ITEM("Host_Name");
+		JSON_GET_OBJECT_ITEM("ThinClient_ThinGroup_ID");
+		if (tmp) ss << tmp->valuedouble;
+
+		JSON_GET_OBJECT_ITEM("ThinClient_Mode");
+		if (tmp) ss << tmp->valueint;
+
+		JSON_GET_OBJECT_ITEM("ThinClient_Version");
 		if (tmp) ss << "'" << tmp->valuestring << "'";
 
-		JSON_GET_OBJECT_ITEM("Host_IP");
+		JSON_GET_OBJECT_ITEM("ThinClient_State");
+		if (tmp) ss << tmp->valueint;
+
+		JSON_GET_OBJECT_ITEM("ThinClient_Protocol");
+		if (tmp) ss << tmp->valueint;
+
+		JSON_GET_OBJECT_ITEM("ThinClient_Name");
 		if (tmp) ss << "'" << tmp->valuestring << "'";
 
-		JSON_GET_OBJECT_ITEM("Host_VirtNet");
+		JSON_GET_OBJECT_ITEM("ThinClient_IP");
+		if (tmp) ss << "'" << tmp->valuestring << "'";
+
+		JSON_GET_OBJECT_ITEM("ThinClient_MAC");
 		if (tmp) ss << "'" << tmp->valuestring << "'";
 
 	#undef JSON_GET_OBJECT_ITEM
@@ -240,7 +264,7 @@ std::string CDC_Host::CDC_Host_Find(const std::string& req)
 		if (!hasItem) goto END;
 
 		string whereSql = ss.str();
-		ret = Host_Find2(whereSql, t);
+		ret = ThinClient_Find2(whereSql, t);
 	}
 
 END:
@@ -254,10 +278,15 @@ END:
 	else
 	{
 	#define JSON_ADD_ONE_ELEMENT \
-		cJSON_AddNumberToObject(data, "Host_ID", t.Host_ID);\
-		cJSON_AddStringToObject(data, "Host_Name", t.Host_Name.c_str());\
-		cJSON_AddStringToObject(data, "Host_IP", t.Host_IP.c_str());\
-		cJSON_AddStringToObject(data, "Host_VirtNet", t.Host_VirtNet.c_str());
+		cJSON_AddNumberToObject(data, "ThinClient_ID", t.ThinClient_ID);\
+		cJSON_AddNumberToObject(data, "ThinClient_ThinGroup_ID", t.ThinClient_ThinGroup_ID);\
+		cJSON_AddNumberToObject(data, "ThinClient_Mode", t.ThinClient_Mode);\
+		cJSON_AddStringToObject(data, "ThinClient_Version", t.ThinClient_Version.c_str());\
+		cJSON_AddNumberToObject(data, "ThinClient_State", t.ThinClient_State);\
+		cJSON_AddNumberToObject(data, "ThinClient_Protocol", t.ThinClient_Protocol);\
+		cJSON_AddStringToObject(data, "ThinClient_Name", t.ThinClient_Name.c_str());\
+		cJSON_AddStringToObject(data, "ThinClient_IP", t.ThinClient_IP.c_str());\
+		cJSON_AddStringToObject(data, "ThinClient_MAC", t.ThinClient_MAC.c_str());
 
 		cJSON *dataArr, *data = 0;
 		if (!isAll)
@@ -272,7 +301,7 @@ END:
 			if (lst.size() > 1)
 			{
 				cJSON_AddItemToObject(result, "Data", dataArr = cJSON_CreateArray());
-				for (list<TCDC_Host>::iterator it = lst.begin(); it != lst.end(); ++it)
+				for (list<TCDC_ThinClient>::iterator it = lst.begin(); it != lst.end(); ++it)
 				{
 					t = *it;
 					cJSON_AddItemToArray(dataArr, data = cJSON_CreateObject());
@@ -293,7 +322,7 @@ END:
 	return string(out);
 }
 
-std::string CDC_Host::CDC_Host_FindCount(const std::string& req)
+std::string CDC_ThinClient::CDC_ThinClient_FindCount(const std::string& req)
 {
 	int ret = 0;
 	bool hasItem = false;
@@ -323,7 +352,7 @@ std::string CDC_Host::CDC_Host_FindCount(const std::string& req)
 
 		if (isAll)
 		{
-			count = Host_Count();
+			count = ThinClient_Count();
 			goto END;
 		}
 
@@ -337,16 +366,31 @@ std::string CDC_Host::CDC_Host_FindCount(const std::string& req)
 				ss << " AND " << X << " = ";}
 
 		stringstream ss;
-		JSON_GET_OBJECT_ITEM("Host_ID");
+		JSON_GET_OBJECT_ITEM("ThinClient_ID");
 		if (tmp) ss << tmp->valuedouble;
 
-		JSON_GET_OBJECT_ITEM("Host_Name");
+		JSON_GET_OBJECT_ITEM("ThinClient_ThinGroup_ID");
+		if (tmp) ss << tmp->valuedouble;
+
+		JSON_GET_OBJECT_ITEM("ThinClient_Mode");
+		if (tmp) ss << tmp->valueint;
+
+		JSON_GET_OBJECT_ITEM("ThinClient_Version");
 		if (tmp) ss << "'" << tmp->valuestring << "'";
 
-		JSON_GET_OBJECT_ITEM("Host_IP");
+		JSON_GET_OBJECT_ITEM("ThinClient_State");
+		if (tmp) ss << tmp->valueint;
+
+		JSON_GET_OBJECT_ITEM("ThinClient_Protocol");
+		if (tmp) ss << tmp->valueint;
+
+		JSON_GET_OBJECT_ITEM("ThinClient_Name");
 		if (tmp) ss << "'" << tmp->valuestring << "'";
 
-		JSON_GET_OBJECT_ITEM("Host_VirtNet");
+		JSON_GET_OBJECT_ITEM("ThinClient_IP");
+		if (tmp) ss << "'" << tmp->valuestring << "'";
+
+		JSON_GET_OBJECT_ITEM("ThinClient_MAC");
 		if (tmp) ss << "'" << tmp->valuestring << "'";
 
 #undef JSON_GET_OBJECT_ITEM
@@ -354,7 +398,7 @@ std::string CDC_Host::CDC_Host_FindCount(const std::string& req)
 		if (!hasItem) goto END;
 
 		string whereSql = ss.str();
-		count = Host_Count(whereSql);
+		count = ThinClient_Count(whereSql);
 	}
 
 END:
@@ -372,23 +416,28 @@ END:
 
 ////////////////////////////////////////////////////////////
 
-double CDC_Host::Host_Add(TCDC_Host& src)
+double CDC_ThinClient::ThinClient_Add(TCDC_ThinClient& src)
 {
 	double id = -1;
 	try
 	{
-		if (Host_Find(src.Host_ID))
+		if (ThinClient_Find(src.ThinClient_ID))
 			return exists;
 
-		_stmt = _db.compileStatement("insert into CDC_Host values (?, ?, ?, ?);");
-		if (src.Host_ID != INVALID_NUM && src.Host_ID > 0)
-			id = src.Host_ID;
+		_stmt = _db.compileStatement("insert into CDC_ThinClient values (?, ?, ?, ?, ?, ?, ?, ?, ?);");
+		if (src.ThinClient_ID != INVALID_NUM && src.ThinClient_ID > 0)
+			id = src.ThinClient_ID;
 		else
 			id = GetMaxID() + 1;
 		_stmt.bind(1, id);
-		_stmt.bind(2, src.Host_Name);
-		_stmt.bind(3, src.Host_IP);
-		_stmt.bind(4, src.Host_VirtNet);
+		_stmt.bind(2, src.ThinClient_ThinGroup_ID);
+		_stmt.bind(3, src.ThinClient_Mode);
+		_stmt.bind(4, src.ThinClient_Version);
+		_stmt.bind(5, src.ThinClient_State);
+		_stmt.bind(6, src.ThinClient_Protocol);
+		_stmt.bind(7, src.ThinClient_Name);
+		_stmt.bind(8, src.ThinClient_IP);
+		_stmt.bind(9, src.ThinClient_MAC);
 
 		_stmt.execDML();
 		_stmt.reset();
@@ -401,14 +450,14 @@ double CDC_Host::Host_Add(TCDC_Host& src)
 	return id;
 }
 
-int CDC_Host::Host_Del(double id)
+int CDC_ThinClient::ThinClient_Del(double id)
 {
 	try
 	{
-		if (!Host_Find(id))
+		if (!ThinClient_Find(id))
 			return notExists;
 
-		_stmt = _db.compileStatement("delete from CDC_Host where Host_ID = ?;");
+		_stmt = _db.compileStatement("delete from CDC_ThinClient where ThinClient_ID = ?;");
 		_stmt.bind(1, id);
 		_stmt.execDML();
 		_stmt.reset();
@@ -421,39 +470,25 @@ int CDC_Host::Host_Del(double id)
 	return success;
 }
 
-int CDC_Host::Host_Del(const std::string& name)
+int CDC_ThinClient::ThinClient_Update(TCDC_ThinClient& src)
 {
 	try
 	{
-		if (!Host_Find(name))
+		if (!ThinClient_Find(src.ThinClient_ID))
 			return notExists;
 
-		char buf[1024] = { 0 };
-		sprintf(buf, "delete from CDC_Host where Host_Name = %s;", name.c_str());
-		_db.execDML(buf);
-	}
-	catch (CppMySQLException& e)
-	{
-		MERR << e.errorCode() << ":" << e.errorMessage();
-		return DBError;
-	}
-	return success;
-}
-
-int CDC_Host::Host_Update(TCDC_Host& src)
-{
-	try
-	{
-		if (!Host_Find(src.Host_ID))
-			return notExists;
-
-		_stmt = _db.compileStatement("update CDC_Host \
-			set Host_Name = ?, Host_IP = ?, Host_VirtNet = ? where Host_ID = ?;");
+		_stmt = _db.compileStatement("update CDC_ThinClient \
+			set ThinClient_HostID = ?, ThinClient_Name = ?, ThinClient_Path = ? where ThinClient_ID = ?;");
 		
-		_stmt.bind(1, src.Host_Name);
-		_stmt.bind(2, src.Host_IP);
-		_stmt.bind(3, src.Host_VirtNet);
-		_stmt.bind(4, src.Host_ID);
+		_stmt.bind(1, src.ThinClient_ID);
+		_stmt.bind(2, src.ThinClient_ThinGroup_ID);
+		_stmt.bind(3, src.ThinClient_Mode);
+		_stmt.bind(4, src.ThinClient_Version);
+		_stmt.bind(5, src.ThinClient_State);
+		_stmt.bind(6, src.ThinClient_Protocol);
+		_stmt.bind(7, src.ThinClient_Name);
+		_stmt.bind(8, src.ThinClient_IP);
+		_stmt.bind(9, src.ThinClient_MAC);
 
 		_stmt.execDML();
 		_stmt.reset();
@@ -466,40 +501,50 @@ int CDC_Host::Host_Update(TCDC_Host& src)
 	return success;
 }
 
-int CDC_Host::Host_Update(TCDC_Host& src, std::list<std::string>& keyList)
+int CDC_ThinClient::ThinClient_Update(TCDC_ThinClient& src, std::list<std::string>& keyList)
 {
 	try
 	{
-		list<string>::iterator it = find(keyList.begin(), keyList.end(), "Host_ID");
+		list<string>::iterator it = find(keyList.begin(), keyList.end(), "ThinClient_ID");
 		if (it == keyList.end())
 			return inputConditionError;
 
-		if (!Host_Find(src.Host_ID))
+		if (!ThinClient_Find(src.ThinClient_ID))
 			return notExists;
 
-		string updateSql = "update CDC_Host set ";
+		string updateSql = "update CDC_ThinClient set ";
 		for (list<string>::iterator it = keyList.begin(); it != keyList.end(); ++it)
 		{
-			if (*it != "Host_ID")
+			if (*it != "ThinClient_ID")
 				updateSql = updateSql + *it + " = ?, ";
 		}
 		updateSql = Trim(updateSql);
 		updateSql = updateSql.substr(0, updateSql.size() - 1);
-		updateSql += " where Host_ID = ?;";
+		updateSql += " where ThinClient_ID = ?;";
 
 		_stmt = _db.compileStatement(updateSql.c_str());
 
 		int index = 1;
 		for (list<string>::iterator it = keyList.begin(); it != keyList.end(); ++it)
 		{
-			if (*it == "Host_Name")
-				_stmt.bind(index++, src.Host_Name);
-			else if (*it == "Host_IP")
-				_stmt.bind(index++, src.Host_IP);
-			else if (*it == "Host_VirtNet")
-				_stmt.bind(index++, src.Host_VirtNet);
+			if (*it == "ThinClient_ThinGroup_ID")
+				_stmt.bind(index++, src.ThinClient_ThinGroup_ID);
+			else if (*it == "ThinClient_Mode")
+				_stmt.bind(index++, src.ThinClient_Mode);
+			else if (*it == "ThinClient_Version")
+				_stmt.bind(index++, src.ThinClient_Version);
+			else if (*it == "ThinClient_State")
+				_stmt.bind(index++, src.ThinClient_State);
+			else if (*it == "ThinClient_Protocol")
+				_stmt.bind(index++, src.ThinClient_Protocol);
+			else if (*it == "ThinClient_Name")
+				_stmt.bind(index++, src.ThinClient_Name);
+			else if (*it == "ThinClient_IP")
+				_stmt.bind(index++, src.ThinClient_IP);
+			else if (*it == "ThinClient_MAC")
+				_stmt.bind(index++, src.ThinClient_MAC);
 		}
-		_stmt.bind(index, src.Host_ID);
+		_stmt.bind(index, src.ThinClient_ID);
 
 		_stmt.execDML();
 		_stmt.reset();
@@ -512,14 +557,14 @@ int CDC_Host::Host_Update(TCDC_Host& src, std::list<std::string>& keyList)
 	return success;
 }
 
-bool CDC_Host::Host_Find(double id)
+bool CDC_ThinClient::ThinClient_Find(double id)
 {
 	if (id == INVALID_NUM)
 		return false;
 	try
 	{
 		char buf[1024] = { 0 };
-		sprintf(buf, "select count(*) from CDC_Host where Host_ID = %f;", id);
+		sprintf(buf, "select count(*) from CDC_ThinClient where ThinClient_ID = %f;", id);
 		return (_db.execScalar(buf) != 0);
 	}
 	catch (CppMySQLException& e)
@@ -530,43 +575,30 @@ bool CDC_Host::Host_Find(double id)
 	return true;
 }
 
-bool CDC_Host::Host_Find(const std::string& name)
+int CDC_ThinClient::ThinClient_Find(double id, TCDC_ThinClient& t)
 {
 	try
 	{
-		char buf[1024] = { 0 };
-		sprintf(buf, "select count(*) from CDC_Host where Host_Name = '%s';", name.c_str());
-		int dd = _db.execScalar(buf);
-		return (_db.execScalar(buf) != 0);
-	}
-	catch (CppMySQLException& e)
-	{
-		MERR << e.errorCode() << ":" << e.errorMessage();
-		return false;
-	}
-	return true;
-}
-
-
-int CDC_Host::Host_Find(double id, TCDC_Host& t)
-{
-	try
-	{
-		if (!Host_Find(id))
+		if (!ThinClient_Find(id))
 			return notExists;
 
 		CppMySQLQuery q;
 		char buf[1024] = { 0 };
-		sprintf(buf, "select * from CDC_Host where Host_ID = %f;", id);
+		sprintf(buf, "select * from CDC_ThinClient where ThinClient_ID = %f;", id);
 
 		q = _db.execQuery(buf);
 
 		if (!q.eof())
 		{
-			t.Host_ID = q.getDoubleField("Host_ID");
-			t.Host_Name = q.fieldValue("Host_Name");
-			t.Host_IP = q.fieldValue("Host_IP");
-			t.Host_VirtNet = q.fieldValue("Host_VirtNet");
+			t.ThinClient_ID = q.getDoubleField(0);
+			t.ThinClient_ThinGroup_ID = q.getDoubleField(1);
+			t.ThinClient_Mode = q.getIntField(2);
+			t.ThinClient_Version = q.getStringField(3);
+			t.ThinClient_State = q.getIntField(4);
+			t.ThinClient_Protocol = q.getIntField(5);
+			t.ThinClient_Name = q.getStringField(6);
+			t.ThinClient_IP = q.getStringField(7);
+			t.ThinClient_MAC = q.getStringField(8);
 			return success;
 		}
 		MDEBUG << "not find, id: " << id;
@@ -580,54 +612,27 @@ int CDC_Host::Host_Find(double id, TCDC_Host& t)
 	return success;
 }
 
-int CDC_Host::Host_Find(const std::string& name, TCDC_Host& t)
-{
-	try
-	{
-		if (!Host_Find(name))
-			return notExists;
-
-		CppMySQLQuery q;
-		char buf[1024] = { 0 };
-		sprintf(buf, "select * from CDC_Host where Host_Name = '%s';", name.c_str());
-
-		q = _db.execQuery(buf);
-
-		if (!q.eof())
-		{
-			t.Host_ID = q.getDoubleField("Host_ID");
-			t.Host_Name = q.fieldValue("Host_Name");
-			t.Host_IP = q.fieldValue("Host_IP");
-			t.Host_VirtNet = q.fieldValue("Host_VirtNet");
-			return success;
-		}
-		MDEBUG << "not find, name: " << name;
-		return notExists;
-	}
-	catch (CppMySQLException& e)
-	{
-		MERR << e.errorCode() << ":" << e.errorMessage();
-		return DBError;
-	}
-	return success;
-}
-
-int CDC_Host::Host_Find2(const std::string& whereSql, TCDC_Host& t)
+int CDC_ThinClient::ThinClient_Find2(const std::string& whereSql, TCDC_ThinClient& t)
 {
 	try
 	{
 		CppMySQLQuery q;
 		char buf[1024] = { 0 };
-		sprintf(buf, "select * from CDC_Host where %s;", whereSql.c_str());
+		sprintf(buf, "select * from CDC_ThinClient where %s;", whereSql.c_str());
 
 		q = _db.execQuery(buf);
 
 		if (!q.eof())
 		{
-			t.Host_ID = q.getDoubleField("Host_ID");
-			t.Host_Name = q.fieldValue("Host_Name");
-			t.Host_IP = q.fieldValue("Host_IP");
-			t.Host_VirtNet = q.fieldValue("Host_VirtNet");
+			t.ThinClient_ID = q.getDoubleField(0);
+			t.ThinClient_ThinGroup_ID = q.getDoubleField(1);
+			t.ThinClient_Mode = q.getIntField(2);
+			t.ThinClient_Version = q.getStringField(3);
+			t.ThinClient_State = q.getIntField(4);
+			t.ThinClient_Protocol = q.getIntField(5);
+			t.ThinClient_Name = q.getStringField(6);
+			t.ThinClient_IP = q.getStringField(7);
+			t.ThinClient_MAC = q.getStringField(8);
 			return success;
 		}
 		MDEBUG << "not find, whereSql: " << whereSql;
@@ -641,11 +646,11 @@ int CDC_Host::Host_Find2(const std::string& whereSql, TCDC_Host& t)
 	return success;
 }
 
-int CDC_Host::Host_Count()
+int CDC_ThinClient::ThinClient_Count()
 {
 	try
 	{
-		return _db.execScalar("select count(*) from CDC_Host;");
+		return _db.execScalar("select count(*) from CDC_ThinClient;");
 	}
 	catch (CppMySQLException& e)
 	{
@@ -655,12 +660,12 @@ int CDC_Host::Host_Count()
 	return 0;
 }
 
-int CDC_Host::Host_Count(const std::string& whereSql)
+int CDC_ThinClient::ThinClient_Count(const std::string& whereSql)
 {
 	try
 	{
 		char buf[1024] = { 0 };
-		sprintf(buf, "select count(*) from CDC_Host where %s;", whereSql.c_str());
+		sprintf(buf, "select count(*) from CDC_ThinClient where %s;", whereSql.c_str());
 
 		return _db.execScalar(buf);
 	}
@@ -672,19 +677,24 @@ int CDC_Host::Host_Count(const std::string& whereSql)
 	return 0;
 }
 
-std::list<TCDC_Host> CDC_Host::GetAll()
+std::list<TCDC_ThinClient> CDC_ThinClient::GetAll()
 {
-	std::list<TCDC_Host> lst;
+	std::list<TCDC_ThinClient> lst;
 	try
 	{
-		CppMySQLQuery q = _db.execQuery("select * from CDC_Host;");
+		CppMySQLQuery q = _db.execQuery("select * from CDC_ThinClient;");
 		while (!q.eof())
 		{
-			TCDC_Host t;
-			t.Host_ID = q.getDoubleField(0);
-			t.Host_Name = q.getStringField(1);
-			t.Host_IP = q.getStringField(2);
-			t.Host_VirtNet = q.getStringField(3);
+			TCDC_ThinClient t;
+			t.ThinClient_ID = q.getDoubleField(0);
+			t.ThinClient_ThinGroup_ID = q.getDoubleField(1);
+			t.ThinClient_Mode = q.getIntField(2);
+			t.ThinClient_Version = q.getStringField(3);
+			t.ThinClient_State = q.getIntField(4);
+			t.ThinClient_Protocol = q.getIntField(5);
+			t.ThinClient_Name = q.getStringField(6);
+			t.ThinClient_IP = q.getStringField(7);
+			t.ThinClient_MAC = q.getStringField(8);
 
 			lst.push_back(t);
 			q.nextRow();
@@ -698,10 +708,10 @@ std::list<TCDC_Host> CDC_Host::GetAll()
 	return lst;
 }
 
-double CDC_Host::GetMaxID()
+double CDC_ThinClient::GetMaxID()
 {
 	char buf[1024] = { 0 };
-	sprintf(buf, "select max(Host_ID) from CDC_Host");
+	sprintf(buf, "select max(ThinClient_ID) from CDC_ThinClient");
 	CppMySQLQuery q = _db.execQuery(buf);
 
 	if (q.eof() || q.numFields() < 1)

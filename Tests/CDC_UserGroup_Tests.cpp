@@ -14,7 +14,7 @@ namespace
 {
 	CppMySQLDB* pDB;
 	const char* gszDB = "CDCMySQLTest";
-	#define HOST		"127.0.0.1"
+	#define Host		"127.0.0.1"
 	#define USER		"root"
 	#define PASSWORD	"123456"
 	int ret = -1;
@@ -39,7 +39,7 @@ void CDC_UserGroup_Tests::setUp()
 {	
 	pDB = new CppMySQLDB();
 	pDB->setOptions(MYSQL_SET_CHARSET_NAME, "gbk");	
-	pDB->connect(HOST, USER, PASSWORD);
+	pDB->connect(Host, USER, PASSWORD);
 	pDB->dropDB(gszDB);
 	pDB->createDB(gszDB);
 	pDB->open(gszDB);

@@ -89,7 +89,7 @@ public:
 	\brief		连接数据库
 	\remarks	如果需要调用setOptions必须在调用该函数之前执行
 	*/
-	void			connect(const char* host, const char* user, const char* passwd, 
+	void			connect(const char* Host, const char* user, const char* passwd, 
 						const char* db = NULL, unsigned int port = 0, unsigned long client_flag = 0);
 	/*!
 	\brief		使用字符串连接数据库
@@ -499,6 +499,7 @@ public:
 	void				bind(int nParam, const char* szValue);
 	void				bind(int nParam, const int& nValue);
 	void				bind(int nParam, const double& dwValue);
+	void				bind(int nParam, const MYSQL_TIME& val);
 
 	/*!
 	\brief	将statement恢复到默认状态

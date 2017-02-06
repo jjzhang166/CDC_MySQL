@@ -30,6 +30,7 @@ public:
 	bool Authorization_Find(const std::string& id);
 	int Authorization_Find(const std::string& id, TCDC_Authorization& t);
 	int Authorization_Find2(const std::string& whereSql, TCDC_Authorization& t);
+	std::list<TCDC_Authorization> Authorization_Find2(const std::string& whereSql);
 	int Authorization_Count();
 	int Authorization_Count(const std::string& whereSql);
 

@@ -1,4 +1,4 @@
-﻿#include "CDC_User_Tests.h"
+#include "CDC_User_Tests.h"
 #include "CppMySQL.h"
 #include "CppUnit/TestCaller.h"
 #include "CppUnit/TestSuite.h"
@@ -72,7 +72,7 @@ void CDC_User_Tests::setUp()
 	try
 	{
 		pDB = new CppMySQLDB();
-		pDB->setOptions(MYSQL_SET_CHARSET_NAME, "gbk");	
+		pDB->setOptions(MYSQL_SET_CHARSET_NAME, "utf8");	
 		pDB->connect(HOST, USER, PASSWORD);
 		pDB->dropDB(gszDB);
 		pDB->createDB(gszDB);

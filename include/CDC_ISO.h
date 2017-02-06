@@ -33,6 +33,7 @@ public:
 	int ISO_Find(double id, TCDC_ISO& t);
 	int ISO_Find(const std::string& name, TCDC_ISO& t);
 	int ISO_Find2(const std::string& whereSql, TCDC_ISO& t);
+	std::list<TCDC_ISO> ISO_Find2(const std::string& whereSql);
 	int ISO_Count();
 	int ISO_Count(const std::string& whereSql);
 

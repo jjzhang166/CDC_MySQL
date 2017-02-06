@@ -31,6 +31,7 @@ public:
 	bool ThinClientGroup_Find(double id);
 	int ThinClientGroup_Find(double id, TCDC_ThinClientGroup& t);
 	int ThinClientGroup_Find2(std::string& whereSql, TCDC_ThinClientGroup& t);
+	std::list<TCDC_ThinClientGroup> ThinClientGroup_Find2(std::string& whereSql);
 
 	int ThinClientGroup_Count();
 	int ThinClientGroup_Count(std::string& whereSql);

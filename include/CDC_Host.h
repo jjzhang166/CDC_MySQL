@@ -33,6 +33,7 @@ public:
 	int Host_Find(double id, TCDC_Host& t);
 	int Host_Find(const std::string& name, TCDC_Host& t);
 	int Host_Find2(const std::string& whereSql, TCDC_Host& t);
+	std::list<TCDC_Host> Host_Find2(const std::string& whereSql);
 	int Host_Count();
 	int Host_Count(const std::string& whereSql);
 

@@ -42,12 +42,12 @@ std::string CDC_User::CDC_User_Add(const std::string& req)
 			assert(ToLower(method) == "part");
 		}
 
-	#define JSON_ADD_ONE_ELEMENT(X, Y) \
+#define JSON_ADD_ONE_ELEMENT(X, Y) \
 		tmp = cJSON_GetObjectItem(json, #X);\
 		if (tmp) t.X = tmp->Y;\
-		else goto END;
+				else goto END;
 
-	#define JSON_ADD_ONE_ELEMENT2(X, Y) \
+#define JSON_ADD_ONE_ELEMENT2(X, Y) \
 		tmp = cJSON_GetObjectItem(json, #X);\
 		if (tmp) t.X = tmp->Y;
 
@@ -58,10 +58,10 @@ std::string CDC_User::CDC_User_Add(const std::string& req)
 		JSON_ADD_ONE_ELEMENT(User_Name, valuestring);
 		JSON_ADD_ONE_ELEMENT(User_LoginName, valuestring);
 		JSON_ADD_ONE_ELEMENT(User_Password, valuestring);
-		JSON_ADD_ONE_ELEMENT(User_Remarks, valuestring);	
+		JSON_ADD_ONE_ELEMENT(User_Remarks, valuestring);
 
-	#undef JSON_ADD_ONE_ELEMENT
-	#undef JSON_ADD_ONE_ELEMENT2
+#undef JSON_ADD_ONE_ELEMENT
+#undef JSON_ADD_ONE_ELEMENT2
 
 		id = User_Add(t);
 	}
@@ -144,13 +144,13 @@ std::string CDC_User::CDC_User_Update(const std::string& req)
 		}
 
 
-	#define JSON_GET_OBJECT_ITEM(X, Y) \
+#define JSON_GET_OBJECT_ITEM(X, Y) \
 		tmp = cJSON_GetObjectItem(json, #X);\
 		if (tmp){\
 			if (!hasItem) hasItem = true;\
 			t.X = tmp->Y;\
 			keyList.push_back(#X);\
-		}
+				}
 
 		TCDC_User t;
 		const char *key = "User_ID";
@@ -168,7 +168,7 @@ std::string CDC_User::CDC_User_Update(const std::string& req)
 		JSON_GET_OBJECT_ITEM(User_LoginName, valuestring);
 		JSON_GET_OBJECT_ITEM(User_Password, valuestring);
 		JSON_GET_OBJECT_ITEM(User_Remarks, valuestring);
-	#undef JSON_GET_OBJECT_ITEM
+#undef JSON_GET_OBJECT_ITEM
 
 		if (!hasItem) goto END;
 
@@ -224,16 +224,16 @@ std::string CDC_User::CDC_User_Find(const std::string& req)
 			goto END;
 		}
 
-	#define JSON_GET_OBJECT_ITEM(X) \
+#define JSON_GET_OBJECT_ITEM(X) \
 		tmp = cJSON_GetObjectItem(json, X);\
 		if (tmp){\
 			if (!hasItem){\
 				ss << " " << X << " = ";\
 				hasItem = true;\
-			}\
-			else\
+						}\
+					else\
 				ss << " AND " << X << " = ";\
-		}
+				}
 
 		stringstream ss;
 		JSON_GET_OBJECT_ITEM("User_ID");
@@ -241,13 +241,13 @@ std::string CDC_User::CDC_User_Find(const std::string& req)
 
 		JSON_GET_OBJECT_ITEM("User_Role");
 		if (tmp) ss << tmp->valueint;
-		
+
 		JSON_GET_OBJECT_ITEM("User_UserGroup_ID");
 		if (tmp) ss << tmp->valuedouble;
-		
+
 		JSON_GET_OBJECT_ITEM("User_Name");
 		if (tmp) ss << "'" << tmp->valuestring << "'";
-		
+
 		JSON_GET_OBJECT_ITEM("User_LoginName");
 		if (tmp) ss << "'" << tmp->valuestring << "'";
 
@@ -257,12 +257,13 @@ std::string CDC_User::CDC_User_Find(const std::string& req)
 		JSON_GET_OBJECT_ITEM("User_Remarks");
 		if (tmp) ss << "'" << tmp->valuestring << "'";
 
-	#undef JSON_GET_OBJECT_ITEM
+#undef JSON_GET_OBJECT_ITEM
 
 		if (!hasItem) goto END;
 
 		string whereSql = ss.str();
-		ret = User_Find2(whereSql, user);
+		lst = User_Find2(whereSql);
+		if (lst.size() != 0) ret = success;
 	}
 
 END:
@@ -275,7 +276,7 @@ END:
 	}
 	else
 	{
-	#define JSON_ADD_ONE_ELEMENT \
+#define JSON_ADD_ONE_ELEMENT \
 		cJSON_AddNumberToObject(data, "User_ID", user.User_ID);\
 		cJSON_AddNumberToObject(data, "User_Role", user.User_Role);\
 		cJSON_AddNumberToObject(data, "User_UserGroup_ID", user.User_UserGroup_ID);\
@@ -285,33 +286,24 @@ END:
 		cJSON_AddStringToObject(data, "User_Remarks", user.User_Remarks.c_str());
 
 		cJSON *dataArr, *data = 0;
-		if (!isAll)
+		cJSON_AddNumberToObject(result, "Result", lst.size());
+		if (lst.size() > 1)
 		{
-			cJSON_AddNumberToObject(result, "Result", 1);
-			cJSON_AddItemToObject(result, "Data", data = cJSON_CreateObject());
-			JSON_ADD_ONE_ELEMENT;
-		}
-		else
-		{
-			cJSON_AddNumberToObject(result, "Result", lst.size());
-			if (lst.size() > 1)
+			cJSON_AddItemToObject(result, "Data", dataArr = cJSON_CreateArray());
+			for (list<TCDC_User>::iterator it = lst.begin(); it != lst.end(); ++it)
 			{
-				cJSON_AddItemToObject(result, "Data", dataArr = cJSON_CreateArray());
-				for (list<TCDC_User>::iterator it = lst.begin(); it != lst.end(); ++it)
-				{
-					user = *it;
-					cJSON_AddItemToArray(dataArr, data = cJSON_CreateObject());
-					JSON_ADD_ONE_ELEMENT;
-				}
-			}
-			else if (lst.size() == 1)
-			{
-				cJSON_AddItemToObject(result, "Data", data = cJSON_CreateObject());
-				user = lst.back();
+				user = *it;
+				cJSON_AddItemToArray(dataArr, data = cJSON_CreateObject());
 				JSON_ADD_ONE_ELEMENT;
 			}
 		}
-	#undef JSON_ADD_ONE_ELEMENT
+		else if (lst.size() == 1)
+		{
+			cJSON_AddItemToObject(result, "Data", data = cJSON_CreateObject());
+			user = lst.back();
+			JSON_ADD_ONE_ELEMENT;
+		}
+#undef JSON_ADD_ONE_ELEMENT
 	}
 	out = cJSON_Print(result);
 	cJSON_Delete(result);
@@ -353,16 +345,16 @@ std::string CDC_User::CDC_User_FindCount(const std::string& req)
 			goto END;
 		}
 
-	#define JSON_GET_OBJECT_ITEM(X) \
+#define JSON_GET_OBJECT_ITEM(X) \
 		tmp = cJSON_GetObjectItem(json, X);\
 		if (tmp){\
 			if (!hasItem){\
 				ss << " " << X << " = ";\
 				hasItem = true;\
-						}\
-					else\
+									}\
+							else\
 				ss << " AND " << X << " = ";\
-			}
+					}
 
 		stringstream ss;
 		JSON_GET_OBJECT_ITEM("User_ID");
@@ -386,7 +378,7 @@ std::string CDC_User::CDC_User_FindCount(const std::string& req)
 		JSON_GET_OBJECT_ITEM("User_Remarks");
 		if (tmp) ss << "'" << tmp->valuestring << "'";
 
-	#undef JSON_GET_OBJECT_ITEM
+#undef JSON_GET_OBJECT_ITEM
 
 		if (!hasItem) goto END;
 
@@ -402,7 +394,7 @@ END:
 		cJSON_AddNumberToObject(result, "Result", 0);
 	else
 		cJSON_AddNumberToObject(result, "Result", count);
-	
+
 	out = cJSON_Print(result);
 	cJSON_Delete(result);
 	return string(out);
@@ -488,10 +480,10 @@ int CDC_User::User_Update(TCDC_User& src)
 			return notExists;
 
 		_stmt = _pdb->compileStatement("update CDC_User \
-			set User_Role = ?, User_UserGroup_ID = ?, User_Name = ?, \
-			User_LoginName = ?, User_Password = ?, User_Remarks = ? \
-		where User_ID = ?;");
-		
+									   			set User_Role = ?, User_UserGroup_ID = ?, User_Name = ?, \
+															User_LoginName = ?, User_Password = ?, User_Remarks = ? \
+																	where User_ID = ?;");
+
 		_stmt.bind(1, src.User_Role);
 		_stmt.bind(2, src.User_UserGroup_ID);
 		_stmt.bind(3, src.User_Name);
@@ -518,7 +510,7 @@ int CDC_User::User_Update(TCDC_User& src, std::list<string>& keyList)
 		list<string>::iterator it = find(keyList.begin(), keyList.end(), "User_ID");
 		if (it == keyList.end())
 			return inputConditionError;
-			
+
 		if (!User_Find(src.User_ID))
 			return notExists;
 
@@ -701,6 +693,41 @@ int CDC_User::User_Find2(const std::string& whereSql, TCDC_User& t)
 		return DBError;
 	}
 	return success;
+}
+
+std::list<TCDC_User> CDC_User::User_Find2(const std::string& whereSql)
+{
+	std::list<TCDC_User> lst;
+	try
+	{
+		CppMySQLQuery q;
+		char buf[1024] = { 0 };
+		sprintf(buf, "select * from CDC_User where %s;", whereSql.c_str());
+
+		q = _pdb->execQuery(buf);
+
+		while (!q.eof())
+		{
+			TCDC_User t;
+			t.User_ID = q.getDoubleField(0);
+			t.User_Role = q.getIntField(1);
+			t.User_UserGroup_ID = q.getDoubleField(2);
+			t.User_Name = q.getStringField(3);
+			t.User_LoginName = q.getStringField(4);
+			t.User_Password = q.getStringField(5);
+			t.User_Remarks = q.getStringField(6);
+			lst.push_back(t);
+			q.nextRow();
+		}
+	}
+	catch (CppMySQLException& e)
+	{
+		MERR << e.errorCode() << ":" << e.errorMessage();
+		return lst;
+	}
+	if (lst.size() == 0)
+		MDEBUG << "not find, whereSql: " << whereSql;
+	return lst;
 }
 
 int CDC_User::User_Count()

@@ -34,6 +34,7 @@ public:
 	int UserGroup_Find(double id, TCDC_UserGroup& t);
 	int UserGroup_Find(std::string& name, TCDC_UserGroup& t);
 	int UserGroup_Find2(std::string& whereSql, TCDC_UserGroup& t);
+	std::list<TCDC_UserGroup> UserGroup_Find2(std::string& whereSql);
 
 	int UserGroup_Count();
 	int UserGroup_Count(std::string& whereSql);

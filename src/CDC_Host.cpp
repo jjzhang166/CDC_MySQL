@@ -240,7 +240,8 @@ std::string CDC_Host::CDC_Host_Find(const std::string& req)
 		if (!hasItem) goto END;
 
 		string whereSql = ss.str();
-		ret = Host_Find2(whereSql, t);
+		lst = Host_Find2(whereSql);
+		if (lst.size() != 0) ret = success;
 	}
 
 END:
@@ -260,31 +261,22 @@ END:
 		cJSON_AddStringToObject(data, "Host_VirtNet", t.Host_VirtNet.c_str());
 
 		cJSON *dataArr, *data = 0;
-		if (!isAll)
+		cJSON_AddNumberToObject(result, "Result", lst.size());
+		if (lst.size() > 1)
 		{
-			cJSON_AddNumberToObject(result, "Result", 1);
-			cJSON_AddItemToObject(result, "Data", data = cJSON_CreateObject());
-			JSON_ADD_ONE_ELEMENT;
-		}
-		else
-		{
-			cJSON_AddNumberToObject(result, "Result", lst.size());
-			if (lst.size() > 1)
+			cJSON_AddItemToObject(result, "Data", dataArr = cJSON_CreateArray());
+			for (list<TCDC_Host>::iterator it = lst.begin(); it != lst.end(); ++it)
 			{
-				cJSON_AddItemToObject(result, "Data", dataArr = cJSON_CreateArray());
-				for (list<TCDC_Host>::iterator it = lst.begin(); it != lst.end(); ++it)
-				{
-					t = *it;
-					cJSON_AddItemToArray(dataArr, data = cJSON_CreateObject());
-					JSON_ADD_ONE_ELEMENT;
-				}
-			}
-			else if (lst.size() == 1)
-			{
-				cJSON_AddItemToObject(result, "Data", data = cJSON_CreateObject());
-				t = lst.back();
+				t = *it;
+				cJSON_AddItemToArray(dataArr, data = cJSON_CreateObject());
 				JSON_ADD_ONE_ELEMENT;
 			}
+		}
+		else if (lst.size() == 1)
+		{
+			cJSON_AddItemToObject(result, "Data", data = cJSON_CreateObject());
+			t = lst.back();
+			JSON_ADD_ONE_ELEMENT;
 		}
 	#undef JSON_ADD_ONE_ELEMENT
 	}
@@ -639,6 +631,36 @@ int CDC_Host::Host_Find2(const std::string& whereSql, TCDC_Host& t)
 		return DBError;
 	}
 	return success;
+}
+
+std::list<TCDC_Host> CDC_Host::Host_Find2(const std::string& whereSql)
+{
+	std::list<TCDC_Host> lst;
+	try
+	{
+		CppMySQLQuery q;
+		char buf[1024] = { 0 };
+		sprintf(buf, "select * from CDC_Host where %s;", whereSql.c_str());
+
+		q = _pdb->execQuery(buf);
+		while (!q.eof())
+		{
+			TCDC_Host t;
+			t.Host_ID = q.getDoubleField(0);
+			t.Host_Name = q.getStringField(1);
+			t.Host_IP = q.getStringField(2);
+			t.Host_VirtNet = q.getStringField(3);
+
+			lst.push_back(t);
+			q.nextRow();
+		}
+	}
+	catch (CppMySQLException& e)
+	{
+		MERR << e.errorCode() << ":" << e.errorMessage();
+		return lst;
+	}
+	return lst;
 }
 
 int CDC_Host::Host_Count()

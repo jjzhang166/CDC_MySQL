@@ -29,6 +29,7 @@ public:
 	bool Template_Find(double id);
 	int Template_Find(double id, TCDC_Template& t);
 	int Template_Find2(const std::string& whereSql, TCDC_Template& t);
+	std::list<TCDC_Template> Template_Find2(const std::string& whereSql);
 	int Template_Count();
 	int Template_Count(const std::string& whereSql);
 

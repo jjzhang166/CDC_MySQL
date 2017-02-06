@@ -29,6 +29,7 @@ public:
 	bool EDU_VM_Find(double id);
 	int EDU_VM_Find(double id, TCDC_EDU_VM& t);
 	int EDU_VM_Find2(const std::string& whereSql, TCDC_EDU_VM& t);
+	std::list<TCDC_EDU_VM> EDU_VM_Find2(const std::string& whereSql);
 	int EDU_VM_Count();
 	int EDU_VM_Count(const std::string& whereSql);
 

@@ -262,7 +262,8 @@ std::string CDC_EDU_VM::CDC_EDU_VM_Find(const std::string& req)
 		if (!hasItem) goto END;
 
 		string whereSql = ss.str();
-		ret = EDU_VM_Find2(whereSql, t);
+		lst = EDU_VM_Find2(whereSql);
+		if (lst.size() != 0) ret = success;
 	}
 
 END:
@@ -285,31 +286,22 @@ END:
 		cJSON_AddStringToObject(data, "EDU_VM_MAC", t.EDU_VM_MAC.c_str());
 
 		cJSON *dataArr, *data = 0;
-		if (!isAll)
+		cJSON_AddNumberToObject(result, "Result", lst.size());
+		if (lst.size() > 1)
 		{
-			cJSON_AddNumberToObject(result, "Result", 1);
-			cJSON_AddItemToObject(result, "Data", data = cJSON_CreateObject());
-			JSON_ADD_ONE_ELEMENT;
-		}
-		else
-		{
-			cJSON_AddNumberToObject(result, "Result", lst.size());
-			if (lst.size() > 1)
+			cJSON_AddItemToObject(result, "Data", dataArr = cJSON_CreateArray());
+			for (list<TCDC_EDU_VM>::iterator it = lst.begin(); it != lst.end(); ++it)
 			{
-				cJSON_AddItemToObject(result, "Data", dataArr = cJSON_CreateArray());
-				for (list<TCDC_EDU_VM>::iterator it = lst.begin(); it != lst.end(); ++it)
-				{
-					t = *it;
-					cJSON_AddItemToArray(dataArr, data = cJSON_CreateObject());
-					JSON_ADD_ONE_ELEMENT;
-				}
-			}
-			else if (lst.size() == 1)
-			{
-				cJSON_AddItemToObject(result, "Data", data = cJSON_CreateObject());
-				t = lst.back();
+				t = *it;
+				cJSON_AddItemToArray(dataArr, data = cJSON_CreateObject());
 				JSON_ADD_ONE_ELEMENT;
 			}
+		}
+		else if (lst.size() == 1)
+		{
+			cJSON_AddItemToObject(result, "Data", data = cJSON_CreateObject());
+			t = lst.back();
+			JSON_ADD_ONE_ELEMENT;
 		}
 	#undef JSON_ADD_ONE_ELEMENT
 	}
@@ -594,6 +586,39 @@ int CDC_EDU_VM::EDU_VM_Find2(const std::string& whereSql, TCDC_EDU_VM& t)
 		return DBError;
 	}
 	return success;
+}
+
+std::list<TCDC_EDU_VM> CDC_EDU_VM::EDU_VM_Find2(const std::string& whereSql)
+{
+	std::list<TCDC_EDU_VM> lst;
+	try
+	{
+		CppMySQLQuery q;
+		char buf[1024] = { 0 };
+		sprintf(buf, "select * from CDC_EDU_VM where %s;", whereSql.c_str());
+
+		q = _pdb->execQuery(buf);
+		while (!q.eof())
+		{
+			TCDC_EDU_VM t;
+			t.EDU_VM_ID = q.getDoubleField(0);
+			t.EDU_VM_Template_ID = q.getDoubleField(1);
+			t.EDU_VM_ThinClient_ID = q.getDoubleField(2);
+			t.EDU_VM_State = q.getIntField(3);
+			t.EDU_VM_SysPath = q.fieldValue(4);
+			t.EDU_VM_SysFilename = q.fieldValue(5);
+			t.EDU_VM_MAC = q.fieldValue(6);
+
+			lst.push_back(t);
+			q.nextRow();
+		}
+	}
+	catch (CppMySQLException& e)
+	{
+		MERR << e.errorCode() << ":" << e.errorMessage();
+		return lst;
+	}
+	return lst;
 }
 
 int CDC_EDU_VM::EDU_VM_Count()

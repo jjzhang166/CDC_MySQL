@@ -29,6 +29,7 @@ public:
 	bool VM_Find(double id);
 	int VM_Find(double id, TCDC_VM& t);
 	int VM_Find2(const std::string& whereSql, TCDC_VM& t);
+	std::list<TCDC_VM> VM_Find2(const std::string& whereSql);
 	int VM_Count();
 	int VM_Count(const std::string& whereSql);
 

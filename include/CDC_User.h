@@ -35,6 +35,7 @@ public:
 	int User_Find(double id, TCDC_User& t);
 	int User_Find(const std::string& name, TCDC_User& t);
 	int User_Find2(const std::string& whereSql, TCDC_User& t);
+	std::list<TCDC_User> User_Find2(const std::string& whereSql);
 
 	int User_Count();
 	int User_Count(const std::string& whereSql);

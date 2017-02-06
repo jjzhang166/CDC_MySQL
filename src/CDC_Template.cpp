@@ -262,14 +262,56 @@ std::string CDC_Template::CDC_Template_Find(const std::string& req)
 		stringstream ss;
 		JSON_GET_OBJECT_ITEM("Template_ID");
 		if (tmp) ss << tmp->valuedouble;
-
+		//
+		JSON_GET_OBJECT_ITEM("Template_HostID");
+		if (tmp) ss << tmp->valuedouble;
+		//
+		JSON_GET_OBJECT_ITEM("Template_CoreNum");
+		if (tmp) ss << tmp->valueint;
+		//
+		JSON_GET_OBJECT_ITEM("Template_MemSize");
+		if (tmp) ss << tmp->valueint;
+		//
+		JSON_GET_OBJECT_ITEM("Template_SysSize");
+		if (tmp) ss << tmp->valueint;
+		//
+		JSON_GET_OBJECT_ITEM("Template_Version");
+		if (tmp) ss << tmp->valueint;
+		//
+		JSON_GET_OBJECT_ITEM("Template_Mode");
+		if (tmp) ss << tmp->valueint;
+		//
+		JSON_GET_OBJECT_ITEM("Template_State");
+		if (tmp) ss << tmp->valueint;
+		//
 		JSON_GET_OBJECT_ITEM("Template_Name");
 		if (tmp) ss << "'" << tmp->valuestring << "'";
-
-		JSON_GET_OBJECT_ITEM("Template_IP");
+		//
+		JSON_GET_OBJECT_ITEM("Template_OS");
 		if (tmp) ss << "'" << tmp->valuestring << "'";
-
-		JSON_GET_OBJECT_ITEM("Template_VirtNet");
+		//
+		JSON_GET_OBJECT_ITEM("Template_Path");
+		if (tmp) ss << "'" << tmp->valuestring << "'";
+		//
+		JSON_GET_OBJECT_ITEM("Template_FileName");
+		if (tmp) ss << "'" << tmp->valuestring << "'";
+		//
+		JSON_GET_OBJECT_ITEM("Template_RollBackFile");
+		if (tmp) ss << "'" << tmp->valuestring << "'";
+		//
+		JSON_GET_OBJECT_ITEM("Template_BackUpFile");
+		if (tmp) ss << "'" << tmp->valuestring << "'";
+		//
+		JSON_GET_OBJECT_ITEM("Template_SpicePwd");
+		if (tmp) ss << "'" << tmp->valuestring << "'";
+		//
+		JSON_GET_OBJECT_ITEM("Template_Uuid");
+		if (tmp) ss << "'" << tmp->valuestring << "'";
+		//
+		JSON_GET_OBJECT_ITEM("Template_Create_Time");
+		if (tmp) ss << "'" << tmp->valuestring << "'";
+		//
+		JSON_GET_OBJECT_ITEM("Template_Update_Time");
 		if (tmp) ss << "'" << tmp->valuestring << "'";
 
 	#undef JSON_GET_OBJECT_ITEM
@@ -277,7 +319,8 @@ std::string CDC_Template::CDC_Template_Find(const std::string& req)
 		if (!hasItem) goto END;
 
 		string whereSql = ss.str();
-		ret = Template_Find2(whereSql, t);
+		lst = Template_Find2(whereSql);
+		if (lst.size() != 0) ret = success;
 	}
 
 END:
@@ -311,31 +354,22 @@ END:
 		cJSON_AddStringToObject(data, "Template_Update_Time", t.Template_Update_Time.c_str());
 
 		cJSON *dataArr, *data = 0;
-		if (!isAll)
+		cJSON_AddNumberToObject(result, "Result", lst.size());
+		if (lst.size() > 1)
 		{
-			cJSON_AddNumberToObject(result, "Result", 1);
-			cJSON_AddItemToObject(result, "Data", data = cJSON_CreateObject());
-			JSON_ADD_ONE_ELEMENT;
-		}
-		else
-		{
-			cJSON_AddNumberToObject(result, "Result", lst.size());
-			if (lst.size() > 1)
+			cJSON_AddItemToObject(result, "Data", dataArr = cJSON_CreateArray());
+			for (list<TCDC_Template>::iterator it = lst.begin(); it != lst.end(); ++it)
 			{
-				cJSON_AddItemToObject(result, "Data", dataArr = cJSON_CreateArray());
-				for (list<TCDC_Template>::iterator it = lst.begin(); it != lst.end(); ++it)
-				{
-					t = *it;
-					cJSON_AddItemToArray(dataArr, data = cJSON_CreateObject());
-					JSON_ADD_ONE_ELEMENT;
-				}
-			}
-			else if (lst.size() == 1)
-			{
-				cJSON_AddItemToObject(result, "Data", data = cJSON_CreateObject());
-				t = lst.back();
+				t = *it;
+				cJSON_AddItemToArray(dataArr, data = cJSON_CreateObject());
 				JSON_ADD_ONE_ELEMENT;
 			}
+		}
+		else if (lst.size() == 1)
+		{
+			cJSON_AddItemToObject(result, "Data", data = cJSON_CreateObject());
+			t = lst.back();
+			JSON_ADD_ONE_ELEMENT;
 		}
 	#undef JSON_ADD_ONE_ELEMENT
 	}
@@ -709,6 +743,50 @@ int CDC_Template::Template_Find2(const std::string& whereSql, TCDC_Template& t)
 		return DBError;
 	}
 	return success;
+}
+
+std::list<TCDC_Template> CDC_Template::Template_Find2(const std::string& whereSql)
+{
+	std::list<TCDC_Template> lst;
+	try
+	{
+		CppMySQLQuery q;
+		char buf[1024] = { 0 };
+		sprintf(buf, "select * from CDC_Template where %s;", whereSql.c_str());
+
+		q = _pdb->execQuery(buf);
+		while (!q.eof())
+		{
+			TCDC_Template t;
+			t.Template_ID = q.getDoubleField(0);
+			t.Template_HostID = q.getDoubleField(1);
+			t.Template_CoreNum = q.getIntField(2);
+			t.Template_MemSize = q.getIntField(3);
+			t.Template_SysSize = q.getIntField(4);
+			t.Template_Version = q.getIntField(5);
+			t.Template_Mode = q.getIntField(6);
+			t.Template_State = q.getIntField(7);
+			t.Template_Name = q.fieldValue(8);
+			t.Template_OS = q.fieldValue(9);
+			t.Template_Path = q.fieldValue(10);
+			t.Template_FileName = q.fieldValue(11);
+			t.Template_RollBackFile = q.fieldValue(12);
+			t.Template_BackUpFile = q.fieldValue(13);
+			t.Template_SpicePwd = q.fieldValue(14);
+			t.Template_Uuid = q.fieldValue(15);
+			t.Template_Create_Time = q.fieldValue(16);
+			t.Template_Update_Time = q.fieldValue(17);
+
+			lst.push_back(t);
+			q.nextRow();
+		}
+	}
+	catch (CppMySQLException& e)
+	{
+		MERR << e.errorCode() << ":" << e.errorMessage();
+		return lst;
+	}
+	return lst;
 }
 
 int CDC_Template::Template_Count()

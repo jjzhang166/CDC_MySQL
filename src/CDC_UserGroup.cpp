@@ -225,7 +225,8 @@ std::string CDC_UserGroup::CDC_UserGroup_Find(const std::string& req)
 		if (!hasItem) goto END;
 
 		string whereSql = ss.str();
-		ret = UserGroup_Find2(whereSql, userGroup);
+		lst = UserGroup_Find2(whereSql);
+		if (lst.size() != 0) ret = success;
 	}
 
 END:
@@ -239,34 +240,23 @@ END:
 	else 
 	{
 		cJSON *dataArr, *data = 0;
-		if (!isAll)
+		cJSON_AddNumberToObject(result, "Result", lst.size());
+		if (lst.size() > 1)
 		{
-			cJSON_AddNumberToObject(result, "Result", 1);
+			cJSON_AddItemToObject(result, "Data", dataArr = cJSON_CreateArray());
+			for (list<TCDC_UserGroup>::iterator it = lst.begin(); it != lst.end(); ++it)
+			{
+				cJSON_AddItemToArray(dataArr, data = cJSON_CreateObject());
+				cJSON_AddNumberToObject(data, "UserGroup_ID", (*it).UserGroup_ID);
+				cJSON_AddStringToObject(data, "UserGroup_Name", (*it).UserGroup_Name.c_str());
+			}
+		}
+		else if (lst.size() == 1)
+		{
 			cJSON_AddItemToObject(result, "Data", data = cJSON_CreateObject());
+			userGroup = lst.back();
 			cJSON_AddNumberToObject(data, "UserGroup_ID", userGroup.UserGroup_ID);
 			cJSON_AddStringToObject(data, "UserGroup_Name", userGroup.UserGroup_Name.c_str());
-		}
-		else
-		{
-			cJSON_AddNumberToObject(result, "Result", lst.size());
-			if (lst.size() > 1)
-			{
-				cJSON_AddItemToObject(result, "Data", dataArr = cJSON_CreateArray());
-				for (list<TCDC_UserGroup>::iterator it = lst.begin(); it != lst.end(); ++it)
-				{
-					cJSON_AddItemToArray(dataArr, data = cJSON_CreateObject());
-					cJSON_AddNumberToObject(data, "UserGroup_ID", (*it).UserGroup_ID);
-					cJSON_AddStringToObject(data, "UserGroup_Name", (*it).UserGroup_Name.c_str());
-				}
-			}
-			else if (lst.size() == 1)
-			{
-				cJSON_AddItemToObject(result, "Data", data = cJSON_CreateObject());
-				userGroup = lst.back();
-				cJSON_AddNumberToObject(data, "UserGroup_ID", userGroup.UserGroup_ID);
-				cJSON_AddStringToObject(data, "UserGroup_Name", userGroup.UserGroup_Name.c_str());
-			}
-
 		}
 	}
 	out = cJSON_Print(result);
@@ -576,6 +566,32 @@ int CDC_UserGroup::UserGroup_Find2(std::string& whereSql, TCDC_UserGroup& t)
 		return DBError;
 	}
 	return success;
+}
+
+std::list<TCDC_UserGroup> CDC_UserGroup::UserGroup_Find2(std::string& whereSql)
+{
+	std::list<TCDC_UserGroup> lst;
+	try
+	{
+		CppMySQLQuery q;
+		char buf[1024] = { 0 };
+		sprintf(buf, "select * from CDC_UserGroup where %s;", whereSql.c_str());
+		q = _pdb->execQuery(buf);
+		while (!q.eof())
+		{
+			TCDC_UserGroup t;
+			t.UserGroup_ID = q.getDoubleField(0);
+			t.UserGroup_Name = q.getStringField(1);
+			lst.push_back(t);
+			q.nextRow();
+		}
+	}
+	catch (CppMySQLException& e)
+	{
+		MERR << e.errorCode() << ":" << e.errorMessage();
+		return lst;
+	}
+	return lst;
 }
 
 int CDC_UserGroup::UserGroup_Count()

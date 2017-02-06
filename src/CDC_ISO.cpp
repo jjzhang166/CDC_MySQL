@@ -240,7 +240,8 @@ std::string CDC_ISO::CDC_ISO_Find(const std::string& req)
 		if (!hasItem) goto END;
 
 		string whereSql = ss.str();
-		ret = ISO_Find2(whereSql, t);
+		lst = ISO_Find2(whereSql);
+		if (lst.size() != 0) ret = success;
 	}
 
 END:
@@ -260,31 +261,22 @@ END:
 		cJSON_AddStringToObject(data, "ISO_Path", t.ISO_Path.c_str());
 
 		cJSON *dataArr, *data = 0;
-		if (!isAll)
+		cJSON_AddNumberToObject(result, "Result", lst.size());
+		if (lst.size() > 1)
 		{
-			cJSON_AddNumberToObject(result, "Result", 1);
-			cJSON_AddItemToObject(result, "Data", data = cJSON_CreateObject());
-			JSON_ADD_ONE_ELEMENT;
-		}
-		else
-		{
-			cJSON_AddNumberToObject(result, "Result", lst.size());
-			if (lst.size() > 1)
+			cJSON_AddItemToObject(result, "Data", dataArr = cJSON_CreateArray());
+			for (list<TCDC_ISO>::iterator it = lst.begin(); it != lst.end(); ++it)
 			{
-				cJSON_AddItemToObject(result, "Data", dataArr = cJSON_CreateArray());
-				for (list<TCDC_ISO>::iterator it = lst.begin(); it != lst.end(); ++it)
-				{
-					t = *it;
-					cJSON_AddItemToArray(dataArr, data = cJSON_CreateObject());
-					JSON_ADD_ONE_ELEMENT;
-				}
-			}
-			else if (lst.size() == 1)
-			{
-				cJSON_AddItemToObject(result, "Data", data = cJSON_CreateObject());
-				t = lst.back();
+				t = *it;
+				cJSON_AddItemToArray(dataArr, data = cJSON_CreateObject());
 				JSON_ADD_ONE_ELEMENT;
 			}
+		}
+		else if (lst.size() == 1)
+		{
+			cJSON_AddItemToObject(result, "Data", data = cJSON_CreateObject());
+			t = lst.back();
+			JSON_ADD_ONE_ELEMENT;
 		}
 	#undef JSON_ADD_ONE_ELEMENT
 	}
@@ -639,6 +631,37 @@ int CDC_ISO::ISO_Find2(const std::string& whereSql, TCDC_ISO& t)
 		return DBError;
 	}
 	return success;
+}
+
+
+std::list<TCDC_ISO> CDC_ISO::ISO_Find2(const std::string& whereSql)
+{
+	std::list<TCDC_ISO> lst;
+	try
+	{
+		CppMySQLQuery q;
+		char buf[1024] = { 0 };
+		sprintf(buf, "select * from CDC_ISO where %s;", whereSql.c_str());
+
+		q = _pdb->execQuery(buf);
+		while (!q.eof())
+		{
+			TCDC_ISO t;
+			t.ISO_ID = q.getDoubleField(0);
+			t.ISO_HostID = q.getDoubleField(1);
+			t.ISO_Name = q.getStringField(2);
+			t.ISO_Path = q.getStringField(3);
+
+			lst.push_back(t);
+			q.nextRow();
+		}
+	}
+	catch (CppMySQLException& e)
+	{
+		MERR << e.errorCode() << ":" << e.errorMessage();
+		return lst;
+	}
+	return lst;
 }
 
 int CDC_ISO::ISO_Count()

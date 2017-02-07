@@ -30,6 +30,7 @@ public:
 	bool ThinClient_Find(double id);
 	int ThinClient_Find(double id, TCDC_ThinClient& t);
 	int ThinClient_Find2(const std::string& whereSql, TCDC_ThinClient& t);
+	std::list<TCDC_ThinClient> ThinClient_Find2(const std::string& whereSql);
 	int ThinClient_Count();
 	int ThinClient_Count(const std::string& whereSql);
 

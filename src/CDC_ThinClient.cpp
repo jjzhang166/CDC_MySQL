@@ -264,7 +264,8 @@ std::string CDC_ThinClient::CDC_ThinClient_Find(const std::string& req)
 		if (!hasItem) goto END;
 
 		string whereSql = ss.str();
-		ret = ThinClient_Find2(whereSql, t);
+		lst = ThinClient_Find2(whereSql);
+		if (lst.size() != 0) ret = success;
 	}
 
 END:
@@ -289,31 +290,22 @@ END:
 		cJSON_AddStringToObject(data, "ThinClient_MAC", t.ThinClient_MAC.c_str());
 
 		cJSON *dataArr, *data = 0;
-		if (!isAll)
+		cJSON_AddNumberToObject(result, "Result", lst.size());
+		if (lst.size() > 1)
 		{
-			cJSON_AddNumberToObject(result, "Result", 1);
-			cJSON_AddItemToObject(result, "Data", data = cJSON_CreateObject());
-			JSON_ADD_ONE_ELEMENT;
-		}
-		else
-		{
-			cJSON_AddNumberToObject(result, "Result", lst.size());
-			if (lst.size() > 1)
+			cJSON_AddItemToObject(result, "Data", dataArr = cJSON_CreateArray());
+			for (list<TCDC_ThinClient>::iterator it = lst.begin(); it != lst.end(); ++it)
 			{
-				cJSON_AddItemToObject(result, "Data", dataArr = cJSON_CreateArray());
-				for (list<TCDC_ThinClient>::iterator it = lst.begin(); it != lst.end(); ++it)
-				{
-					t = *it;
-					cJSON_AddItemToArray(dataArr, data = cJSON_CreateObject());
-					JSON_ADD_ONE_ELEMENT;
-				}
-			}
-			else if (lst.size() == 1)
-			{
-				cJSON_AddItemToObject(result, "Data", data = cJSON_CreateObject());
-				t = lst.back();
+				t = *it;
+				cJSON_AddItemToArray(dataArr, data = cJSON_CreateObject());
 				JSON_ADD_ONE_ELEMENT;
 			}
+		}
+		else if (lst.size() == 1)
+		{
+			cJSON_AddItemToObject(result, "Data", data = cJSON_CreateObject());
+			t = lst.back();
+			JSON_ADD_ONE_ELEMENT;
 		}
 	#undef JSON_ADD_ONE_ELEMENT
 	}
@@ -644,6 +636,41 @@ int CDC_ThinClient::ThinClient_Find2(const std::string& whereSql, TCDC_ThinClien
 		return DBError;
 	}
 	return success;
+}
+
+std::list<TCDC_ThinClient> CDC_ThinClient::ThinClient_Find2(const std::string& whereSql)
+{
+	std::list<TCDC_ThinClient> lst;
+	try
+	{
+		CppMySQLQuery q;
+		char buf[1024] = { 0 };
+		sprintf(buf, "select * from CDC_ThinClient where %s;", whereSql.c_str());
+
+		q = _pdb->execQuery(buf);
+		while (!q.eof())
+		{
+			TCDC_ThinClient t;
+			t.ThinClient_ID = q.getDoubleField(0);
+			t.ThinClient_ThinGroup_ID = q.getDoubleField(1);
+			t.ThinClient_Mode = q.getIntField(2);
+			t.ThinClient_Version = q.getStringField(3);
+			t.ThinClient_State = q.getIntField(4);
+			t.ThinClient_Protocol = q.getIntField(5);
+			t.ThinClient_Name = q.getStringField(6);
+			t.ThinClient_IP = q.getStringField(7);
+			t.ThinClient_MAC = q.getStringField(8);
+
+			lst.push_back(t);
+			q.nextRow();
+		}
+	}
+	catch (CppMySQLException& e)
+	{
+		MERR << e.errorCode() << ":" << e.errorMessage();
+		return lst;
+	}
+	return lst;
 }
 
 int CDC_ThinClient::ThinClient_Count()

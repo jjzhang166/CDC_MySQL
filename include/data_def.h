@@ -123,7 +123,9 @@ struct TCDC_Template
 	std::string	Template_FileName;
 	std::string	Template_RollBackFile;
 	std::string	Template_BackUpFile;
+	std::string	Template_MAC;
 	std::string	Template_SpicePwd;
+	std::string	Template_SpicePort;
 	std::string	Template_Uuid;
 	std::string Template_Create_Time;	// DateTime type
 	std::string Template_Update_Time;	// DateTime type
@@ -217,6 +219,7 @@ struct TCDC_VM
 	std::string	VM_DataFilename;
 	std::string	VM_MAC;
 	std::string	VM_SpicePwd;
+	std::string	VM_SpicePort;
 	std::string	VM_Uuid;
 	std::string	VM_Create_Time;
 	std::string	VM_Update_Time;

@@ -76,7 +76,7 @@ void CDC_Authorization_Tests::testJsonAdd()
 	// success
 	json = cJSON_CreateObject();
 	cJSON_AddStringToObject(json, "Method", "Part");
-	cJSON_AddStringToObject(json, "Authorization_MachineID", "XXaa11");
+	cJSON_AddStringToObject(json, "Authorization_MachineID", "XXaa11-200-asssss87-huhuhuu");
 	cJSON_AddNumberToObject(json, "Authorization_MaxClientNum", 11);
 	cJSON_AddStringToObject(json, "Authorization_Deadline", "2017-12-31 12:56:30");
 	cJSON_AddStringToObject(json, "Authorization_Company", "testJsonAdd_222");

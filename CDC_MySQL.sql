@@ -45,7 +45,9 @@ Template_Path Varchar(255) not null,            /*模板所在路径*/
 Template_FileName Varchar(255) not null,        /*模板文件名*/ 
 Template_RollBackFile Varchar(255),             /*回滚快照名*/ 
 Template_BackUpFile Varchar(255) not null,      /*备份模板名*/ 
+Template_MAC Varchar(255) not null,             /*模板Mac地址*/ 
 Template_SpicePwd Varchar(255) not null,        /*Spice密码*/ 
+Template_SpicePort Varchar(255) not null,       /*Spice端口*/ 
 Template_Uuid Varchar(255) ,                    /*模板内部标识名*/ 
 Template_Create_Time DateTime,                  /*模板创建时间*/ 
 Template_Update_Time DateTime,                  /*模板最后修改时间*/ 
@@ -110,6 +112,7 @@ VM_DataPath Varchar(255),                       /*数据盘所在路径*/
 VM_DataFilename Varchar(255),                   /*数据盘文件名*/ 
 VM_MAC Varchar(255) not null,                   /*虚拟机Mac地址*/ 
 VM_SpicePwd Varchar(255) not null,              /*Spice密码*/ 
+VM_SpicePort Varchar(255) not null,             /*Spice端口*/ 
 VM_Uuid Varchar(255),                           /*虚拟机内部标识*/ 
 VM_Create_Time DATETIME,                        /*虚拟机创建时间*/ 
 VM_Update_Time DATETIME,                        /*虚拟机最后修改时间*/ 

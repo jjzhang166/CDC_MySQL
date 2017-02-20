@@ -69,7 +69,9 @@ std::string CDC_Template::CDC_Template_Add(const std::string& req)
 		JSON_ADD_ONE_ELEMENT(Template_FileName, valuestring);
 		JSON_ADD_ONE_ELEMENT2(Template_RollBackFile, valuestring);
 		JSON_ADD_ONE_ELEMENT(Template_BackUpFile, valuestring);
+		JSON_ADD_ONE_ELEMENT(Template_MAC, valuestring);
 		JSON_ADD_ONE_ELEMENT(Template_SpicePwd, valuestring);
+		JSON_ADD_ONE_ELEMENT(Template_SpicePort, valuestring);
 		JSON_ADD_ONE_ELEMENT2(Template_Uuid, valuestring);
 		JSON_ADD_ONE_ELEMENT2(Template_Create_Time, valuestring);
 		JSON_ADD_ONE_ELEMENT2(Template_Update_Time, valuestring);
@@ -191,7 +193,9 @@ std::string CDC_Template::CDC_Template_Update(const std::string& req)
 		JSON_GET_OBJECT_ITEM(Template_FileName, valuestring);
 		JSON_GET_OBJECT_ITEM(Template_RollBackFile, valuestring);
 		JSON_GET_OBJECT_ITEM(Template_BackUpFile, valuestring);
+		JSON_GET_OBJECT_ITEM(Template_MAC, valuestring);
 		JSON_GET_OBJECT_ITEM(Template_SpicePwd, valuestring);
+		JSON_GET_OBJECT_ITEM(Template_SpicePort, valuestring);
 		JSON_GET_OBJECT_ITEM(Template_Uuid, valuestring);
 		JSON_GET_OBJECT_ITEM(Template_Create_Time, valuestring);
 		JSON_GET_OBJECT_ITEM(Template_Update_Time, valuestring);
@@ -302,7 +306,13 @@ std::string CDC_Template::CDC_Template_Find(const std::string& req)
 		JSON_GET_OBJECT_ITEM("Template_BackUpFile");
 		if (tmp) ss << "'" << tmp->valuestring << "'";
 		//
+		JSON_GET_OBJECT_ITEM("Template_MAC");
+		if (tmp) ss << "'" << tmp->valuestring << "'";
+		//
 		JSON_GET_OBJECT_ITEM("Template_SpicePwd");
+		if (tmp) ss << "'" << tmp->valuestring << "'";
+		//
+		JSON_GET_OBJECT_ITEM("Template_SpicePort");
 		if (tmp) ss << "'" << tmp->valuestring << "'";
 		//
 		JSON_GET_OBJECT_ITEM("Template_Uuid");
@@ -348,7 +358,9 @@ END:
 		cJSON_AddStringToObject(data, "Template_FileName", t.Template_FileName.c_str());\
 		cJSON_AddStringToObject(data, "Template_RollBackFile", t.Template_RollBackFile.c_str());\
 		cJSON_AddStringToObject(data, "Template_BackUpFile", t.Template_BackUpFile.c_str());\
+		cJSON_AddStringToObject(data, "Template_MAC", t.Template_MAC.c_str());\
 		cJSON_AddStringToObject(data, "Template_SpicePwd", t.Template_SpicePwd.c_str());\
+		cJSON_AddStringToObject(data, "Template_SpicePort", t.Template_SpicePort.c_str());\
 		cJSON_AddStringToObject(data, "Template_Uuid", t.Template_Uuid.c_str());\
 		cJSON_AddStringToObject(data, "Template_Create_Time", t.Template_Create_Time.c_str());\
 		cJSON_AddStringToObject(data, "Template_Update_Time", t.Template_Update_Time.c_str());
@@ -464,7 +476,13 @@ std::string CDC_Template::CDC_Template_FindCount(const std::string& req)
 		JSON_GET_OBJECT_ITEM("Template_BackUpFile");
 		if (tmp) ss << "'" << tmp->valuestring << "'";
 		//
+		JSON_GET_OBJECT_ITEM("Template_MAC");
+		if (tmp) ss << "'" << tmp->valuestring << "'";
+		//
 		JSON_GET_OBJECT_ITEM("Template_SpicePwd");
+		if (tmp) ss << "'" << tmp->valuestring << "'";
+		//
+		JSON_GET_OBJECT_ITEM("Template_SpicePort");
 		if (tmp) ss << "'" << tmp->valuestring << "'";
 		//
 		JSON_GET_OBJECT_ITEM("Template_Uuid");
@@ -508,7 +526,7 @@ double CDC_Template::Template_Add(TCDC_Template& src)
 		if (Template_Find(src.Template_ID))
 			return exists;
 
-		_stmt = _pdb->compileStatement("insert into CDC_Template values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);");
+		_stmt = _pdb->compileStatement("insert into CDC_Template values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);");
 		if (src.Template_ID != INVALID_NUM && src.Template_ID > 0)
 			id = src.Template_ID;
 		else
@@ -527,10 +545,12 @@ double CDC_Template::Template_Add(TCDC_Template& src)
 		_stmt.bind(12, src.Template_FileName);
 		_stmt.bind(13, src.Template_RollBackFile);
 		_stmt.bind(14, src.Template_BackUpFile);
-		_stmt.bind(15, src.Template_SpicePwd);
-		_stmt.bind(16, src.Template_Uuid);
-		_stmt.bind(17, String2MySQLTime(src.Template_Create_Time));
-		_stmt.bind(18, String2MySQLTime(src.Template_Update_Time));
+		_stmt.bind(15, src.Template_MAC);
+		_stmt.bind(16, src.Template_SpicePwd);
+		_stmt.bind(17, src.Template_SpicePort);
+		_stmt.bind(18, src.Template_Uuid);
+		_stmt.bind(19, String2MySQLTime(src.Template_Create_Time));
+		_stmt.bind(20, String2MySQLTime(src.Template_Update_Time));
 
 		_stmt.execDML();
 		_stmt.reset();
@@ -615,8 +635,12 @@ int CDC_Template::Template_Update(TCDC_Template& src, std::list<std::string>& ke
 				_stmt.bind(index++, src.Template_RollBackFile);
 			else if (*it == "Template_BackUpFile")
 				_stmt.bind(index++, src.Template_BackUpFile);
+			else if (*it == "Template_MAC")
+				_stmt.bind(index++, src.Template_MAC);
 			else if (*it == "Template_SpicePwd")
 				_stmt.bind(index++, src.Template_SpicePwd);
+			else if (*it == "Template_SpicePort")
+				_stmt.bind(index++, src.Template_SpicePort);
 			else if (*it == "Template_Uuid")
 				_stmt.bind(index++, src.Template_Uuid);
 			else if (*it == "Template_Create_Time")
@@ -685,10 +709,12 @@ int CDC_Template::Template_Find(double id, TCDC_Template& t)
 			t.Template_FileName = q.fieldValue(11);
 			t.Template_RollBackFile = q.fieldValue(12);
 			t.Template_BackUpFile = q.fieldValue(13);
-			t.Template_SpicePwd = q.fieldValue(14);
-			t.Template_Uuid = q.fieldValue(15);
-			t.Template_Create_Time = q.fieldValue(16);
-			t.Template_Update_Time = q.fieldValue(17);
+			t.Template_MAC = q.fieldValue(14);
+			t.Template_SpicePwd = q.fieldValue(15);
+			t.Template_SpicePort = q.fieldValue(16);
+			t.Template_Uuid = q.fieldValue(17);
+			t.Template_Create_Time = q.fieldValue(18);
+			t.Template_Update_Time = q.fieldValue(19);
 			return success;
 		}
 		MDEBUG << "not find, id: " << id;
@@ -728,10 +754,12 @@ int CDC_Template::Template_Find2(const std::string& whereSql, TCDC_Template& t)
 			t.Template_FileName = q.fieldValue(11);
 			t.Template_RollBackFile = q.fieldValue(12);
 			t.Template_BackUpFile = q.fieldValue(13);
-			t.Template_SpicePwd = q.fieldValue(14);
-			t.Template_Uuid = q.fieldValue(15);
-			t.Template_Create_Time = q.fieldValue(16);
-			t.Template_Update_Time = q.fieldValue(17);
+			t.Template_MAC = q.fieldValue(14);
+			t.Template_SpicePwd = q.fieldValue(15);
+			t.Template_SpicePort = q.fieldValue(16);
+			t.Template_Uuid = q.fieldValue(17);
+			t.Template_Create_Time = q.fieldValue(18);
+			t.Template_Update_Time = q.fieldValue(19);
 			return success;
 		}
 		MDEBUG << "not find, whereSql: " << whereSql;
@@ -772,10 +800,12 @@ std::list<TCDC_Template> CDC_Template::Template_Find2(const std::string& whereSq
 			t.Template_FileName = q.fieldValue(11);
 			t.Template_RollBackFile = q.fieldValue(12);
 			t.Template_BackUpFile = q.fieldValue(13);
-			t.Template_SpicePwd = q.fieldValue(14);
-			t.Template_Uuid = q.fieldValue(15);
-			t.Template_Create_Time = q.fieldValue(16);
-			t.Template_Update_Time = q.fieldValue(17);
+			t.Template_MAC = q.fieldValue(14);
+			t.Template_SpicePwd = q.fieldValue(15);
+			t.Template_SpicePort = q.fieldValue(16);
+			t.Template_Uuid = q.fieldValue(17);
+			t.Template_Create_Time = q.fieldValue(18);
+			t.Template_Update_Time = q.fieldValue(19);
 
 			lst.push_back(t);
 			q.nextRow();
@@ -843,10 +873,12 @@ std::list<TCDC_Template> CDC_Template::GetAll()
 			t.Template_FileName = q.fieldValue(11);
 			t.Template_RollBackFile = q.fieldValue(12);
 			t.Template_BackUpFile = q.fieldValue(13);
-			t.Template_SpicePwd = q.fieldValue(14);
-			t.Template_Uuid = q.fieldValue(15);
-			t.Template_Create_Time = q.fieldValue(16);
-			t.Template_Update_Time = q.fieldValue(17);
+			t.Template_MAC = q.fieldValue(14);
+			t.Template_SpicePwd = q.fieldValue(15);
+			t.Template_SpicePort = q.fieldValue(16);
+			t.Template_Uuid = q.fieldValue(17);
+			t.Template_Create_Time = q.fieldValue(18);
+			t.Template_Update_Time = q.fieldValue(19);
 
 			lst.push_back(t);
 			q.nextRow();

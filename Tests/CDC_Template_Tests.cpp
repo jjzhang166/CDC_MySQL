@@ -101,7 +101,9 @@ void CDC_Template_Tests::setUp()
 			Template_FileName Varchar(255) not null,        /*模板文件名*/\
 			Template_RollBackFile Varchar(255),             /*回滚快照名*/\
 			Template_BackUpFile Varchar(255) not null,      /*备份模板名*/\
+			Template_MAC Varchar(255) not null,				/*模板Mac地址*/\
 			Template_SpicePwd Varchar(255) not null,        /*Spice密码*/\
+			Template_SpicePort Varchar(255) not null,       /*Spice端口*/\
 			Template_Uuid Varchar(255),                    /*模板内部标识名*/\
 			Template_Create_Time DateTime,                  /*模板创建时间*/\
 			Template_Update_Time DateTime,                  /*模板最后修改时间*/\
@@ -143,10 +145,12 @@ void CDC_Template_Tests::tearDown()
 		t1.Template_FileName = "testJson_4";\
 		t1.Template_RollBackFile = "testJson_5";\
 		t1.Template_BackUpFile = "testJson_6";\
+		t1.Template_MAC = "testJson_55"; \
 		t1.Template_SpicePwd = "testJson_7";\
+		t1.Template_SpicePort = "testJson_72";\
 		t1.Template_Uuid = "testJson_8";\
 		t1.Template_Create_Time = "2017-12-31 12:56:30";\
-		t1.Template_Update_Time = "2017-12-31 12:56:30";
+		t1.Template_Update_Time = "2018-08-08 08:08:08";
 
 void CDC_Template_Tests::testJsonAdd()
 {
@@ -166,10 +170,12 @@ void CDC_Template_Tests::testJsonAdd()
 	cJSON_AddStringToObject(json, "Template_FileName", "testJsonAdd_4");
 	cJSON_AddStringToObject(json, "Template_RollBackFile", "testJsonAdd_5");
 	cJSON_AddStringToObject(json, "Template_BackUpFile", "testJsonAdd_6");
+	cJSON_AddStringToObject(json, "Template_MAC", "testJsonAdd_66");
 	cJSON_AddStringToObject(json, "Template_SpicePwd", "testJsonAdd_7");
+	cJSON_AddStringToObject(json, "Template_SpicePort", "testJsonAdd_71");
 	cJSON_AddStringToObject(json, "Template_Uuid", "testJsonAdd_8");
 	cJSON_AddStringToObject(json, "Template_Create_Time", "2017-12-31 12:56:30");
-	cJSON_AddStringToObject(json, "Template_Update_Time", "2017-12-31 12:56:30");
+	cJSON_AddStringToObject(json, "Template_Update_Time", "2018-08-08 08:08:08");
 	out = cJSON_Print(json);
 	req = out;
 	cJSON_Delete(json);
@@ -235,7 +241,7 @@ void CDC_Template_Tests::testJsonFind()
 	json = cJSON_CreateObject();
 	cJSON_AddStringToObject(json, "Method", "Part");
 	cJSON_AddNumberToObject(json, "Template_HostID", 1001);
-	cJSON_AddStringToObject(json, "Template_Name", "testJson_1");
+	//cJSON_AddStringToObject(json, "Template_Name", "testJson_1");
 	out = cJSON_Print(json);
 	req = out;
 	cJSON_Delete(json);

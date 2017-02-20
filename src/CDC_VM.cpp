@@ -71,6 +71,7 @@ std::string CDC_VM::CDC_VM_Add(const std::string& req)
 		JSON_ADD_ONE_ELEMENT2(VM_DataFilename, valuestring);
 		JSON_ADD_ONE_ELEMENT(VM_MAC, valuestring);
 		JSON_ADD_ONE_ELEMENT(VM_SpicePwd, valuestring);
+		JSON_ADD_ONE_ELEMENT(VM_SpicePort, valuestring);
 		JSON_ADD_ONE_ELEMENT2(VM_Uuid, valuestring);
 		JSON_ADD_ONE_ELEMENT2(VM_Create_Time, valuestring);
 		JSON_ADD_ONE_ELEMENT2(VM_Update_Time, valuestring);
@@ -194,6 +195,7 @@ std::string CDC_VM::CDC_VM_Update(const std::string& req)
 		JSON_GET_OBJECT_ITEM(VM_DataFilename, valuestring);
 		JSON_GET_OBJECT_ITEM(VM_MAC, valuestring);
 		JSON_GET_OBJECT_ITEM(VM_SpicePwd, valuestring);
+		JSON_GET_OBJECT_ITEM(VM_SpicePort, valuestring);
 		JSON_GET_OBJECT_ITEM(VM_Uuid, valuestring);
 		JSON_GET_OBJECT_ITEM(VM_Create_Time, valuestring);
 		JSON_GET_OBJECT_ITEM(VM_Update_Time, valuestring);
@@ -313,6 +315,9 @@ std::string CDC_VM::CDC_VM_Find(const std::string& req)
 		JSON_GET_OBJECT_ITEM("VM_SpicePwd");
 		if (tmp) ss << "'" << tmp->valuestring << "'";
 
+		JSON_GET_OBJECT_ITEM("VM_SpicePort");
+		if (tmp) ss << "'" << tmp->valuestring << "'";
+
 		JSON_GET_OBJECT_ITEM("VM_Uuid");
 		if (tmp) ss << "'" << tmp->valuestring << "'";
 
@@ -359,6 +364,7 @@ END:
 		cJSON_AddStringToObject(data, "VM_DataFilename", t.VM_DataFilename.c_str());\
 		cJSON_AddStringToObject(data, "VM_MAC", t.VM_MAC.c_str());\
 		cJSON_AddStringToObject(data, "VM_SpicePwd", t.VM_SpicePwd.c_str());\
+		cJSON_AddStringToObject(data, "VM_SpicePort", t.VM_SpicePort.c_str());\
 		cJSON_AddStringToObject(data, "VM_Uuid", t.VM_Uuid.c_str());\
 		cJSON_AddStringToObject(data, "VM_Create_Time", t.VM_Create_Time.c_str());\
 		cJSON_AddStringToObject(data, "VM_Update_Time", t.VM_Update_Time.c_str());
@@ -483,6 +489,9 @@ std::string CDC_VM::CDC_VM_FindCount(const std::string& req)
 		JSON_GET_OBJECT_ITEM("VM_SpicePwd");
 		if (tmp) ss << "'" << tmp->valuestring << "'";
 		//
+		JSON_GET_OBJECT_ITEM("VM_SpicePort");
+		if (tmp) ss << "'" << tmp->valuestring << "'";
+		//
 		JSON_GET_OBJECT_ITEM("VM_Uuid");
 		if (tmp) ss << "'" << tmp->valuestring << "'";
 		//
@@ -523,7 +532,7 @@ double CDC_VM::VM_Add(TCDC_VM& src)
 		if (VM_Find(src.VM_ID))
 			return exists;
 
-		_stmt = _pdb->compileStatement("insert into CDC_VM values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);");
+		_stmt = _pdb->compileStatement("insert into CDC_VM values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);");
 		if (src.VM_ID != INVALID_NUM && src.VM_ID > 0)
 			id = src.VM_ID;
 		else
@@ -545,9 +554,10 @@ double CDC_VM::VM_Add(TCDC_VM& src)
 		_stmt.bind(15, src.VM_DataFilename);
 		_stmt.bind(16, src.VM_MAC);
 		_stmt.bind(17, src.VM_SpicePwd);
-		_stmt.bind(18, src.VM_Uuid);
-		_stmt.bind(19, String2MySQLTime(src.VM_Create_Time));
-		_stmt.bind(20, String2MySQLTime(src.VM_Update_Time));
+		_stmt.bind(18, src.VM_SpicePort);
+		_stmt.bind(19, src.VM_Uuid);
+		_stmt.bind(20, String2MySQLTime(src.VM_Create_Time));
+		_stmt.bind(21, String2MySQLTime(src.VM_Update_Time));
 
 		_stmt.execDML();
 		_stmt.reset();
@@ -638,6 +648,8 @@ int CDC_VM::VM_Update(TCDC_VM& src, std::list<std::string>& keyList)
 				_stmt.bind(index++, src.VM_DataFilename);
 			else if (*it == "VM_SpicePwd")
 				_stmt.bind(index++, src.VM_SpicePwd);
+			else if (*it == "VM_SpicePort")
+				_stmt.bind(index++, src.VM_SpicePort);
 			else if (*it == "VM_Uuid")
 				_stmt.bind(index++, src.VM_Uuid);
 			else if (*it == "VM_Create_Time")
@@ -709,9 +721,10 @@ int CDC_VM::VM_Find(double id, TCDC_VM& t)
 			t.VM_DataFilename = q.fieldValue(14);
 			t.VM_MAC = q.fieldValue(15);
 			t.VM_SpicePwd = q.fieldValue(16);
-			t.VM_Uuid = q.fieldValue(17);
-			t.VM_Create_Time = q.fieldValue(18);
-			t.VM_Update_Time = q.fieldValue(19);
+			t.VM_SpicePort = q.fieldValue(17);
+			t.VM_Uuid = q.fieldValue(18);
+			t.VM_Create_Time = q.fieldValue(19);
+			t.VM_Update_Time = q.fieldValue(20);
 			return success;
 		}
 		MDEBUG << "not find, id: " << id;
@@ -754,9 +767,10 @@ int CDC_VM::VM_Find2(const std::string& whereSql, TCDC_VM& t)
 			t.VM_DataFilename = q.fieldValue(14);
 			t.VM_MAC = q.fieldValue(15);
 			t.VM_SpicePwd = q.fieldValue(16);
-			t.VM_Uuid = q.fieldValue(17);
-			t.VM_Create_Time = q.fieldValue(18);
-			t.VM_Update_Time = q.fieldValue(19);
+			t.VM_SpicePort = q.fieldValue(17);
+			t.VM_Uuid = q.fieldValue(18);
+			t.VM_Create_Time = q.fieldValue(19);
+			t.VM_Update_Time = q.fieldValue(20);
 			return success;
 		}
 		MDEBUG << "not find, whereSql: " << whereSql;
@@ -800,9 +814,10 @@ std::list<TCDC_VM> CDC_VM::VM_Find2(const std::string& whereSql)
 			t.VM_DataFilename = q.fieldValue(14);
 			t.VM_MAC = q.fieldValue(15);
 			t.VM_SpicePwd = q.fieldValue(16);
-			t.VM_Uuid = q.fieldValue(17);
-			t.VM_Create_Time = q.fieldValue(18);
-			t.VM_Update_Time = q.fieldValue(19);
+			t.VM_SpicePort = q.fieldValue(17);
+			t.VM_Uuid = q.fieldValue(18);
+			t.VM_Create_Time = q.fieldValue(19);
+			t.VM_Update_Time = q.fieldValue(20);
 
 			lst.push_back(t);
 			q.nextRow();
@@ -873,9 +888,10 @@ std::list<TCDC_VM> CDC_VM::GetAll()
 			t.VM_DataFilename = q.fieldValue(14);
 			t.VM_MAC = q.fieldValue(15);
 			t.VM_SpicePwd = q.fieldValue(16);
-			t.VM_Uuid = q.fieldValue(17);
-			t.VM_Create_Time = q.fieldValue(18);
-			t.VM_Update_Time = q.fieldValue(19);
+			t.VM_SpicePort = q.fieldValue(17);
+			t.VM_Uuid = q.fieldValue(18);
+			t.VM_Create_Time = q.fieldValue(19);
+			t.VM_Update_Time = q.fieldValue(20);
 
 			lst.push_back(t);
 			q.nextRow();

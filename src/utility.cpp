@@ -90,6 +90,8 @@ std::vector<std::string> Split(const std::string &s, const std::string &seperato
 MYSQL_TIME String2MySQLTime(const std::string& s)
 {
 	MYSQL_TIME mt = { 0 };
+
+	if (Trim(s).size() == 0)	return mt;
 	try
 	{
 		std::vector<std::string> vec = Split(s, " -:");

@@ -146,13 +146,13 @@ void CDC_UserGroup_Tests::testJsonFind()
 	assert(id > 0);
 
 	TCDC_UserGroup userGroup2;
-	userGroup2.UserGroup_Name = "testJsonFind22";
+	userGroup2.UserGroup_Name = "testJsonFind11";
 	id = _pObj->UserGroup_Add(userGroup2);
 	assert(id > 0);
 
 	json = cJSON_CreateObject();
 	cJSON_AddStringToObject(json, "Method", "Part");
-	cJSON_AddNumberToObject(json, "UserGroup_ID", id);
+	cJSON_AddStringToObject(json, "UserGroup_Name", "testJsonFind11");
 	out = cJSON_Print(json);
 	req = out;
 	cJSON_Delete(json);

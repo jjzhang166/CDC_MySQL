@@ -158,7 +158,7 @@ void CDC_Host_Tests::testJsonFind()
 
 	json = cJSON_CreateObject();
 	cJSON_AddStringToObject(json, "Method", "Part");
-	cJSON_AddStringToObject(json, "Host_Name", "testJsonFind22");
+	//cJSON_AddStringToObject(json, "Host_Name", "testJsonFind22");
 	cJSON_AddStringToObject(json, "Host_IP", "127.0.0.1");
 	out = cJSON_Print(json);
 	req = out;

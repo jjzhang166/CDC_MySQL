@@ -93,7 +93,9 @@ void CDC_VM_Tests::dependsFuc1()
 			Template_FileName Varchar(255) not null,        /*模板文件名*/\
 			Template_RollBackFile Varchar(255),             /*回滚快照名*/\
 			Template_BackUpFile Varchar(255) not null,      /*备份模板名*/\
+			Template_MAC Varchar(255) not null,				/*模板Mac地址*/\
 			Template_SpicePwd Varchar(255) not null,        /*Spice密码*/\
+			Template_SpicePort Varchar(255) not null,        /*Spice端口*/\
 			Template_Uuid Varchar(255),                    /*模板内部标识名*/\
 			Template_Create_Time DateTime,                  /*模板创建时间*/\
 			Template_Update_Time DateTime,                  /*模板最后修改时间*/\
@@ -122,7 +124,9 @@ void CDC_VM_Tests::dependsFuc1()
 		t1.Template_FileName = "testJson_4"; 
 		t1.Template_RollBackFile = "testJson_5"; 
 		t1.Template_BackUpFile = "testJson_6"; 
+		t1.Template_MAC = "testJson_67";
 		t1.Template_SpicePwd = "testJson_7"; 
+		t1.Template_SpicePort = "testJson_71";
 		t1.Template_Uuid = "testJson_8"; 
 		t1.Template_Create_Time = "2017-12-31 12:56:30"; 
 		t1.Template_Update_Time = "2017-12-31 12:56:30";
@@ -145,7 +149,9 @@ void CDC_VM_Tests::dependsFuc1()
 		t2.Template_FileName = "testJson_44";
 		t2.Template_RollBackFile = "testJson_55";
 		t2.Template_BackUpFile = "testJson_66";
+		t2.Template_MAC = "testJson_662";
 		t2.Template_SpicePwd = "testJson_77";
+		t2.Template_SpicePort = "testJson_72";
 		t2.Template_Uuid = "testJson_88";
 		t2.Template_Create_Time = "2016-12-31 12:56:30";
 		t2.Template_Update_Time = "2016-12-31 12:56:30";
@@ -353,6 +359,7 @@ void CDC_VM_Tests::setUp()
 			VM_DataFilename Varchar(255),                   /*数据盘文件名*/\
 			VM_MAC Varchar(255) not null,                   /*虚拟机Mac地址*/\
 			VM_SpicePwd Varchar(255) not null,              /*Spice密码*/\
+			VM_SpicePort Varchar(255) not null,             /*Spice端口*/\
 			VM_Uuid Varchar(255),                           /*虚拟机内部标识*/\
 			VM_Create_Time datetime,                        /*虚拟机创建时间*/\
 			VM_Update_Time datetime,                        /*虚拟机最后修改时间*/\
@@ -408,9 +415,10 @@ void CDC_VM_Tests::tearDown()
 		t1.VM_DataFilename = "testJson_7";\
 		t1.VM_MAC = "testJson_8";\
 		t1.VM_SpicePwd = "testJson_8";\
+		t1.VM_SpicePort = "testJson_83";\
 		t1.VM_Uuid = "testJson_8";\
 		t1.VM_Create_Time = "2017-12-31 12:56:30";\
-		t1.VM_Update_Time = "2017-12-31 12:56:30";
+		t1.VM_Update_Time = "2018-11-02 12:11:09";
 
 void CDC_VM_Tests::testJsonAdd()
 {
@@ -433,10 +441,11 @@ void CDC_VM_Tests::testJsonAdd()
 	cJSON_AddStringToObject(json, "VM_DataPath", "testJson_6");
 	cJSON_AddStringToObject(json, "VM_DataFilename", "testJson_7");
 	cJSON_AddStringToObject(json, "VM_SpicePwd", "testJson_8");
+	cJSON_AddStringToObject(json, "VM_SpicePort", "testJson_18");
 	cJSON_AddStringToObject(json, "VM_MAC", "testJson_8");
 	cJSON_AddStringToObject(json, "VM_Uuid", "testJsonAdd_8");
 	cJSON_AddStringToObject(json, "VM_Create_Time", "2017-12-31 12:56:30");
-	cJSON_AddStringToObject(json, "VM_Update_Time", "2017-12-31 12:56:30");
+	cJSON_AddStringToObject(json, "VM_Update_Time", "2018-11-02 12:11:09");
 	out = cJSON_Print(json);
 	req = out;
 	cJSON_Delete(json);

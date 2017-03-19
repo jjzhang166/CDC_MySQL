@@ -28,6 +28,7 @@
 #include <map>
 
 #include "mysql.h"
+#include "mutex.h"
 
 #undef NULL
 #define NULL 0
@@ -74,6 +75,15 @@ private:
 class CppMySQLQuery;
 class CppMySQLResultSet;
 class CppMySQLStatement;
+ 
+
+static Mutex g_mutex;
+CppMySQLStatement CPPMYSQL_API compileStatement(const char* szSQL);
+int				CPPMYSQL_API execScalar(const char* szSQL, int nNullValue = 0);
+CppMySQLQuery	CPPMYSQL_API execQuery(const char* szSQL);
+
+int				CPPMYSQL_API execDML(const char* szSQL);
+int				CPPMYSQL_API execDML(std::string& str);
 
 /*!
 	\class		CppMySQLDB 
@@ -82,8 +92,14 @@ class CppMySQLStatement;
 class CPPMYSQL_API CppMySQLDB
 {
 public:
-	CppMySQLDB();
-	virtual ~CppMySQLDB();
+	/*CppMySQLDB();
+	virtual ~CppMySQLDB();*/
+
+	static CppMySQLDB & Instance()
+	{
+		static CppMySQLDB db;
+		return db;
+	}
 
 	/*!
 	\brief		连接数据库
@@ -107,6 +123,7 @@ public:
 	*/
 	void			open(const char* szDBName);
 	void			close();
+	void			init();
 
 	/*!
 	\brief		查询某个表是否存在，通过execScalar查询。
@@ -199,6 +216,8 @@ public:
 	MYSQL*			getHandle() const { return m_pDB; }
 
 private:
+	CppMySQLDB();
+	virtual ~CppMySQLDB();
 	//CppMySQLDB(const CppMySQLDB* pdb);
 	//CppMySQLDB& operator=(const CppMySQLDB* pdb);
 	/*!

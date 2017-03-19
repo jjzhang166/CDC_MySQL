@@ -13,7 +13,6 @@ using namespace std;
 
 namespace
 {
-	CppMySQLDB* pDB;
 	const char* gszDB = "CDCMySQLTest";
 	#define HOST		"127.0.0.1"
 	#define USER		"root"
@@ -48,9 +47,9 @@ void CDC_VM_Tests::dependsFuc()
 			PRIMARY KEY(Host_ID)\
 			) ENGINE = InnoDB DEFAULT CHARSET = utf8; ";
 
-		pDB->execDML(sql);
+		execDML(sql);
 
-		_pCDC_HostObj = new CDC_Host(pDB);
+		_pCDC_HostObj = new CDC_Host();
 
 		TCDC_Host t1;
 		t1.Host_ID = 1001;
@@ -105,9 +104,9 @@ void CDC_VM_Tests::dependsFuc1()
 			ON DELETE CASCADE\
 						) ENGINE = InnoDB DEFAULT CHARSET = utf8; ";
 
-		pDB->execDML(sql);
+		execDML(sql);
 
-		_pCDC_TemplateObj = new CDC_Template(pDB);
+		_pCDC_TemplateObj = new CDC_Template();
 
 		TCDC_Template t1; 
 		t1.Template_ID = 1001;
@@ -174,9 +173,9 @@ void CDC_VM_Tests::dependsFuc2()
 					PRIMARY KEY(ThinClientGroup_ID)\
 					) ENGINE = InnoDB DEFAULT CHARSET = utf8;";
 
-		pDB->execDML(sql);
+		execDML(sql);
 
-		_pCDC_ThinClientGroupObj = new CDC_ThinClientGroup(pDB);
+		_pCDC_ThinClientGroupObj = new CDC_ThinClientGroup();
 
 		TCDC_ThinClientGroup t1;
 		t1.ThinClientGroup_ID = 1001;
@@ -207,9 +206,9 @@ void CDC_VM_Tests::dependsFuc2()
 			ON DELETE CASCADE\
 			) ENGINE = InnoDB DEFAULT CHARSET = utf8; ";
 
-		pDB->execDML(sql);
+		execDML(sql);
 
-		_pCDC_ThinClientObj = new CDC_ThinClient(pDB);
+		_pCDC_ThinClientObj = new CDC_ThinClient();
 
 		TCDC_ThinClient t3; 
 		t3.ThinClient_ID = 1001;
@@ -253,9 +252,9 @@ void CDC_VM_Tests::dependsFuc3()
 			PRIMARY KEY(UserGroup_ID)\
 			) ENGINE = InnoDB; ";
 
-		pDB->execDML(sql);
+		execDML(sql);
 
-		_pCDC_UserGroupObj = new CDC_UserGroup(pDB);
+		_pCDC_UserGroupObj = new CDC_UserGroup();
 
 		TCDC_UserGroup userGroup1;
 		userGroup1.UserGroup_ID = 1001;
@@ -294,9 +293,9 @@ void CDC_VM_Tests::dependsFuc4()
 			ON DELETE CASCADE\
 			) ENGINE = InnoDB DEFAULT CHARSET = utf8;";
 
-		pDB->execDML(sql);
+		execDML(sql);
 
-		_pCDC_UserObj = new CDC_User(pDB);
+		_pCDC_UserObj = new CDC_User();
 
 		TCDC_User User1;
 		User1.User_ID = 1001;
@@ -329,12 +328,12 @@ void CDC_VM_Tests::setUp()
 {	
 	try
 	{
-		pDB = new CppMySQLDB();
-		pDB->setOptions(MYSQL_SET_CHARSET_NAME, "gbk");	
-		pDB->connect(HOST, USER, PASSWORD);
-		pDB->dropDB(gszDB);
-		pDB->createDB(gszDB);
-		pDB->open(gszDB);
+		CppMySQLDB::Instance().init();
+		CppMySQLDB::Instance().setOptions(MYSQL_SET_CHARSET_NAME, "gbk");	
+		CppMySQLDB::Instance().connect(HOST, USER, PASSWORD);
+		CppMySQLDB::Instance().dropDB(gszDB);
+		CppMySQLDB::Instance().createDB(gszDB);
+		CppMySQLDB::Instance().open(gszDB);
 		dependsFuc();
 		dependsFuc1();
 		dependsFuc2();
@@ -379,8 +378,8 @@ void CDC_VM_Tests::setUp()
 			REFERENCES CDC_User(User_ID)\
 			ON DELETE CASCADE\
 			) ENGINE = InnoDB DEFAULT CHARSET = utf8; ";
-		pDB->execDML(sql);
-		_pObj = new CDC_VM(pDB);
+		execDML(sql);
+		_pObj = new CDC_VM();
 	}
 	catch (CppMySQLException& e)
 	{
@@ -390,10 +389,8 @@ void CDC_VM_Tests::setUp()
 
 void CDC_VM_Tests::tearDown()
 {
-	pDB->dropDB(gszDB);
-	pDB->close();
-	delete pDB;
-	pDB = NULL;
+	CppMySQLDB::Instance().dropDB(gszDB);
+	CppMySQLDB::Instance().close();
 }
 
 
@@ -418,7 +415,7 @@ void CDC_VM_Tests::tearDown()
 		t1.VM_SpicePort = "testJson_83";\
 		t1.VM_Uuid = "testJson_8";\
 		t1.VM_Create_Time = "2017-12-31 12:56:30";\
-		t1.VM_Update_Time = "2018-11-02 12:11:09";
+		t1.VM_Update_Time = "2017-12-31 12:56:30";
 
 void CDC_VM_Tests::testJsonAdd()
 {
@@ -444,8 +441,8 @@ void CDC_VM_Tests::testJsonAdd()
 	cJSON_AddStringToObject(json, "VM_SpicePort", "testJson_18");
 	cJSON_AddStringToObject(json, "VM_MAC", "testJson_8");
 	cJSON_AddStringToObject(json, "VM_Uuid", "testJsonAdd_8");
-	cJSON_AddStringToObject(json, "VM_Create_Time", "2017-12-31 12:56:30");
-	cJSON_AddStringToObject(json, "VM_Update_Time", "2018-11-02 12:11:09");
+	/*cJSON_AddStringToObject(json, "VM_Create_Time", "2017-12-31 12:56:30");
+	cJSON_AddStringToObject(json, "VM_Update_Time", "2017-12-31 12:56:30");*/
 	out = cJSON_Print(json);
 	req = out;
 	cJSON_Delete(json);

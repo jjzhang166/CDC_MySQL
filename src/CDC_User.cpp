@@ -9,8 +9,8 @@
 
 using namespace std;
 
-CDC_User::CDC_User(CppMySQLDB* pdb)
-	:_pdb(pdb)
+CDC_User::CDC_User()
+	:_pdb(NULL)
 {
 }
 
@@ -409,7 +409,7 @@ double CDC_User::User_Add(TCDC_User& src)
 		if (User_Find(src.User_ID))
 			return exists;
 
-		_stmt = _pdb->compileStatement("insert into CDC_User values (?, ?, ?, ?, ?, ?, ?);");
+		_stmt = compileStatement("insert into CDC_User values (?, ?, ?, ?, ?, ?, ?);");
 		if (src.User_ID != INVALID_NUM && src.User_ID > 0)
 			id = src.User_ID;
 		else
@@ -440,7 +440,7 @@ int CDC_User::User_Del(double id)
 		if (!User_Find(id))
 			return notExists;
 
-		_stmt = _pdb->compileStatement("delete from CDC_User where User_ID = ?;");
+		_stmt = compileStatement("delete from CDC_User where User_ID = ?;");
 		_stmt.bind(1, id);
 		_stmt.execDML();
 		_stmt.reset();
@@ -462,7 +462,7 @@ int CDC_User::User_Del(const std::string& name)
 
 		char buf[1024] = { 0 };
 		sprintf(buf, "delete from CDC_User where User_Name = %s;", name.c_str());
-		_pdb->execDML(buf);
+		execDML(buf);
 	}
 	catch (CppMySQLException& e)
 	{
@@ -479,7 +479,7 @@ int CDC_User::User_Update(TCDC_User& src)
 		if (!User_Find(src.User_ID))
 			return notExists;
 
-		_stmt = _pdb->compileStatement("update CDC_User \
+		_stmt = compileStatement("update CDC_User \
 									   			set User_Role = ?, User_UserGroup_ID = ?, User_Name = ?, \
 															User_LoginName = ?, User_Password = ?, User_Remarks = ? \
 																	where User_ID = ?;");
@@ -524,7 +524,7 @@ int CDC_User::User_Update(TCDC_User& src, std::list<string>& keyList)
 		updateSql = updateSql.substr(0, updateSql.size() - 1);
 		updateSql += " where User_ID = ?;";
 
-		_stmt = _pdb->compileStatement(updateSql.c_str());
+		_stmt = compileStatement(updateSql.c_str());
 
 		int index = 1;
 		for (list<string>::iterator it = keyList.begin(); it != keyList.end(); ++it)
@@ -564,7 +564,7 @@ bool CDC_User::User_Find(double id)
 	{
 		char buf[1024] = { 0 };
 		sprintf(buf, "select count(*) from CDC_User where User_ID = %f;", id);
-		return (_pdb->execScalar(buf) != 0);
+		return (execScalar(buf) != 0);
 	}
 	catch (CppMySQLException& e)
 	{
@@ -580,8 +580,8 @@ bool CDC_User::User_Find(const std::string& name)
 	{
 		char buf[1024] = { 0 };
 		sprintf(buf, "select count(*) from CDC_User where User_LoginName = '%s';", name.c_str());
-		int dd = _pdb->execScalar(buf);
-		return (_pdb->execScalar(buf) != 0);
+		int dd = execScalar(buf);
+		return (execScalar(buf) != 0);
 	}
 	catch (CppMySQLException& e)
 	{
@@ -603,7 +603,7 @@ int CDC_User::User_Find(double id, TCDC_User& t)
 		char buf[1024] = { 0 };
 		sprintf(buf, "select * from CDC_User where User_ID = %f;", id);
 
-		q = _pdb->execQuery(buf);
+		q = execQuery(buf);
 
 		if (!q.eof())
 		{
@@ -638,7 +638,7 @@ int CDC_User::User_Find(const std::string& name, TCDC_User& t)
 		char buf[1024] = { 0 };
 		sprintf(buf, "select * from CDC_User where User_LoginName = '%s';", name.c_str());
 
-		q = _pdb->execQuery(buf);
+		q = execQuery(buf);
 
 		if (!q.eof())
 		{
@@ -671,7 +671,7 @@ int CDC_User::User_Find2(const std::string& whereSql, TCDC_User& t)
 		char buf[1024] = { 0 };
 		sprintf(buf, "select * from CDC_User where %s;", whereSql.c_str());
 
-		q = _pdb->execQuery(buf);
+		q = execQuery(buf);
 
 		if (!q.eof())
 		{
@@ -704,7 +704,7 @@ std::list<TCDC_User> CDC_User::User_Find2(const std::string& whereSql)
 		char buf[1024] = { 0 };
 		sprintf(buf, "select * from CDC_User where %s;", whereSql.c_str());
 
-		q = _pdb->execQuery(buf);
+		q = execQuery(buf);
 
 		while (!q.eof())
 		{
@@ -734,7 +734,7 @@ int CDC_User::User_Count()
 {
 	try
 	{
-		return _pdb->execScalar("select count(*) from CDC_User;");
+		return execScalar("select count(*) from CDC_User;");
 	}
 	catch (CppMySQLException& e)
 	{
@@ -751,7 +751,7 @@ int CDC_User::User_Count(const std::string& whereSql)
 		char buf[1024] = { 0 };
 		sprintf(buf, "select count(*) from CDC_User where %s;", whereSql.c_str());
 
-		return _pdb->execScalar(buf);
+		return execScalar(buf);
 	}
 	catch (CppMySQLException& e)
 	{
@@ -767,7 +767,7 @@ std::list<TCDC_User> CDC_User::GetAll()
 	std::list<TCDC_User> lst;
 	try
 	{
-		CppMySQLQuery q = _pdb->execQuery("select * from CDC_User;");
+		CppMySQLQuery q = execQuery("select * from CDC_User;");
 		while (!q.eof())
 		{
 			TCDC_User t;
@@ -796,7 +796,7 @@ double CDC_User::GetMaxID()
 {
 	char buf[1024] = { 0 };
 	sprintf(buf, "select max(User_ID) from CDC_User");
-	CppMySQLQuery q = _pdb->execQuery(buf);
+	CppMySQLQuery q = execQuery(buf);
 
 	if (q.eof() || q.numFields() < 1)
 	{

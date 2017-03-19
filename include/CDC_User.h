@@ -20,7 +20,7 @@ public:
 
 	////////////////////////////////////////////
 
-	CDC_User(CppMySQLDB* pdb);
+	CDC_User();
 	~CDC_User();
 	double User_Add(TCDC_User&);
 

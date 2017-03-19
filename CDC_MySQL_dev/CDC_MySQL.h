@@ -36,7 +36,7 @@ class CDC_MYSQL_API CDC_UserGroup
 {
 	DISABLE_COPY(CDC_UserGroup);
 public:
-	CDC_UserGroup(CppMySQLDB* pdb);
+	CDC_UserGroup();
 	~CDC_UserGroup();
 
 	std::string CDC_UserGroup_Add(const std::string& req);
@@ -54,7 +54,7 @@ class CDC_MYSQL_API CDC_User
 {
     DISABLE_COPY(CDC_User);
 public:
-	CDC_User(CppMySQLDB* pdb);
+	CDC_User();
 	~CDC_User();
 
 	std::string CDC_User_Add(const std::string& req);
@@ -72,7 +72,7 @@ class CDC_MYSQL_API CDC_Host
 {
     DISABLE_COPY(CDC_Host);
 public:
-	CDC_Host(CppMySQLDB* pdb);
+	CDC_Host();
 	~CDC_Host();
 
 	std::string CDC_Host_Add(const std::string& req);
@@ -90,7 +90,7 @@ class CDC_MYSQL_API CDC_Template
 {
     DISABLE_COPY(CDC_Template);
 public:
-	CDC_Template(CppMySQLDB* pdb);
+	CDC_Template();
 	~CDC_Template();
 
 	std::string CDC_Template_Add(const std::string& req);
@@ -108,7 +108,7 @@ class CDC_MYSQL_API CDC_ISO
 {
     DISABLE_COPY(CDC_ISO);
 public:
-	CDC_ISO(CppMySQLDB* pdb);
+	CDC_ISO();
 	~CDC_ISO();
 
 	std::string CDC_ISO_Add(const std::string& req);
@@ -126,7 +126,7 @@ class CDC_MYSQL_API CDC_ThinClientGroup
 {
     DISABLE_COPY(CDC_ThinClientGroup);
 public:
-	CDC_ThinClientGroup(CppMySQLDB* pdb);
+	CDC_ThinClientGroup();
 	~CDC_ThinClientGroup();
 
 	std::string CDC_ThinClientGroup_Add(const std::string& req);
@@ -144,7 +144,7 @@ class CDC_MYSQL_API CDC_ThinClient
 {
     DISABLE_COPY(CDC_ThinClient);
 public:
-	CDC_ThinClient(CppMySQLDB* pdb);
+	CDC_ThinClient();
 	~CDC_ThinClient();
 
 	std::string CDC_ThinClient_Add(const std::string& req);
@@ -162,7 +162,7 @@ class CDC_MYSQL_API CDC_VM
 {
     DISABLE_COPY(CDC_VM);
 public:
-	CDC_VM(CppMySQLDB* pdb);
+	CDC_VM();
 	~CDC_VM();
 
 	std::string CDC_VM_Add(const std::string& req);
@@ -180,7 +180,7 @@ class CDC_MYSQL_API CDC_EDU_VM
 {
     DISABLE_COPY(CDC_EDU_VM);
 public:
-	CDC_EDU_VM(CppMySQLDB* pdb);
+	CDC_EDU_VM();
 	~CDC_EDU_VM();
 
 	std::string CDC_EDU_VM_Add(const std::string& req);
@@ -198,7 +198,7 @@ class CDC_MYSQL_API CDC_Authorization
 {
     DISABLE_COPY(CDC_Authorization);
 public:
-	CDC_Authorization(CppMySQLDB* pdb);
+	CDC_Authorization();
 	~CDC_Authorization();
 
 	std::string CDC_Authorization_Add(const std::string& req);

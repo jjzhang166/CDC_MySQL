@@ -13,7 +13,6 @@ using namespace std;
 
 namespace
 {
-	CppMySQLDB* pDB;
 	const char* gszDB = "CDCMySQLTest";
 	#define Authorization		"127.0.0.1"
 	#define USER		"root"
@@ -40,12 +39,12 @@ void CDC_Authorization_Tests::setUp()
 {	
 	try
 	{
-		pDB = new CppMySQLDB();
-		pDB->setOptions(MYSQL_SET_CHARSET_NAME, "gbk");	
-		pDB->connect(Authorization, USER, PASSWORD);
-		pDB->dropDB(gszDB);
-		pDB->createDB(gszDB);
-		pDB->open(gszDB);
+		CppMySQLDB::Instance().init();
+		CppMySQLDB::Instance().setOptions(MYSQL_SET_CHARSET_NAME, "gbk");	
+		CppMySQLDB::Instance().connect(Authorization, USER, PASSWORD);
+		CppMySQLDB::Instance().dropDB(gszDB);
+		CppMySQLDB::Instance().createDB(gszDB);
+		CppMySQLDB::Instance().open(gszDB);
 
 		string sql = "CREATE TABLE IF NOT EXISTS CDC_Authorization (\
 			Authorization_MachineID Varchar(255) not null,  /*机器码*/\
@@ -54,8 +53,8 @@ void CDC_Authorization_Tests::setUp()
 			Authorization_Company Varchar(255) not null,    /*单位名称*/\
 			PRIMARY KEY(Authorization_MachineID)\
 			) ENGINE = InnoDB DEFAULT CHARSET = utf8; ";
-		pDB->execDML(sql);
-		_pObj = new CDC_Authorization(pDB);
+		execDML(sql);
+		_pObj = new CDC_Authorization();
 	}
 	catch (CppMySQLException& e)
 	{
@@ -65,10 +64,8 @@ void CDC_Authorization_Tests::setUp()
 
 void CDC_Authorization_Tests::tearDown()
 {
-	pDB->dropDB(gszDB);
-	pDB->close();
-	delete pDB;
-	pDB = NULL;
+	CppMySQLDB::Instance().dropDB(gszDB);
+	CppMySQLDB::Instance().close();
 }
 
 void CDC_Authorization_Tests::testJsonAdd()
@@ -76,7 +73,7 @@ void CDC_Authorization_Tests::testJsonAdd()
 	// success
 	json = cJSON_CreateObject();
 	cJSON_AddStringToObject(json, "Method", "Part");
-	cJSON_AddStringToObject(json, "Authorization_MachineID", "XXaa11-200-asssss87-huhuhuu");
+	cJSON_AddStringToObject(json, "Authorization_MachineID", "XXaa11");
 	cJSON_AddNumberToObject(json, "Authorization_MaxClientNum", 11);
 	cJSON_AddStringToObject(json, "Authorization_Deadline", "2017-12-31 12:56:30");
 	cJSON_AddStringToObject(json, "Authorization_Company", "testJsonAdd_222");

@@ -1,91 +1,91 @@
-## DBæ¥å£ä½¿ç”¨
+## DB½Ó¿ÚÊ¹ÓÃ
 
-### Methodè¯·æ±‚ç±»å‹è¡¨ï¼š
+### MethodÇëÇóÀàĞÍ±í£º
 ```
-å€¼	å«ä¹‰
-All	ä»£è¡¨æ‰€æœ‰ä¾‹å¦‚åœ¨æŸ¥æ‰¾ä¸­ä»£è¡¨æŸ¥æ‰¾è¡¨ä¸­æ‰€æœ‰æ•°æ®
-Part	ä»£è¡¨éƒ¨åˆ†ï¼Œä¾‹å¦‚æŸ¥æ‰¾ä¸­æŸ¥æ‰¾ç¬¦åˆæŸäº›æ¡ä»¶çš„è®°å½•
+Öµ	º¬Òå
+All	´ú±íËùÓĞÀıÈçÔÚ²éÕÒÖĞ´ú±í²éÕÒ±íÖĞËùÓĞÊı¾İ
+Part	´ú±í²¿·Ö£¬ÀıÈç²éÕÒÖĞ²éÕÒ·ûºÏÄ³Ğ©Ìõ¼şµÄ¼ÇÂ¼
 ```
 
 
 
 
 1.ADD
-å‡½æ•°åä¾‹å­ï¼šstring  CDC_User_Addï¼ˆstring  reqï¼‰;
+º¯ÊıÃûÀı×Ó£ºstring  CDC_User_Add£¨string  req£©;
 
-å‚æ•°æ ¼å¼ï¼š
+²ÎÊı¸ñÊ½£º
 ```
-å­—æ®µ	æ•°æ®ç±»å‹	å«ä¹‰	å¤‡æ³¨
-Method	string	è¯·æ±‚ç±»å‹	è§è¯·æ±‚ç±»å‹è¡¨
-User_Role	integer	è§è¡¨ç»“æ„æ–‡æ¡£ï¼Œ ä¸‹åŒ	
+×Ö¶Î	Êı¾İÀàĞÍ	º¬Òå	±¸×¢
+Method	string	ÇëÇóÀàĞÍ	¼ûÇëÇóÀàĞÍ±í
+User_Role	integer	¼û±í½á¹¹ÎÄµµ£¬ ÏÂÍ¬	
 User_UserGroup_ID	integer		
-User_Name	string		 
+User_Name	string		
 User_LoginName	string		
 User_Password	string		
 User_Remarks	string		
 ```			
 
-è¿”å›å€¼æ ¼å¼ï¼š
+·µ»ØÖµ¸ñÊ½£º
 ```
-å­—æ®µ	æ•°æ®ç±»å‹	å«ä¹‰	å¤‡æ³¨
-Result	integer	æ‰§è¡Œç»“æœ	å¤±è´¥ï¼š-1/-2/â€¦. æˆåŠŸï¼šè¿”å›è¿™æ¡è®°å½•çš„ID
+×Ö¶Î	Êı¾İÀàĞÍ	º¬Òå	±¸×¢
+Result	integer	Ö´ĞĞ½á¹û	Ê§°Ü£º-1/-2/¡­. ³É¹¦£º·µ»ØÕâÌõ¼ÇÂ¼µÄID
 ```
-Demoï¼š
+Demo£º
 
-å‚æ•°ï¼š
+²ÎÊı£º
 ```
 {
-"Method": "Part",
-"User_Role":1,
-"User_UserGroup_ID":2,
-"User_Name":"xxx",
-"User_LoginName":"XXX_asd",
-"User_Password":"111111sdfs",
-"User_Remarks":"asdasd"
+¡°Method¡±: ¡°Part¡±,
+¡°User_Role¡±:1,
+¡°User_UserGroup_ID¡±:2,
+¡°User_Name¡±:¡±xxx¡±,
+¡°User_LoginName¡±:¡±XXX_asd¡±,
+¡°User_Password¡±:¡±111111sdfs¡±,
+¡°User_Remarks¡±:¡±asdasd¡±
 }
 ```
-è¿”å›å€¼ï¼š
+·µ»ØÖµ£º
 ```
 {
-"Result": é”™è¯¯ç æˆ–è€…ID
+¡°Result¡±: ´íÎóÂë»òÕßID
 }
 ```
 
 2.DELETE
-å‡½æ•°åä¾‹å­ï¼šstring  CDC_User_Deleteï¼ˆstring  reqï¼‰;
+º¯ÊıÃûÀı×Ó£ºstring  CDC_User_Delete£¨string  req£©;
 
 ```   
-å­—æ®µ	æ•°æ®ç±»å‹	å«ä¹‰	å¤‡æ³¨
-Method	string	è¯·æ±‚ç±»å‹	è§è¯·æ±‚ç±»å‹è¡¨
+×Ö¶Î	Êı¾İÀàĞÍ	º¬Òå	±¸×¢
+Method	string	ÇëÇóÀàĞÍ	¼ûÇëÇóÀàĞÍ±í
 User_ID	integer		
 ```
-æœåŠ¡ç«¯åé¦ˆï¼š
+·şÎñ¶Ë·´À¡£º
 ```
-å­—æ®µ	æ•°æ®ç±»å‹	å«ä¹‰	å¤‡æ³¨
-Result	integer	æ‰§è¡Œç»“æœ	0ï¼šå¤±è´¥  1ï¼šæˆåŠŸ
+×Ö¶Î	Êı¾İÀàĞÍ	º¬Òå	±¸×¢
+Result	integer	Ö´ĞĞ½á¹û	0£ºÊ§°Ü  1£º³É¹¦
 ```
-Demoï¼š
+Demo£º
 ```
-å‚æ•°ï¼š
+²ÎÊı£º
 {
-"Method": "Part",
-"User_ID":1
+¡°Method¡±: ¡°Part¡±,
+¡°User_ID¡±:1
 }
 ```
-è¿”å›å€¼ï¼š
+·µ»ØÖµ£º
 ```
 {
-"Result": 1
+¡°Result¡±: 1
 }
 ```
 3.FIND
-å‡½æ•°åä¾‹å­ï¼šstring  CDC_User_Findï¼ˆstring  reqï¼‰;
+º¯ÊıÃûÀı×Ó£ºstring  CDC_User_Find£¨string  req£©;
 
-å‚æ•°æ ¼å¼ï¼š
+²ÎÊı¸ñÊ½£º
 ```
-å­—æ®µ	æ•°æ®ç±»å‹	å«ä¹‰	å¤‡æ³¨
-Method	string	è¯·æ±‚ç±»å‹	è§è¯·æ±‚ç±»å‹è¡¨
-User_Role	integer		æ­¤ä½ç½®ä¸ºè¦æŸ¥æ‰¾çš„æ¡ä»¶ï¼Œå¦‚æœMethodå­—æ®µæ˜¯"All"ï¼Œæ­¤å¤„ä¸å¡«ï¼Œå¦‚æœMethodå­—æ®µä¸º"Part"æ—¶æ¡ä»¶æœ€å°‘ä¸€ä¸ªã€‚
+×Ö¶Î	Êı¾İÀàĞÍ	º¬Òå	±¸×¢
+Method	string	ÇëÇóÀàĞÍ	¼ûÇëÇóÀàĞÍ±í
+User_Role	integer		´ËÎ»ÖÃÎªÒª²éÕÒµÄÌõ¼ş£¬Èç¹ûMethod×Ö¶ÎÊÇ¡°All¡±£¬´Ë´¦²»Ìî£¬Èç¹ûMethod×Ö¶ÎÎª¡°Part¡±Ê±Ìõ¼ş×îÉÙÒ»¸ö¡£
 User_UserGroup_ID	integer		
 User_Name	string		
 User_LoginName	string		
@@ -93,78 +93,78 @@ User_Password	string
 User_Remarks	string		
 ```			
 
-è¿”å›å€¼æ ¼å¼ï¼š
+·µ»ØÖµ¸ñÊ½£º
 ```
-å­—æ®µ	æ•°æ®ç±»å‹	å«ä¹‰	å¤‡æ³¨
-Result	integer	æ‰§è¡Œç»“æœ	æ­¤å¤„ä¸ºæŸ¥è¯¢ç»“æœä¸ªæ•° 
-Data	json	æŸ¥è¯¢æ•°æ®ç»“æœ	
+×Ö¶Î	Êı¾İÀàĞÍ	º¬Òå	±¸×¢
+Result	integer	Ö´ĞĞ½á¹û	´Ë´¦Îª²éÑ¯½á¹û¸öÊı 
+Data	json	²éÑ¯Êı¾İ½á¹û	
 ```
-Demoï¼š
+Demo£º
 ```
-å‚æ•°ï¼š
+²ÎÊı£º
 {
-"Method": "Part",
-"User_Name":"xxx",
-"User_UserGroup_ID":2
+¡°Method¡±: ¡°Part¡±,
+¡°User_Name¡±:¡±xxx¡±,
+¡°User_UserGroup_ID¡±:2
 }
 ```
-æˆ–è€…
+»òÕß
 ```
 {
-"Method": "All"
+¡°Method¡±: ¡°All¡±
 }
 ```
-è¿”å›å€¼ï¼š
+·µ»ØÖµ£º
 ```
 {
-"Result": 3ï¼Œ
-"Data":
+¡°Result¡±: 3£¬
+¡°Data¡±:
 [
 {
-"User_ID":1,
-"User_Role":1,
-"User_UserGroup_ID":2,
-"User_Name":"xxx",
-"User_LoginName":"XXX_aaa",
-"User_Password":"111111sdfs",
-"User_Remarks":"asdasd"
+¡°User_ID¡±:1,
+¡°User_Role¡±:1,
+¡°User_UserGroup_ID¡±:2,
+¡°User_Name¡±:¡±xxx¡±,
+¡°User_LoginName¡±:¡±XXX_aaa¡±,
+¡°User_Password¡±:¡±111111sdfs¡±,
+¡°User_Remarks¡±:¡±asdasd¡±
 },
 {
-"User_ID":2,
-"User_Role":1,
-"User_UserGroup_ID":2,
-"User_Name":"xxx",
-"User_LoginName":"XXX_bbb",
-"User_Password":"111111sdfs",
-"User_Remarks":"asdasd"
+¡°User_ID¡±:2,
+¡°User_Role¡±:1,
+¡°User_UserGroup_ID¡±:2,
+¡°User_Name¡±:¡±xxx¡±,
+¡°User_LoginName¡±:¡±XXX_bbb¡±,
+¡°User_Password¡±:¡±111111sdfs¡±,
+¡°User_Remarks¡±:¡±asdasd¡±
 },
 {
-"User_ID":3,
-"User_Role":1,
-"User_UserGroup_ID":2,
-"User_Name":"xxx",
-"User_LoginName":"XXX_ccc",
-"User_Password":"111111sdfs",
-"User_Remarks":"asdasd"
+¡°User_ID¡±:3,
+¡°User_Role¡±:1,
+¡°User_UserGroup_ID¡±:2,
+¡°User_Name¡±:¡±xxx¡±,
+¡°User_LoginName¡±:¡±XXX_ccc¡±,
+¡°User_Password¡±:¡±111111sdfs¡±,
+¡°User_Remarks¡±:¡±asdasd¡±
 }
 ]
 }
 ```
-æˆ–è€…
+»òÕß
 ```
 {
-"Result": é”™è¯¯ç 
+¡°Result¡±: ´íÎóÂë
 }
 ```
 4.FINDCOUNT
 ```
-å‡½æ•°åä¾‹å­ï¼šstring  CDC_User_FindCountï¼ˆstring  reqï¼‰;
+º¯ÊıÃûÀı×Ó£ºstring  CDC_User_FindCount£¨string  req£©;
 ```
-å‚æ•°æ ¼å¼ï¼š
+²ÎÊı¸ñÊ½£º
 ```
-å­—æ®µ	æ•°æ®ç±»å‹	å«ä¹‰	å¤‡æ³¨
-Method	string	è¯·æ±‚ç±»å‹	è§è¯·æ±‚ç±»å‹è¡¨
-User_Role	integer		æ­¤ä½ç½®ä¸ºè¦æŸ¥æ‰¾çš„æ¡ä»¶ï¼Œå¦‚æœMethodå­—æ®µæ˜¯"All"ï¼Œæ­¤å¤„ä¸å¡«ï¼Œå¦‚æœMethodå­—æ®µä¸º"Part"æ—¶æ¡ä»¶æœ€å°‘ä¸€ä¸ªã€‚
+×Ö¶Î	Êı¾İÀàĞÍ	º¬Òå	±¸×¢
+Method	string	ÇëÇóÀàĞÍ	¼ûÇëÇóÀàĞÍ±í
+User_Role	integer		´ËÎ»ÖÃÎªÒª²éÕÒµÄÌõ¼ş£¬Èç¹ûMethod×Ö¶ÎÊÇ¡°All¡±£¬´Ë´¦²»Ìî£¬Èç¹ûMethod×Ö¶ÎÎª¡°Part¡±Ê±Ìõ¼ş×îÉÙÒ»¸ö¡£
 User_UserGroup_ID	integer		
 User_Name	string		
 User_LoginName	string		
@@ -172,43 +172,43 @@ User_Password	string
 User_Remarks	string		
 ```			
 
-è¿”å›å€¼æ ¼å¼ï¼š
+·µ»ØÖµ¸ñÊ½£º
 ```
-å­—æ®µ	æ•°æ®ç±»å‹	å«ä¹‰	å¤‡æ³¨
-Result	integer	æ‰§è¡Œç»“æœ	æ­¤å¤„ä¸ºç¬¦åˆæ¡ä»¶æŸ¥è¯¢ç»“æœçš„ä¸ªæ•° 
+×Ö¶Î	Êı¾İÀàĞÍ	º¬Òå	±¸×¢
+Result	integer	Ö´ĞĞ½á¹û	´Ë´¦Îª·ûºÏÌõ¼ş²éÑ¯½á¹ûµÄ¸öÊı 
 ```
-Demoï¼š
+Demo£º
 ```
-å‚æ•°ï¼š
+²ÎÊı£º
 {
-"Method": "Part",
-"User_Name":"xxx",
-"User_UserGroup_ID":2
+¡°Method¡±: ¡°Part¡±,
+¡°User_Name¡±:¡±xxx¡±,
+¡°User_UserGroup_ID¡±:2
 }
 ```
-æˆ–è€…
+»òÕß
 ```
 {
-"Method": "All"
+¡°Method¡±: ¡°All¡±
 }
 ```
-è¿”å›å€¼ï¼š
+·µ»ØÖµ£º
 ```
 {
-"Result": 3
+¡°Result¡±: 3
 }
 ```
 
 5.UPDATE
 ```
-å‡½æ•°åä¾‹å­ï¼šstring  CDC_User_Updateï¼ˆstring  reqï¼‰;
+º¯ÊıÃûÀı×Ó£ºstring  CDC_User_Update£¨string  req£©;
 ```
-å‚æ•°æ ¼å¼ï¼š
+²ÎÊı¸ñÊ½£º
 ```
-å­—æ®µ	æ•°æ®ç±»å‹	å«ä¹‰	å¤‡æ³¨
-Method	string	è¯·æ±‚ç±»å‹	è§è¯·æ±‚ç±»å‹è¡¨
-User_ID	integer		è¡¨çš„ä¸»é”®ä¸ºå¿…å¡«é¡¹
-User_Role	integer		æ­¤ä½ç½®ä¸ºè¦æ›´æ–°çš„é¡¹ï¼Œæœ€å°‘ä¸€ä¸ªã€‚
+×Ö¶Î	Êı¾İÀàĞÍ	º¬Òå	±¸×¢
+Method	string	ÇëÇóÀàĞÍ	¼ûÇëÇóÀàĞÍ±í
+User_ID	integer		±íµÄÖ÷¼üÎª±ØÌîÏî
+User_Role	integer		´ËÎ»ÖÃÎªÒª¸üĞÂµÄÏî£¬×îÉÙÒ»¸ö¡£
 User_UserGroup_ID	integer		
 User_Name	string		
 User_LoginName	string		
@@ -216,33 +216,33 @@ User_Password	string
 User_Remarks	string		
 ```			
 
-è¿”å›å€¼æ ¼å¼ï¼š
+·µ»ØÖµ¸ñÊ½£º
 ```
-å­—æ®µ	æ•°æ®ç±»å‹	å«ä¹‰	å¤‡æ³¨
-Result	integer	æ‰§è¡Œç»“æœ	0ï¼šå¤±è´¥  1ï¼šæˆåŠŸ
+×Ö¶Î	Êı¾İÀàĞÍ	º¬Òå	±¸×¢
+Result	integer	Ö´ĞĞ½á¹û	0£ºÊ§°Ü  1£º³É¹¦
 ```
-Demoï¼š
+Demo£º
 ```
-å‚æ•°ï¼š
+²ÎÊı£º
 {
-"Method": "Part",
-"User_ID":1,
-"User_Name":"xxx",
-"User_UserGroup_ID":2
+¡°Method¡±: ¡°Part¡±,
+¡°User_ID¡±:1,
+¡°User_Name¡±:¡±xxx¡±,
+¡°User_UserGroup_ID¡±:2
 }
 ```
-è¿”å›å€¼ï¼š
+·µ»ØÖµ£º
 ```
 {
-"Result": 1
+¡°Result¡±: 1
 }
 ```
-æ³¨æ„ï¼š
-æˆæƒè¡¨CDC_Authorizationä¸­çš„
-Authorization_Deadline		DATE	åˆ°æœŸæ—¶é—´
+×¢Òâ£º
+ÊÚÈ¨±íCDC_AuthorizationÖĞµÄ
+Authorization_Deadline		DATE	µ½ÆÚÊ±¼ä
 
-ä¼ å…¥çš„æ˜¯stringæ ¼å¼   
-åœ¨jsonå­—ç¬¦ä¸²ä¸­æ ¼å¼ï¼š 
+´«ÈëµÄÊÇstring¸ñÊ½   
+ÔÚjson×Ö·û´®ÖĞ¸ñÊ½£º 
  ```
- "Authorization_Deadline" : "2017-12-31 12:56:30"
+ ¡°Authorization_Deadline¡± : ¡±2017-12-31 12:56:30¡±
 ```

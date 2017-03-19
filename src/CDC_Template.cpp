@@ -10,8 +10,8 @@
 
 using namespace std;
 
-CDC_Template::CDC_Template(CppMySQLDB* pdb)
-	:_pdb(pdb)
+CDC_Template::CDC_Template()
+	:_pdb(NULL)
 {
 }
 
@@ -526,7 +526,7 @@ double CDC_Template::Template_Add(TCDC_Template& src)
 		if (Template_Find(src.Template_ID))
 			return exists;
 
-		_stmt = _pdb->compileStatement("insert into CDC_Template values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);");
+		_stmt = compileStatement("insert into CDC_Template values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);");
 		if (src.Template_ID != INVALID_NUM && src.Template_ID > 0)
 			id = src.Template_ID;
 		else
@@ -570,7 +570,7 @@ int CDC_Template::Template_Del(double id)
 		if (!Template_Find(id))
 			return notExists;
 
-		_stmt = _pdb->compileStatement("delete from CDC_Template where Template_ID = ?;");
+		_stmt = compileStatement("delete from CDC_Template where Template_ID = ?;");
 		_stmt.bind(1, id);
 		_stmt.execDML();
 		_stmt.reset();
@@ -604,7 +604,7 @@ int CDC_Template::Template_Update(TCDC_Template& src, std::list<std::string>& ke
 		updateSql = updateSql.substr(0, updateSql.size() - 1);
 		updateSql += " where Template_ID = ?;";
 
-		_stmt = _pdb->compileStatement(updateSql.c_str());
+		_stmt = compileStatement(updateSql.c_str());
 
 		int index = 1;
 		for (list<string>::iterator it = keyList.begin(); it != keyList.end(); ++it)
@@ -670,7 +670,7 @@ bool CDC_Template::Template_Find(double id)
 	{
 		char buf[1024] = { 0 };
 		sprintf(buf, "select count(*) from CDC_Template where Template_ID = %f;", id);
-		return (_pdb->execScalar(buf) != 0);
+		return (execScalar(buf) != 0);
 	}
 	catch (CppMySQLException& e)
 	{
@@ -691,7 +691,7 @@ int CDC_Template::Template_Find(double id, TCDC_Template& t)
 		char buf[1024] = { 0 };
 		sprintf(buf, "select * from CDC_Template where Template_ID = %f;", id);
 
-		q = _pdb->execQuery(buf);
+		q = execQuery(buf);
 
 		if (!q.eof())
 		{
@@ -713,8 +713,8 @@ int CDC_Template::Template_Find(double id, TCDC_Template& t)
 			t.Template_SpicePwd = q.fieldValue(15);
 			t.Template_SpicePort = q.fieldValue(16);
 			t.Template_Uuid = q.fieldValue(17);
-			t.Template_Create_Time = q.fieldValue(18);
-			t.Template_Update_Time = q.fieldValue(19);
+			t.Template_Create_Time = q.fieldValue(19);
+			t.Template_Update_Time = q.fieldValue(20);
 			return success;
 		}
 		MDEBUG << "not find, id: " << id;
@@ -736,7 +736,7 @@ int CDC_Template::Template_Find2(const std::string& whereSql, TCDC_Template& t)
 		char buf[1024] = { 0 };
 		sprintf(buf, "select * from CDC_Template where %s;", whereSql.c_str());
 
-		q = _pdb->execQuery(buf);
+		q = execQuery(buf);
 
 		if (!q.eof())
 		{
@@ -758,8 +758,8 @@ int CDC_Template::Template_Find2(const std::string& whereSql, TCDC_Template& t)
 			t.Template_SpicePwd = q.fieldValue(15);
 			t.Template_SpicePort = q.fieldValue(16);
 			t.Template_Uuid = q.fieldValue(17);
-			t.Template_Create_Time = q.fieldValue(18);
-			t.Template_Update_Time = q.fieldValue(19);
+			t.Template_Create_Time = q.fieldValue(19);
+			t.Template_Update_Time = q.fieldValue(20);
 			return success;
 		}
 		MDEBUG << "not find, whereSql: " << whereSql;
@@ -782,7 +782,7 @@ std::list<TCDC_Template> CDC_Template::Template_Find2(const std::string& whereSq
 		char buf[1024] = { 0 };
 		sprintf(buf, "select * from CDC_Template where %s;", whereSql.c_str());
 
-		q = _pdb->execQuery(buf);
+		q = execQuery(buf);
 		while (!q.eof())
 		{
 			TCDC_Template t;
@@ -823,7 +823,7 @@ int CDC_Template::Template_Count()
 {
 	try
 	{
-		return _pdb->execScalar("select count(*) from CDC_Template;");
+		return execScalar("select count(*) from CDC_Template;");
 	}
 	catch (CppMySQLException& e)
 	{
@@ -840,7 +840,7 @@ int CDC_Template::Template_Count(const std::string& whereSql)
 		char buf[1024] = { 0 };
 		sprintf(buf, "select count(*) from CDC_Template where %s;", whereSql.c_str());
 
-		return _pdb->execScalar(buf);
+		return execScalar(buf);
 	}
 	catch (CppMySQLException& e)
 	{
@@ -855,7 +855,7 @@ std::list<TCDC_Template> CDC_Template::GetAll()
 	std::list<TCDC_Template> lst;
 	try
 	{
-		CppMySQLQuery q = _pdb->execQuery("select * from CDC_Template;");
+		CppMySQLQuery q = execQuery("select * from CDC_Template;");
 		while (!q.eof())
 		{
 			TCDC_Template t;
@@ -896,7 +896,7 @@ double CDC_Template::GetMaxID()
 {
 	char buf[1024] = { 0 };
 	sprintf(buf, "select max(Template_ID) from CDC_Template");
-	CppMySQLQuery q = _pdb->execQuery(buf);
+	CppMySQLQuery q = execQuery(buf);
 
 	if (q.eof() || q.numFields() < 1)
 	{

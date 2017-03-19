@@ -10,8 +10,8 @@
 
 using namespace std;
 
-CDC_ISO::CDC_ISO(CppMySQLDB* pdb)
-	:_pdb(pdb)
+CDC_ISO::CDC_ISO()
+	:_pdb(NULL)
 {
 }
 
@@ -372,7 +372,7 @@ double CDC_ISO::ISO_Add(TCDC_ISO& src)
 		if (ISO_Find(src.ISO_ID))
 			return exists;
 
-		_stmt = _pdb->compileStatement("insert into CDC_ISO values (?, ?, ?, ?);");
+		_stmt = compileStatement("insert into CDC_ISO values (?, ?, ?, ?);");
 		if (src.ISO_ID != INVALID_NUM && src.ISO_ID > 0)
 			id = src.ISO_ID;
 		else
@@ -400,7 +400,7 @@ int CDC_ISO::ISO_Del(double id)
 		if (!ISO_Find(id))
 			return notExists;
 
-		_stmt = _pdb->compileStatement("delete from CDC_ISO where ISO_ID = ?;");
+		_stmt = compileStatement("delete from CDC_ISO where ISO_ID = ?;");
 		_stmt.bind(1, id);
 		_stmt.execDML();
 		_stmt.reset();
@@ -422,7 +422,7 @@ int CDC_ISO::ISO_Del(const std::string& name)
 
 		char buf[1024] = { 0 };
 		sprintf(buf, "delete from CDC_ISO where ISO_Name = %s;", name.c_str());
-		_pdb->execDML(buf);
+		execDML(buf);
 	}
 	catch (CppMySQLException& e)
 	{
@@ -439,7 +439,7 @@ int CDC_ISO::ISO_Update(TCDC_ISO& src)
 		if (!ISO_Find(src.ISO_ID))
 			return notExists;
 
-		_stmt = _pdb->compileStatement("update CDC_ISO \
+		_stmt = compileStatement("update CDC_ISO \
 			set ISO_HostID = ?, ISO_Name = ?, ISO_Path = ? where ISO_ID = ?;");
 		
 		_stmt.bind(1, src.ISO_HostID);
@@ -479,7 +479,7 @@ int CDC_ISO::ISO_Update(TCDC_ISO& src, std::list<std::string>& keyList)
 		updateSql = updateSql.substr(0, updateSql.size() - 1);
 		updateSql += " where ISO_ID = ?;";
 
-		_stmt = _pdb->compileStatement(updateSql.c_str());
+		_stmt = compileStatement(updateSql.c_str());
 
 		int index = 1;
 		for (list<string>::iterator it = keyList.begin(); it != keyList.end(); ++it)
@@ -512,7 +512,7 @@ bool CDC_ISO::ISO_Find(double id)
 	{
 		char buf[1024] = { 0 };
 		sprintf(buf, "select count(*) from CDC_ISO where ISO_ID = %f;", id);
-		return (_pdb->execScalar(buf) != 0);
+		return (execScalar(buf) != 0);
 	}
 	catch (CppMySQLException& e)
 	{
@@ -528,8 +528,8 @@ bool CDC_ISO::ISO_Find(const std::string& name)
 	{
 		char buf[1024] = { 0 };
 		sprintf(buf, "select count(*) from CDC_ISO where ISO_Name = '%s';", name.c_str());
-		int dd = _pdb->execScalar(buf);
-		return (_pdb->execScalar(buf) != 0);
+		int dd = execScalar(buf);
+		return (execScalar(buf) != 0);
 	}
 	catch (CppMySQLException& e)
 	{
@@ -551,7 +551,7 @@ int CDC_ISO::ISO_Find(double id, TCDC_ISO& t)
 		char buf[1024] = { 0 };
 		sprintf(buf, "select * from CDC_ISO where ISO_ID = %f;", id);
 
-		q = _pdb->execQuery(buf);
+		q = execQuery(buf);
 
 		if (!q.eof())
 		{
@@ -583,7 +583,7 @@ int CDC_ISO::ISO_Find(const std::string& name, TCDC_ISO& t)
 		char buf[1024] = { 0 };
 		sprintf(buf, "select * from CDC_ISO where ISO_Name = '%s';", name.c_str());
 
-		q = _pdb->execQuery(buf);
+		q = execQuery(buf);
 
 		if (!q.eof())
 		{
@@ -612,7 +612,7 @@ int CDC_ISO::ISO_Find2(const std::string& whereSql, TCDC_ISO& t)
 		char buf[1024] = { 0 };
 		sprintf(buf, "select * from CDC_ISO where %s;", whereSql.c_str());
 
-		q = _pdb->execQuery(buf);
+		q = execQuery(buf);
 
 		if (!q.eof())
 		{
@@ -643,7 +643,7 @@ std::list<TCDC_ISO> CDC_ISO::ISO_Find2(const std::string& whereSql)
 		char buf[1024] = { 0 };
 		sprintf(buf, "select * from CDC_ISO where %s;", whereSql.c_str());
 
-		q = _pdb->execQuery(buf);
+		q = execQuery(buf);
 		while (!q.eof())
 		{
 			TCDC_ISO t;
@@ -668,7 +668,7 @@ int CDC_ISO::ISO_Count()
 {
 	try
 	{
-		return _pdb->execScalar("select count(*) from CDC_ISO;");
+		return execScalar("select count(*) from CDC_ISO;");
 	}
 	catch (CppMySQLException& e)
 	{
@@ -685,7 +685,7 @@ int CDC_ISO::ISO_Count(const std::string& whereSql)
 		char buf[1024] = { 0 };
 		sprintf(buf, "select count(*) from CDC_ISO where %s;", whereSql.c_str());
 
-		return _pdb->execScalar(buf);
+		return execScalar(buf);
 	}
 	catch (CppMySQLException& e)
 	{
@@ -700,7 +700,7 @@ std::list<TCDC_ISO> CDC_ISO::GetAll()
 	std::list<TCDC_ISO> lst;
 	try
 	{
-		CppMySQLQuery q = _pdb->execQuery("select * from CDC_ISO;");
+		CppMySQLQuery q = execQuery("select * from CDC_ISO;");
 		while (!q.eof())
 		{
 			TCDC_ISO t;
@@ -725,7 +725,7 @@ double CDC_ISO::GetMaxID()
 {
 	char buf[1024] = { 0 };
 	sprintf(buf, "select max(ISO_ID) from CDC_ISO");
-	CppMySQLQuery q = _pdb->execQuery(buf);
+	CppMySQLQuery q = execQuery(buf);
 
 	if (q.eof() || q.numFields() < 1)
 	{

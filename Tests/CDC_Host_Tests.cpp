@@ -13,7 +13,6 @@ using namespace std;
 
 namespace
 {
-	CppMySQLDB* pDB;
 	const char* gszDB = "CDCMySQLTest";
 	#define Host		"127.0.0.1"
 	#define USER		"root"
@@ -40,12 +39,12 @@ void CDC_Host_Tests::setUp()
 {	
 	try
 	{
-		pDB = new CppMySQLDB();
-		pDB->setOptions(MYSQL_SET_CHARSET_NAME, "gbk");	
-		pDB->connect(Host, USER, PASSWORD);
-		pDB->dropDB(gszDB);
-		pDB->createDB(gszDB);
-		pDB->open(gszDB);
+		CppMySQLDB::Instance().init();
+		CppMySQLDB::Instance().setOptions(MYSQL_SET_CHARSET_NAME, "gbk");	
+		CppMySQLDB::Instance().connect(Host, USER, PASSWORD);
+		CppMySQLDB::Instance().dropDB(gszDB);
+		CppMySQLDB::Instance().createDB(gszDB);
+		CppMySQLDB::Instance().open(gszDB);
 
 		string sql = "CREATE TABLE IF NOT EXISTS CDC_Host (\
 			Host_ID bigint(20) not null DEFAULT 1,\
@@ -54,8 +53,8 @@ void CDC_Host_Tests::setUp()
 			Host_VirtNet Varchar(255) not null,\
 			PRIMARY KEY(Host_ID)\
 			) ENGINE = InnoDB DEFAULT CHARSET = utf8;";
-		pDB->execDML(sql);
-		_pObj = new CDC_Host(pDB);
+		execDML(sql);
+		_pObj = new CDC_Host();
 	}
 	catch (CppMySQLException& e)
 	{
@@ -65,10 +64,8 @@ void CDC_Host_Tests::setUp()
 
 void CDC_Host_Tests::tearDown()
 {
-	pDB->dropDB(gszDB);
-	pDB->close();
-	delete pDB;
-	pDB = NULL;
+	CppMySQLDB::Instance().dropDB(gszDB);
+	CppMySQLDB::Instance().close();
 }
 
 void CDC_Host_Tests::testJsonAdd()
@@ -158,7 +155,7 @@ void CDC_Host_Tests::testJsonFind()
 
 	json = cJSON_CreateObject();
 	cJSON_AddStringToObject(json, "Method", "Part");
-	//cJSON_AddStringToObject(json, "Host_Name", "testJsonFind22");
+	cJSON_AddStringToObject(json, "Host_Name", "testJsonFind22");
 	cJSON_AddStringToObject(json, "Host_IP", "127.0.0.1");
 	out = cJSON_Print(json);
 	req = out;

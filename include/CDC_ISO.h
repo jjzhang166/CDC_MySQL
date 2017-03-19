@@ -10,7 +10,7 @@ class CDC_MYSQL_API CDC_ISO
 {
 	DISABLE_COPY(CDC_ISO);
 public:
-	CDC_ISO(CppMySQLDB* pdb);
+	CDC_ISO();
 	~CDC_ISO();
 
 	std::string CDC_ISO_Add(const std::string& req);

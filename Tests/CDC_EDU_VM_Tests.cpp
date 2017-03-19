@@ -13,7 +13,6 @@ using namespace std;
 
 namespace
 {
-	CppMySQLDB* pDB;
 	const char* gszDB = "CDCMySQLTest";
 	#define HOST		"127.0.0.1"
 	#define USER		"root"
@@ -48,9 +47,9 @@ void CDC_EDU_VM_Tests::dependsFuc()
 			PRIMARY KEY(Host_ID)\
 			) ENGINE = InnoDB DEFAULT CHARSET = utf8; ";
 
-		pDB->execDML(sql);
+		execDML(sql);
 
-		_pCDC_HostObj = new CDC_Host(pDB);
+		_pCDC_HostObj = new CDC_Host();
 
 		TCDC_Host t1;
 		t1.Host_ID = 1001;
@@ -93,7 +92,9 @@ void CDC_EDU_VM_Tests::dependsFuc1()
 			Template_FileName Varchar(255) not null,        /*模板文件名*/\
 			Template_RollBackFile Varchar(255),             /*回滚快照名*/\
 			Template_BackUpFile Varchar(255) not null,      /*备份模板名*/\
+			Template_MAC Varchar(255) not null,				/*模板Mac地址*/\
 			Template_SpicePwd Varchar(255) not null,        /*Spice密码*/\
+			Template_SpicePort Varchar(255) not null,       /*Spice端口*/\
 			Template_Uuid Varchar(255),                    /*模板内部标识名*/\
 			Template_Create_Time DateTime,                  /*模板创建时间*/\
 			Template_Update_Time DateTime,                  /*模板最后修改时间*/\
@@ -101,11 +102,11 @@ void CDC_EDU_VM_Tests::dependsFuc1()
 			FOREIGN KEY(Template_HostID)\
 			REFERENCES CDC_Host(Host_ID)\
 			ON DELETE CASCADE\
-						) ENGINE = InnoDB DEFAULT CHARSET = utf8; ";
+			) ENGINE = InnoDB DEFAULT CHARSET = utf8; ";
 
-		pDB->execDML(sql);
+		execDML(sql);
 
-		_pCDC_TemplateObj = new CDC_Template(pDB);
+		_pCDC_TemplateObj = new CDC_Template();
 
 		TCDC_Template t1; 
 		t1.Template_ID = 1001;
@@ -168,9 +169,9 @@ void CDC_EDU_VM_Tests::dependsFuc2()
 					PRIMARY KEY(ThinClientGroup_ID)\
 					) ENGINE = InnoDB DEFAULT CHARSET = utf8;";
 
-		pDB->execDML(sql);
+		execDML(sql);
 
-		_pCDC_ThinClientGroupObj = new CDC_ThinClientGroup(pDB);
+		_pCDC_ThinClientGroupObj = new CDC_ThinClientGroup();
 
 		TCDC_ThinClientGroup t1;
 		t1.ThinClientGroup_ID = 1001;
@@ -201,9 +202,9 @@ void CDC_EDU_VM_Tests::dependsFuc2()
 			ON DELETE CASCADE\
 			) ENGINE = InnoDB DEFAULT CHARSET = utf8; ";
 
-		pDB->execDML(sql);
+		execDML(sql);
 
-		_pCDC_ThinClientObj = new CDC_ThinClient(pDB);
+		_pCDC_ThinClientObj = new CDC_ThinClient();
 
 		TCDC_ThinClient t3; 
 		t3.ThinClient_ID = 1001;
@@ -241,12 +242,12 @@ void CDC_EDU_VM_Tests::setUp()
 {	
 	try
 	{
-		pDB = new CppMySQLDB();
-		pDB->setOptions(MYSQL_SET_CHARSET_NAME, "gbk");	
-		pDB->connect(HOST, USER, PASSWORD);
-		pDB->dropDB(gszDB);
-		pDB->createDB(gszDB);
-		pDB->open(gszDB);
+		CppMySQLDB::Instance().init();
+		CppMySQLDB::Instance().setOptions(MYSQL_SET_CHARSET_NAME, "gbk");	
+		CppMySQLDB::Instance().connect(HOST, USER, PASSWORD);
+		CppMySQLDB::Instance().dropDB(gszDB);
+		CppMySQLDB::Instance().createDB(gszDB);
+		CppMySQLDB::Instance().open(gszDB);
 		dependsFuc();
 		dependsFuc1();
 		dependsFuc2();
@@ -267,8 +268,8 @@ void CDC_EDU_VM_Tests::setUp()
 			REFERENCES CDC_ThinClient(ThinClient_ID)\
 			ON DELETE CASCADE\
 			) ENGINE = InnoDB DEFAULT CHARSET = utf8; ";
-		pDB->execDML(sql);
-		_pObj = new CDC_EDU_VM(pDB);
+		execDML(sql);
+		_pObj = new CDC_EDU_VM();
 	}
 	catch (CppMySQLException& e)
 	{
@@ -278,10 +279,8 @@ void CDC_EDU_VM_Tests::setUp()
 
 void CDC_EDU_VM_Tests::tearDown()
 {
-	pDB->dropDB(gszDB);
-	pDB->close();
-	delete pDB;
-	pDB = NULL;
+	CppMySQLDB::Instance().dropDB(gszDB);
+	CppMySQLDB::Instance().close();
 }
 
 

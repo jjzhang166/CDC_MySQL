@@ -12,7 +12,6 @@ using namespace std;
 
 namespace
 {
-	CppMySQLDB* pDB;
 	const char* gszDB = "CDCMySQLTest";
 	#define Host		"127.0.0.1"
 	#define USER		"root"
@@ -37,12 +36,12 @@ CDC_ThinClientGroup_Tests::~CDC_ThinClientGroup_Tests()
 
 void CDC_ThinClientGroup_Tests::setUp()
 {	
-	pDB = new CppMySQLDB();
-	pDB->setOptions(MYSQL_SET_CHARSET_NAME, "gbk");	
-	pDB->connect(Host, USER, PASSWORD);
-	pDB->dropDB(gszDB);
-	pDB->createDB(gszDB);
-	pDB->open(gszDB);
+	CppMySQLDB::Instance().init();
+	CppMySQLDB::Instance().setOptions(MYSQL_SET_CHARSET_NAME, "gbk");	
+	CppMySQLDB::Instance().connect(Host, USER, PASSWORD);
+	CppMySQLDB::Instance().dropDB(gszDB);
+	CppMySQLDB::Instance().createDB(gszDB);
+	CppMySQLDB::Instance().open(gszDB);
 
 	string sql = "CREATE TABLE IF NOT EXISTS CDC_ThinClientGroup (\
 		ThinClientGroup_ID bigint(20) not null AUTO_INCREMENT,  /*ÊÝÖÕ¶ËID*/\
@@ -50,17 +49,15 @@ void CDC_ThinClientGroup_Tests::setUp()
 		PRIMARY KEY(ThinClientGroup_ID)\
 		) ENGINE = InnoDB DEFAULT CHARSET = utf8;";
 
-	pDB->execDML(sql);
-	_pObj = new CDC_ThinClientGroup(pDB);
+	execDML(sql);
+	_pObj = new CDC_ThinClientGroup();
 }
 
 
 void CDC_ThinClientGroup_Tests::tearDown()
 {
-	pDB->dropDB(gszDB);
-	pDB->close();
-	delete pDB;
-	pDB = NULL;
+	CppMySQLDB::Instance().dropDB(gszDB);
+	CppMySQLDB::Instance().close();
 }
 
 void CDC_ThinClientGroup_Tests::testJsonAdd()

@@ -35,9 +35,9 @@ LIBS :=  mysqlclient cjson
 
 ## Add driver-specific include directory to the search path
 
-INC_PATH += ../include ../include/MySQL5.7   
+INC_PATH += ../include ../include/MySQL5.5   
 
-LIB_PATH := . ../lib /usr/lib/x86_64-linux-gnu /usr/local/lib
+LIB_PATH := . ../lib/libmysql ../lib /usr/lib/x86_64-linux-gnu /usr/local/lib
 
 INSTALL_LIB_PATH = ../lib
 

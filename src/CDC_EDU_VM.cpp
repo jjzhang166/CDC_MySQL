@@ -10,8 +10,8 @@
 
 using namespace std;
 
-CDC_EDU_VM::CDC_EDU_VM(CppMySQLDB* pdb)
-	:_pdb(pdb)
+CDC_EDU_VM::CDC_EDU_VM()
+	:_pdb(NULL)
 {
 }
 
@@ -407,7 +407,7 @@ double CDC_EDU_VM::EDU_VM_Add(TCDC_EDU_VM& src)
 		if (EDU_VM_Find(src.EDU_VM_ID))
 			return exists;
 
-		_stmt = _pdb->compileStatement("insert into CDC_EDU_VM values (?, ?, ?, ?, ?, ?, ?);");
+		_stmt = compileStatement("insert into CDC_EDU_VM values (?, ?, ?, ?, ?, ?, ?);");
 		if (src.EDU_VM_ID != INVALID_NUM && src.EDU_VM_ID > 0)
 			id = src.EDU_VM_ID;
 		else
@@ -438,7 +438,7 @@ int CDC_EDU_VM::EDU_VM_Del(double id)
 		if (!EDU_VM_Find(id))
 			return notExists;
 
-		_stmt = _pdb->compileStatement("delete from CDC_EDU_VM where EDU_VM_ID = ?;");
+		_stmt = compileStatement("delete from CDC_EDU_VM where EDU_VM_ID = ?;");
 		_stmt.bind(1, id);
 		_stmt.execDML();
 		_stmt.reset();
@@ -472,7 +472,7 @@ int CDC_EDU_VM::EDU_VM_Update(TCDC_EDU_VM& src, std::list<std::string>& keyList)
 		updateSql = updateSql.substr(0, updateSql.size() - 1);
 		updateSql += " where EDU_VM_ID = ?;";
 
-		_stmt = _pdb->compileStatement(updateSql.c_str());
+		_stmt = compileStatement(updateSql.c_str());
 
 		int index = 1;
 		for (list<string>::iterator it = keyList.begin(); it != keyList.end(); ++it)
@@ -511,7 +511,7 @@ bool CDC_EDU_VM::EDU_VM_Find(double id)
 	{
 		char buf[1024] = { 0 };
 		sprintf(buf, "select count(*) from CDC_EDU_VM where EDU_VM_ID = %f;", id);
-		return (_pdb->execScalar(buf) != 0);
+		return (execScalar(buf) != 0);
 	}
 	catch (CppMySQLException& e)
 	{
@@ -532,7 +532,7 @@ int CDC_EDU_VM::EDU_VM_Find(double id, TCDC_EDU_VM& t)
 		char buf[1024] = { 0 };
 		sprintf(buf, "select * from CDC_EDU_VM where EDU_VM_ID = %f;", id);
 
-		q = _pdb->execQuery(buf);
+		q = execQuery(buf);
 
 		if (!q.eof())
 		{
@@ -564,7 +564,7 @@ int CDC_EDU_VM::EDU_VM_Find2(const std::string& whereSql, TCDC_EDU_VM& t)
 		char buf[1024] = { 0 };
 		sprintf(buf, "select * from CDC_EDU_VM where %s;", whereSql.c_str());
 
-		q = _pdb->execQuery(buf);
+		q = execQuery(buf);
 
 		if (!q.eof())
 		{
@@ -597,7 +597,7 @@ std::list<TCDC_EDU_VM> CDC_EDU_VM::EDU_VM_Find2(const std::string& whereSql)
 		char buf[1024] = { 0 };
 		sprintf(buf, "select * from CDC_EDU_VM where %s;", whereSql.c_str());
 
-		q = _pdb->execQuery(buf);
+		q = execQuery(buf);
 		while (!q.eof())
 		{
 			TCDC_EDU_VM t;
@@ -625,7 +625,7 @@ int CDC_EDU_VM::EDU_VM_Count()
 {
 	try
 	{
-		return _pdb->execScalar("select count(*) from CDC_EDU_VM;");
+		return execScalar("select count(*) from CDC_EDU_VM;");
 	}
 	catch (CppMySQLException& e)
 	{
@@ -642,7 +642,7 @@ int CDC_EDU_VM::EDU_VM_Count(const std::string& whereSql)
 		char buf[1024] = { 0 };
 		sprintf(buf, "select count(*) from CDC_EDU_VM where %s;", whereSql.c_str());
 
-		return _pdb->execScalar(buf);
+		return execScalar(buf);
 	}
 	catch (CppMySQLException& e)
 	{
@@ -657,7 +657,7 @@ std::list<TCDC_EDU_VM> CDC_EDU_VM::GetAll()
 	std::list<TCDC_EDU_VM> lst;
 	try
 	{
-		CppMySQLQuery q = _pdb->execQuery("select * from CDC_EDU_VM;");
+		CppMySQLQuery q = execQuery("select * from CDC_EDU_VM;");
 		while (!q.eof())
 		{
 			TCDC_EDU_VM t;
@@ -685,7 +685,7 @@ double CDC_EDU_VM::GetMaxID()
 {
 	char buf[1024] = { 0 };
 	sprintf(buf, "select max(EDU_VM_ID) from CDC_EDU_VM");
-	CppMySQLQuery q = _pdb->execQuery(buf);
+	CppMySQLQuery q = execQuery(buf);
 
 	if (q.eof() || q.numFields() < 1)
 	{

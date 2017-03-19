@@ -10,8 +10,8 @@
 
 using namespace std;
 
-CDC_VM::CDC_VM(CppMySQLDB* pdb)
-	:_pdb(pdb)
+CDC_VM::CDC_VM()
+	:_pdb(NULL)
 {
 }
 
@@ -532,7 +532,7 @@ double CDC_VM::VM_Add(TCDC_VM& src)
 		if (VM_Find(src.VM_ID))
 			return exists;
 
-		_stmt = _pdb->compileStatement("insert into CDC_VM values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);");
+		_stmt = compileStatement("insert into CDC_VM values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);");
 		if (src.VM_ID != INVALID_NUM && src.VM_ID > 0)
 			id = src.VM_ID;
 		else
@@ -577,7 +577,7 @@ int CDC_VM::VM_Del(double id)
 		if (!VM_Find(id))
 			return notExists;
 
-		_stmt = _pdb->compileStatement("delete from CDC_VM where VM_ID = ?;");
+		_stmt = compileStatement("delete from CDC_VM where VM_ID = ?;");
 		_stmt.bind(1, id);
 		_stmt.execDML();
 		_stmt.reset();
@@ -611,7 +611,7 @@ int CDC_VM::VM_Update(TCDC_VM& src, std::list<std::string>& keyList)
 		updateSql = updateSql.substr(0, updateSql.size() - 1);
 		updateSql += " where VM_ID = ?;";
 
-		_stmt = _pdb->compileStatement(updateSql.c_str());
+		_stmt = compileStatement(updateSql.c_str());
 
 		int index = 1;
 		for (list<string>::iterator it = keyList.begin(); it != keyList.end(); ++it)
@@ -679,7 +679,7 @@ bool CDC_VM::VM_Find(double id)
 	{
 		char buf[1024] = { 0 };
 		sprintf(buf, "select count(*) from CDC_VM where VM_ID = %f;", id);
-		return (_pdb->execScalar(buf) != 0);
+		return (execScalar(buf) != 0);
 	}
 	catch (CppMySQLException& e)
 	{
@@ -700,7 +700,7 @@ int CDC_VM::VM_Find(double id, TCDC_VM& t)
 		char buf[1024] = { 0 };
 		sprintf(buf, "select * from CDC_VM where VM_ID = %f;", id);
 
-		q = _pdb->execQuery(buf);
+		q = execQuery(buf);
 
 		if (!q.eof())
 		{
@@ -746,7 +746,7 @@ int CDC_VM::VM_Find2(const std::string& whereSql, TCDC_VM& t)
 		char buf[1024] = { 0 };
 		sprintf(buf, "select * from CDC_VM where %s;", whereSql.c_str());
 
-		q = _pdb->execQuery(buf);
+		q = execQuery(buf);
 
 		if (!q.eof())
 		{
@@ -793,7 +793,7 @@ std::list<TCDC_VM> CDC_VM::VM_Find2(const std::string& whereSql)
 		char buf[1024] = { 0 };
 		sprintf(buf, "select * from CDC_VM where %s;", whereSql.c_str());
 
-		q = _pdb->execQuery(buf);
+		q = execQuery(buf);
 		while (!q.eof())
 		{
 			TCDC_VM t;
@@ -835,7 +835,7 @@ int CDC_VM::VM_Count()
 {
 	try
 	{
-		return _pdb->execScalar("select count(*) from CDC_VM;");
+		return execScalar("select count(*) from CDC_VM;");
 	}
 	catch (CppMySQLException& e)
 	{
@@ -852,7 +852,7 @@ int CDC_VM::VM_Count(const std::string& whereSql)
 		char buf[1024] = { 0 };
 		sprintf(buf, "select count(*) from CDC_VM where %s;", whereSql.c_str());
 
-		return _pdb->execScalar(buf);
+		return execScalar(buf);
 	}
 	catch (CppMySQLException& e)
 	{
@@ -867,7 +867,7 @@ std::list<TCDC_VM> CDC_VM::GetAll()
 	std::list<TCDC_VM> lst;
 	try
 	{
-		CppMySQLQuery q = _pdb->execQuery("select * from CDC_VM;");
+		CppMySQLQuery q = execQuery("select * from CDC_VM;");
 		while (!q.eof())
 		{
 			TCDC_VM t;
@@ -909,7 +909,7 @@ double CDC_VM::GetMaxID()
 {
 	char buf[1024] = { 0 };
 	sprintf(buf, "select max(VM_ID) from CDC_VM");
-	CppMySQLQuery q = _pdb->execQuery(buf);
+	CppMySQLQuery q = execQuery(buf);
 
 	if (q.eof() || q.numFields() < 1)
 	{

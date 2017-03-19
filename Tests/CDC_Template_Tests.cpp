@@ -13,7 +13,6 @@ using namespace std;
 
 namespace
 {
-	CppMySQLDB* pDB;
 	const char* gszDB = "CDCMySQLTest";
 	#define HOST		"127.0.0.1"
 	#define USER		"root"
@@ -48,9 +47,9 @@ void CDC_Template_Tests::dependsFuc()
 			PRIMARY KEY(Host_ID)\
 			) ENGINE = InnoDB DEFAULT CHARSET = utf8; ";
 
-		pDB->execDML(sql);
+		execDML(sql);
 
-		_pCDC_HostObj = new CDC_Host(pDB);
+		_pCDC_HostObj = new CDC_Host();
 
 		TCDC_Host t1;
 		t1.Host_ID = 1001;
@@ -78,12 +77,12 @@ void CDC_Template_Tests::setUp()
 {	
 	try
 	{
-		pDB = new CppMySQLDB();
-		pDB->setOptions(MYSQL_SET_CHARSET_NAME, "gbk");	
-		pDB->connect(HOST, USER, PASSWORD);
-		pDB->dropDB(gszDB);
-		pDB->createDB(gszDB);
-		pDB->open(gszDB);
+		CppMySQLDB::Instance().init();
+		CppMySQLDB::Instance().setOptions(MYSQL_SET_CHARSET_NAME, "gbk");	
+		CppMySQLDB::Instance().connect(HOST, USER, PASSWORD);
+		CppMySQLDB::Instance().dropDB(gszDB);
+		CppMySQLDB::Instance().createDB(gszDB);
+		CppMySQLDB::Instance().open(gszDB);
 		dependsFuc();
 
 		string sql = "CREATE TABLE IF NOT EXISTS CDC_Template (\
@@ -112,8 +111,8 @@ void CDC_Template_Tests::setUp()
 			REFERENCES CDC_Host(Host_ID)\
 			ON DELETE CASCADE\
 			) ENGINE = InnoDB DEFAULT CHARSET = utf8; ";
-		pDB->execDML(sql);
-		_pObj = new CDC_Template(pDB);
+		execDML(sql);
+		_pObj = new CDC_Template();
 	}
 	catch (CppMySQLException& e)
 	{
@@ -123,10 +122,8 @@ void CDC_Template_Tests::setUp()
 
 void CDC_Template_Tests::tearDown()
 {
-	pDB->dropDB(gszDB);
-	pDB->close();
-	delete pDB;
-	pDB = NULL;
+	CppMySQLDB::Instance().dropDB(gszDB);
+	CppMySQLDB::Instance().close();
 }
 
 
@@ -150,7 +147,7 @@ void CDC_Template_Tests::tearDown()
 		t1.Template_SpicePort = "testJson_72";\
 		t1.Template_Uuid = "testJson_8";\
 		t1.Template_Create_Time = "2017-12-31 12:56:30";\
-		t1.Template_Update_Time = "2018-08-08 08:08:08";
+		t1.Template_Update_Time = "2017-12-31 12:56:30";
 
 void CDC_Template_Tests::testJsonAdd()
 {
@@ -175,7 +172,7 @@ void CDC_Template_Tests::testJsonAdd()
 	cJSON_AddStringToObject(json, "Template_SpicePort", "testJsonAdd_71");
 	cJSON_AddStringToObject(json, "Template_Uuid", "testJsonAdd_8");
 	cJSON_AddStringToObject(json, "Template_Create_Time", "2017-12-31 12:56:30");
-	cJSON_AddStringToObject(json, "Template_Update_Time", "2018-08-08 08:08:08");
+	cJSON_AddStringToObject(json, "Template_Update_Time", "2017-12-31 12:56:30");
 	out = cJSON_Print(json);
 	req = out;
 	cJSON_Delete(json);

@@ -10,7 +10,7 @@ class CDC_MYSQL_API CDC_Host
 {
 	DISABLE_COPY(CDC_Host);
 public:
-	CDC_Host(CppMySQLDB* pdb);
+	CDC_Host();
 	~CDC_Host();
 
 	std::string CDC_Host_Add(const std::string& req);

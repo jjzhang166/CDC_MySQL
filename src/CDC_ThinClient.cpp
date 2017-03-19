@@ -10,8 +10,8 @@
 
 using namespace std;
 
-CDC_ThinClient::CDC_ThinClient(CppMySQLDB* pdb)
-	:_pdb(pdb)
+CDC_ThinClient::CDC_ThinClient()
+	:_pdb(NULL)
 {
 }
 
@@ -416,7 +416,7 @@ double CDC_ThinClient::ThinClient_Add(TCDC_ThinClient& src)
 		if (ThinClient_Find(src.ThinClient_ID))
 			return exists;
 
-		_stmt = _pdb->compileStatement("insert into CDC_ThinClient values (?, ?, ?, ?, ?, ?, ?, ?, ?);");
+		_stmt = compileStatement("insert into CDC_ThinClient values (?, ?, ?, ?, ?, ?, ?, ?, ?);");
 		if (src.ThinClient_ID != INVALID_NUM && src.ThinClient_ID > 0)
 			id = src.ThinClient_ID;
 		else
@@ -449,7 +449,7 @@ int CDC_ThinClient::ThinClient_Del(double id)
 		if (!ThinClient_Find(id))
 			return notExists;
 
-		_stmt = _pdb->compileStatement("delete from CDC_ThinClient where ThinClient_ID = ?;");
+		_stmt = compileStatement("delete from CDC_ThinClient where ThinClient_ID = ?;");
 		_stmt.bind(1, id);
 		_stmt.execDML();
 		_stmt.reset();
@@ -469,7 +469,7 @@ int CDC_ThinClient::ThinClient_Update(TCDC_ThinClient& src)
 		if (!ThinClient_Find(src.ThinClient_ID))
 			return notExists;
 
-		_stmt = _pdb->compileStatement("update CDC_ThinClient \
+		_stmt = compileStatement("update CDC_ThinClient \
 			set ThinClient_HostID = ?, ThinClient_Name = ?, ThinClient_Path = ? where ThinClient_ID = ?;");
 		
 		_stmt.bind(1, src.ThinClient_ID);
@@ -514,7 +514,7 @@ int CDC_ThinClient::ThinClient_Update(TCDC_ThinClient& src, std::list<std::strin
 		updateSql = updateSql.substr(0, updateSql.size() - 1);
 		updateSql += " where ThinClient_ID = ?;";
 
-		_stmt = _pdb->compileStatement(updateSql.c_str());
+		_stmt = compileStatement(updateSql.c_str());
 
 		int index = 1;
 		for (list<string>::iterator it = keyList.begin(); it != keyList.end(); ++it)
@@ -557,7 +557,7 @@ bool CDC_ThinClient::ThinClient_Find(double id)
 	{
 		char buf[1024] = { 0 };
 		sprintf(buf, "select count(*) from CDC_ThinClient where ThinClient_ID = %f;", id);
-		return (_pdb->execScalar(buf) != 0);
+		return (execScalar(buf) != 0);
 	}
 	catch (CppMySQLException& e)
 	{
@@ -578,7 +578,7 @@ int CDC_ThinClient::ThinClient_Find(double id, TCDC_ThinClient& t)
 		char buf[1024] = { 0 };
 		sprintf(buf, "select * from CDC_ThinClient where ThinClient_ID = %f;", id);
 
-		q = _pdb->execQuery(buf);
+		q = execQuery(buf);
 
 		if (!q.eof())
 		{
@@ -612,7 +612,7 @@ int CDC_ThinClient::ThinClient_Find2(const std::string& whereSql, TCDC_ThinClien
 		char buf[1024] = { 0 };
 		sprintf(buf, "select * from CDC_ThinClient where %s;", whereSql.c_str());
 
-		q = _pdb->execQuery(buf);
+		q = execQuery(buf);
 
 		if (!q.eof())
 		{
@@ -647,7 +647,7 @@ std::list<TCDC_ThinClient> CDC_ThinClient::ThinClient_Find2(const std::string& w
 		char buf[1024] = { 0 };
 		sprintf(buf, "select * from CDC_ThinClient where %s;", whereSql.c_str());
 
-		q = _pdb->execQuery(buf);
+		q = execQuery(buf);
 		while (!q.eof())
 		{
 			TCDC_ThinClient t;
@@ -677,7 +677,7 @@ int CDC_ThinClient::ThinClient_Count()
 {
 	try
 	{
-		return _pdb->execScalar("select count(*) from CDC_ThinClient;");
+		return execScalar("select count(*) from CDC_ThinClient;");
 	}
 	catch (CppMySQLException& e)
 	{
@@ -694,7 +694,7 @@ int CDC_ThinClient::ThinClient_Count(const std::string& whereSql)
 		char buf[1024] = { 0 };
 		sprintf(buf, "select count(*) from CDC_ThinClient where %s;", whereSql.c_str());
 
-		return _pdb->execScalar(buf);
+		return execScalar(buf);
 	}
 	catch (CppMySQLException& e)
 	{
@@ -709,7 +709,7 @@ std::list<TCDC_ThinClient> CDC_ThinClient::GetAll()
 	std::list<TCDC_ThinClient> lst;
 	try
 	{
-		CppMySQLQuery q = _pdb->execQuery("select * from CDC_ThinClient;");
+		CppMySQLQuery q = execQuery("select * from CDC_ThinClient;");
 		while (!q.eof())
 		{
 			TCDC_ThinClient t;
@@ -739,7 +739,7 @@ double CDC_ThinClient::GetMaxID()
 {
 	char buf[1024] = { 0 };
 	sprintf(buf, "select max(ThinClient_ID) from CDC_ThinClient");
-	CppMySQLQuery q = _pdb->execQuery(buf);
+	CppMySQLQuery q = execQuery(buf);
 
 	if (q.eof() || q.numFields() < 1)
 	{

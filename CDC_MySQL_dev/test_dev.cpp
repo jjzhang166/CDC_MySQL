@@ -7,7 +7,6 @@ using namespace std;
 
 int main()
 {
-    CppMySQLDB* pDB;     // 必须一个对象
 	const char* gszDB = "test_dev";
 	#define Host		"127.0.0.1"
 	#define USER		"root"
@@ -24,12 +23,12 @@ int main()
 
 	////////////////////////////////////////
     // 连接创建数据库，设置数据库字符集，显示汉字需要设置为utf8
-    pDB = new CppMySQLDB();
-	pDB->setOptions(MYSQL_SET_CHARSET_NAME, "utf8");
-	pDB->connect(Host, USER, PASSWORD);
-	pDB->dropDB(gszDB);
-	pDB->createDB(gszDB);
-	pDB->open(gszDB);
+	CppMySQLDB::Instance().init();
+	CppMySQLDB::Instance().setOptions(MYSQL_SET_CHARSET_NAME, "utf8");
+	CppMySQLDB::Instance().connect(Host, USER, PASSWORD);
+	CppMySQLDB::Instance().dropDB(gszDB);
+	CppMySQLDB::Instance().createDB(gszDB);
+	CppMySQLDB::Instance().open(gszDB);
 	
 	//创建用户组表
 	string sql = "CREATE TABLE IF NOT EXISTS CDC_UserGroup (\
@@ -38,8 +37,8 @@ int main()
 		PRIMARY KEY(UserGroup_ID)\
 		) ENGINE = InnoDB; ";
 
-	pDB->execDML(sql);
-	_pUserGroupObj = new CDC_UserGroup(pDB);
+	CppMySQLDB::Instance().execDML(sql);
+	_pUserGroupObj = new CDC_UserGroup();
 
 	/// 创建用户表
 	sql = "CREATE TABLE IF NOT EXISTS CDC_User (\
@@ -56,8 +55,8 @@ int main()
 			ON DELETE CASCADE\
 			) ENGINE = InnoDB; ";
 
-	pDB->execDML(sql);
-	_pUserObj = new CDC_User(pDB);
+	execDML(sql);
+	_pUserObj = new CDC_User();
 
     //////////////////////////////////////
     //插入到用户组表
@@ -106,9 +105,7 @@ int main()
 	delete _pUserObj;
 	_pUserObj = NULL;
 
-    pDB->dropDB(gszDB);
-	pDB->close();
-	delete pDB;
-	pDB = NULL;
+	CppMySQLDB::Instance().dropDB(gszDB);
+	CppMySQLDB::Instance().close();
     return 0;
 }

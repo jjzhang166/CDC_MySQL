@@ -12,7 +12,6 @@ using namespace std;
 
 namespace
 {
-	CppMySQLDB* pDB;
 	const char* gszDB = "CDCMySQLTest";
 	#define Host		"127.0.0.1"
 	#define USER		"root"
@@ -37,12 +36,12 @@ CDC_UserGroup_Tests::~CDC_UserGroup_Tests()
 
 void CDC_UserGroup_Tests::setUp()
 {	
-	pDB = new CppMySQLDB();
-	pDB->setOptions(MYSQL_SET_CHARSET_NAME, "gbk");	
-	pDB->connect(Host, USER, PASSWORD);
-	pDB->dropDB(gszDB);
-	pDB->createDB(gszDB);
-	pDB->open(gszDB);
+	CppMySQLDB::Instance().init();
+	CppMySQLDB::Instance().setOptions(MYSQL_SET_CHARSET_NAME, "gbk");	
+	CppMySQLDB::Instance().connect(Host, USER, PASSWORD);
+	CppMySQLDB::Instance().dropDB(gszDB);
+	CppMySQLDB::Instance().createDB(gszDB);
+	CppMySQLDB::Instance().open(gszDB);
 
 	string sql = "CREATE TABLE IF NOT EXISTS CDC_UserGroup (\
 		UserGroup_ID bigint(20) not null AUTO_INCREMENT,\
@@ -50,17 +49,15 @@ void CDC_UserGroup_Tests::setUp()
 		PRIMARY KEY(UserGroup_ID)\
 		) ENGINE = InnoDB; ";
 
-	pDB->execDML(sql);
-	_pObj = new CDC_UserGroup(pDB);
+	execDML(sql);
+	_pObj = new CDC_UserGroup();
 }
 
 
 void CDC_UserGroup_Tests::tearDown()
 {
-	pDB->dropDB(gszDB);
-	pDB->close();
-	delete pDB;
-	pDB = NULL;
+	CppMySQLDB::Instance().dropDB(gszDB);
+	//CppMySQLDB::Instance().close();
 }
 
 void CDC_UserGroup_Tests::testCount()
@@ -146,13 +143,13 @@ void CDC_UserGroup_Tests::testJsonFind()
 	assert(id > 0);
 
 	TCDC_UserGroup userGroup2;
-	userGroup2.UserGroup_Name = "testJsonFind11";
+	userGroup2.UserGroup_Name = "testJsonFind22";
 	id = _pObj->UserGroup_Add(userGroup2);
 	assert(id > 0);
 
 	json = cJSON_CreateObject();
 	cJSON_AddStringToObject(json, "Method", "Part");
-	cJSON_AddStringToObject(json, "UserGroup_Name", "testJsonFind11");
+	cJSON_AddNumberToObject(json, "UserGroup_ID", id);
 	out = cJSON_Print(json);
 	req = out;
 	cJSON_Delete(json);

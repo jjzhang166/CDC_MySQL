@@ -10,7 +10,7 @@ class CDC_MYSQL_API CDC_VM
 {
 	DISABLE_COPY(CDC_VM);
 public:
-	CDC_VM(CppMySQLDB* pdb);
+	CDC_VM();
 	~CDC_VM();
 
 	std::string CDC_VM_Add(const std::string& req);

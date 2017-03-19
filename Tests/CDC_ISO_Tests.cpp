@@ -13,7 +13,6 @@ using namespace std;
 
 namespace
 {
-	CppMySQLDB* pDB;
 	const char* gszDB = "CDCMySQLTest";
 	#define Host		"127.0.0.1"
 	#define USER		"root"
@@ -48,9 +47,9 @@ void CDC_ISO_Tests::dependsFuc()
 			PRIMARY KEY(Host_ID)\
 			) ENGINE = InnoDB DEFAULT CHARSET = utf8; ";
 
-		pDB->execDML(sql);
+		execDML(sql);
 
-		_pCDC_HostObj = new CDC_Host(pDB);
+		_pCDC_HostObj = new CDC_Host();
 
 		TCDC_Host t1;
 		t1.Host_ID = 1001;
@@ -78,12 +77,12 @@ void CDC_ISO_Tests::setUp()
 {	
 	try
 	{
-		pDB = new CppMySQLDB();
-		pDB->setOptions(MYSQL_SET_CHARSET_NAME, "gbk");	
-		pDB->connect(Host, USER, PASSWORD);
-		pDB->dropDB(gszDB);
-		pDB->createDB(gszDB);
-		pDB->open(gszDB);
+		CppMySQLDB::Instance().init();
+		CppMySQLDB::Instance().setOptions(MYSQL_SET_CHARSET_NAME, "gbk");	
+		CppMySQLDB::Instance().connect(Host, USER, PASSWORD);
+		CppMySQLDB::Instance().dropDB(gszDB);
+		CppMySQLDB::Instance().createDB(gszDB);
+		CppMySQLDB::Instance().open(gszDB);
 		dependsFuc();
 
 		string sql = "CREATE TABLE IF NOT EXISTS CDC_ISO (\
@@ -96,8 +95,8 @@ void CDC_ISO_Tests::setUp()
 			REFERENCES CDC_Host(Host_ID)\
 			ON DELETE CASCADE\
 			) ENGINE = InnoDB DEFAULT CHARSET = utf8; ";
-		pDB->execDML(sql);
-		_pObj = new CDC_ISO(pDB);
+		execDML(sql);
+		_pObj = new CDC_ISO();
 	}
 	catch (CppMySQLException& e)
 	{
@@ -107,10 +106,8 @@ void CDC_ISO_Tests::setUp()
 
 void CDC_ISO_Tests::tearDown()
 {
-	pDB->dropDB(gszDB);
-	pDB->close();
-	delete pDB;
-	pDB = NULL;
+	CppMySQLDB::Instance().dropDB(gszDB);
+	CppMySQLDB::Instance().close();
 }
 
 void CDC_ISO_Tests::testJsonAdd()

@@ -9,8 +9,8 @@
 
 using namespace std;
 
-CDC_UserGroup::CDC_UserGroup(CppMySQLDB* pdb)
-	:_pdb(pdb)
+CDC_UserGroup::CDC_UserGroup()
+	:_pdb(NULL)
 {
 }
 
@@ -348,7 +348,7 @@ double CDC_UserGroup::GetMaxID()
 {
 	char buf[1024] = { 0 };
 	sprintf(buf, "select max(UserGroup_ID) from CDC_UserGroup");
-	CppMySQLQuery q = _pdb->execQuery(buf);
+	CppMySQLQuery q = execQuery(buf);
 
 	if (q.eof() || q.numFields() < 1)
 	{
@@ -366,7 +366,7 @@ double CDC_UserGroup::UserGroup_Add(TCDC_UserGroup& src)
 		if (UserGroup_Find(src.UserGroup_ID))
 			return exists;
 
-		_stmt = _pdb->compileStatement("insert into CDC_UserGroup values (?, ?);");
+		_stmt = compileStatement("insert into CDC_UserGroup values (?, ?);");
 
 		if (src.UserGroup_ID != INVALID_NUM)
 			id = src.UserGroup_ID;
@@ -395,7 +395,7 @@ int CDC_UserGroup::UserGroup_Del(double id)
 
 		char buf[1024] = { 0 };
 		sprintf(buf, "delete from CDC_UserGroup where UserGroup_ID = %f;", id);
-		_pdb->execDML(buf);
+		execDML(buf);
 	}
 	catch (CppMySQLException& e)
 	{
@@ -414,7 +414,7 @@ int CDC_UserGroup::UserGroup_Del(std::string& name)
 
 		char buf[1024] = { 0 };
 		sprintf(buf, "delete from CDC_UserGroup where UserGroup_Name = '%s';", name.c_str());
-		_pdb->execDML(buf);
+		execDML(buf);
 	}
 	catch (CppMySQLException& e)
 	{
@@ -431,7 +431,7 @@ int CDC_UserGroup::UserGroup_Update(TCDC_UserGroup& src)
 		if (!UserGroup_Find(src.UserGroup_ID))
 			return notExists;
 
-		_stmt = _pdb->compileStatement("update CDC_UserGroup set UserGroup_Name = ? where UserGroup_ID = ?;");
+		_stmt = compileStatement("update CDC_UserGroup set UserGroup_Name = ? where UserGroup_ID = ?;");
 		_stmt.bind(1, src.UserGroup_Name);
 		_stmt.bind(2, src.UserGroup_ID);
 		_stmt.execDML();
@@ -454,7 +454,7 @@ bool CDC_UserGroup::UserGroup_Find(double id)
 	{
 		char buf[1024] = {0};
 		sprintf(buf, "select count(*) from CDC_UserGroup where UserGroup_ID = %f;", id);
-		return (_pdb->execScalar(buf) != 0);
+		return (execScalar(buf) != 0);
 	}
 	catch (CppMySQLException& e)
 	{
@@ -470,7 +470,7 @@ bool CDC_UserGroup::UserGroup_Find(std::string& name)
 	{
 		char buf[1024] = { 0 };
 		sprintf(buf, "select count(*) from CDC_UserGroup where UserGroup_Name = '%s';", name.c_str());
-		return (_pdb->execScalar(buf) != 0);
+		return (execScalar(buf) != 0);
 	}
 	catch (CppMySQLException& e)
 	{
@@ -492,7 +492,7 @@ int CDC_UserGroup::UserGroup_Find(double id, TCDC_UserGroup& t)
 		char buf[1024] = { 0 };
 		sprintf(buf, "select * from CDC_UserGroup where UserGroup_ID = %f;", id);
 
-		q = _pdb->execQuery(buf);
+		q = execQuery(buf);
 
 		if (!q.eof())
 		{
@@ -522,7 +522,7 @@ int CDC_UserGroup::UserGroup_Find(std::string& name, TCDC_UserGroup& t)
 		char buf[1024] = { 0 };
 		sprintf(buf, "select * from CDC_UserGroup where UserGroup_Name = '%s';", name.c_str());
 
-		q = _pdb->execQuery(buf);
+		q = execQuery(buf);
 
 		if (!q.eof())
 		{
@@ -549,7 +549,7 @@ int CDC_UserGroup::UserGroup_Find2(std::string& whereSql, TCDC_UserGroup& t)
 		char buf[1024] = { 0 };
 		sprintf(buf, "select * from CDC_UserGroup where %s;", whereSql.c_str());
 
-		q = _pdb->execQuery(buf);
+		q = execQuery(buf);
 
 		if (!q.eof())
 		{
@@ -576,7 +576,7 @@ std::list<TCDC_UserGroup> CDC_UserGroup::UserGroup_Find2(std::string& whereSql)
 		CppMySQLQuery q;
 		char buf[1024] = { 0 };
 		sprintf(buf, "select * from CDC_UserGroup where %s;", whereSql.c_str());
-		q = _pdb->execQuery(buf);
+		q = execQuery(buf);
 		while (!q.eof())
 		{
 			TCDC_UserGroup t;
@@ -598,7 +598,7 @@ int CDC_UserGroup::UserGroup_Count()
 {
 	try
 	{
-		return _pdb->execScalar("select count(*) from CDC_UserGroup;");
+		return execScalar("select count(*) from CDC_UserGroup;");
 	}
 	catch (CppMySQLException& e)
 	{
@@ -615,7 +615,7 @@ int CDC_UserGroup::UserGroup_Count(std::string& whereSql)
 		char buf[1024] = { 0 };
 		sprintf(buf, "select count(*) from CDC_UserGroup where %s;", whereSql.c_str());
 
-		return _pdb->execScalar(buf);
+		return execScalar(buf);
 	}
 	catch (CppMySQLException& e)
 	{
@@ -630,7 +630,7 @@ std::list<TCDC_UserGroup> CDC_UserGroup::GetAll()
 	std::list<TCDC_UserGroup> lst;
 	try
 	{
-		CppMySQLQuery q = _pdb->execQuery("select * from CDC_UserGroup;");
+		CppMySQLQuery q = execQuery("select * from CDC_UserGroup;");
 		while (!q.eof())
 		{
 			TCDC_UserGroup t;

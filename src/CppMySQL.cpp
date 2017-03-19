@@ -8,7 +8,7 @@
 
 using namespace std;
 
-
+ 
 ////////////////////////////////////////////////////////////////////////////////
 ///   CppMySQLException
 ////////////////////////////////////////////////////////////////////////////////
@@ -80,12 +80,50 @@ CppMySQLException::~CppMySQLException()
 }
 
 ////////////////////////////////////////////////////////////////////////////////
+///   pure api with lock support
+////////////////////////////////////////////////////////////////////////////////
+
+CppMySQLStatement CPPMYSQL_API compileStatement(const char* szSQL)
+{
+	MutexLock lock(&g_mutex);
+	return CppMySQLDB::Instance().compileStatement(szSQL);
+}
+
+int	CPPMYSQL_API execScalar(const char* szSQL, int nNullValue)
+{
+	MutexLock lock(&g_mutex);
+	return CppMySQLDB::Instance().execScalar(szSQL, nNullValue);
+}
+CppMySQLQuery CPPMYSQL_API execQuery(const char* szSQL)
+{
+	MutexLock lock(&g_mutex);
+	return CppMySQLDB::Instance().execQuery(szSQL);
+}
+
+int	CPPMYSQL_API execDML(const char* szSQL)
+{
+	MutexLock lock(&g_mutex);
+	return CppMySQLDB::Instance().execDML(szSQL);
+}
+
+int	CPPMYSQL_API execDML(std::string& str)
+{
+	MutexLock lock(&g_mutex);
+	return CppMySQLDB::Instance().execDML(str);
+}
+
+
+////////////////////////////////////////////////////////////////////////////////
 ///   CppMySQLDB
 ////////////////////////////////////////////////////////////////////////////////
 
 static std::string s_DBName;
 CppMySQLDB::CppMySQLDB()
 	: m_inTransaction(0), m_pDB(NULL)
+{
+}
+
+void CppMySQLDB::init()
 {
 	m_pDB = mysql_init(NULL);
 	if (NULL == m_pDB)
